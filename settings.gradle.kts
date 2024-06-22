@@ -26,6 +26,8 @@ include(":app")
 
 include(":core:common")
 include(":core:design-system")
+include(":core:model")
+include(":core:network")
 include(":core:screenshot-testing")
 include(":core:testing")
 

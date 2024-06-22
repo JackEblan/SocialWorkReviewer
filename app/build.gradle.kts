@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.com.android.socialworkreviewer.applicationJacoco)
     alias(libs.plugins.com.android.socialworkreviewer.hilt)
     alias(libs.plugins.baselineprofile)
+    alias(libs.plugins.google.services)
     alias(libs.plugins.kotlin.serialization)
 }
 
