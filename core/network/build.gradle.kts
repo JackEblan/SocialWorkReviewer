@@ -29,4 +29,6 @@ android {
 dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestore)
+
+    implementation(projects.core.model)
 }
