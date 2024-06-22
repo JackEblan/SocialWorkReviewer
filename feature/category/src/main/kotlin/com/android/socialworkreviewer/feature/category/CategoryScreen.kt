@@ -1,5 +1,6 @@
 package com.android.socialworkreviewer.feature.category
 
+import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -32,7 +33,6 @@ import com.android.socialworkreviewer.core.designsystem.theme.SocialWorkReviewer
 import com.android.socialworkreviewer.core.model.Category
 import com.android.socialworkreviewer.core.ui.CategoryPreviewParameterProvider
 import com.android.socialworkreviewer.core.ui.DevicePreviews
-import org.jetbrains.annotations.VisibleForTesting
 
 @Composable
 internal fun CategoryRoute(

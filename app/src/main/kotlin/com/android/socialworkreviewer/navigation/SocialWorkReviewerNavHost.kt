@@ -22,6 +22,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.android.socialworkreviewer.feature.category.navigation.CategoryRouteData
 import com.android.socialworkreviewer.feature.category.navigation.categoryScreen
+import com.android.socialworkreviewer.feature.question.navigation.navigateToQuestionScreen
+import com.android.socialworkreviewer.feature.question.navigation.questionScreen
 
 @Composable
 fun SocialWorkReviewerNavHost(navController: NavHostController) {
@@ -30,7 +32,9 @@ fun SocialWorkReviewerNavHost(navController: NavHostController) {
         startDestination = CategoryRouteData::class,
     ) {
         categoryScreen(
-            onCategoryClick = {},
+            onCategoryClick = navController::navigateToQuestionScreen,
         )
+
+        questionScreen()
     }
 }
