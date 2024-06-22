@@ -34,6 +34,7 @@ kotlinxCoroutines = "1.8.1"
 kotlinxSerializationJson = "1.6.3"
 ksp = "2.0.0-1.0.21"
 moduleGraph = "2.5.0"
+noarg = "2.0.0"
 protobuf = "4.26.1"
 protobufPlugin = "0.9.4"
 room = "2.6.1"
@@ -120,8 +121,9 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-noarg = { id = "org.jetbrains.kotlin.plugin.noarg", version.ref = "noarg" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-module-graph = { id = "com.jraska.module.graph.assertion", version.ref = "moduleGraph" }
+moduleGraph = { id = "com.jraska.module.graph.assertion", version.ref = "moduleGraph" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
 room = { id = "androidx.room", version.ref = "room" }

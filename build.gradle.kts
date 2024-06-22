@@ -8,9 +8,10 @@ plugins {
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.jvm) apply false
+    alias(libs.plugins.kotlin.noarg) apply true
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.ksp) apply false
-    alias(libs.plugins.module.graph) apply true
+    alias(libs.plugins.moduleGraph) apply true
     alias(libs.plugins.roborazzi) apply false
     alias(libs.plugins.room) apply false
     alias(libs.plugins.google.services) apply false

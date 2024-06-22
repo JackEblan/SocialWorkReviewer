@@ -15,16 +15,10 @@
  *   limitations under the License.
  *
  */
+package com.android.socialworkreviewer
 
-plugins {
-    alias(libs.plugins.com.android.socialworkreviewer.library)
-    alias(libs.plugins.kotlin.noarg)
-}
+import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 
-android {
-    namespace = "com.android.socialworkreviewer.core.model"
-}
-
-noArg {
-    annotation("com.android.socialworkreviewer.core.model.NoArg")
-}
+@HiltAndroidApp
+class SocialWorkReviewerApplication : Application()

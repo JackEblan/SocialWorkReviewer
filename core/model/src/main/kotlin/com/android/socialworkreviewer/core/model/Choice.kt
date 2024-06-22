@@ -1,6 +1,7 @@
 package com.android.socialworkreviewer.core.model
 
+@NoArg
 data class Choice(
-    val order: Int,
+    val id: Int,
     val content: String,
 )

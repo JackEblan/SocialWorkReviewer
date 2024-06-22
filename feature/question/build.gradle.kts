@@ -17,14 +17,24 @@
  */
 
 plugins {
-    alias(libs.plugins.com.android.socialworkreviewer.library)
-    alias(libs.plugins.kotlin.noarg)
+    alias(libs.plugins.com.android.socialworkreviewer.feature)
+    alias(libs.plugins.com.android.socialworkreviewer.libraryCompose)
+    alias(libs.plugins.com.android.socialworkreviewer.libraryJacoco)
+    alias(libs.plugins.roborazzi)
 }
 
 android {
-    namespace = "com.android.socialworkreviewer.core.model"
+    namespace = "com.android.socialworkreviewer.feature.question"
 }
 
-noArg {
-    annotation("com.android.socialworkreviewer.core.model.NoArg")
+dependencies {
+    implementation(projects.core.data)
+
+    testImplementation(libs.hilt.android.testing)
+    testImplementation(libs.robolectric)
+    testImplementation(projects.core.testing)
+    testImplementation(projects.core.screenshotTesting)
+    testImplementation(libs.roborazzi)
+
+    androidTestImplementation(projects.core.testing)
 }

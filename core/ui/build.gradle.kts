@@ -18,13 +18,24 @@
 
 plugins {
     alias(libs.plugins.com.android.socialworkreviewer.library)
-    alias(libs.plugins.kotlin.noarg)
+    alias(libs.plugins.com.android.socialworkreviewer.libraryCompose)
+    alias(libs.plugins.com.android.socialworkreviewer.libraryJacoco)
 }
 
 android {
-    namespace = "com.android.socialworkreviewer.core.model"
+    namespace = "com.android.socialworkreviewer.core.ui"
+
+    defaultConfig {
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
 }
 
-noArg {
-    annotation("com.android.socialworkreviewer.core.model.NoArg")
+dependencies {
+    api(projects.core.designSystem)
+    api(projects.core.model)
+
+    implementation(libs.androidx.core.ktx)
+
+    testImplementation(projects.core.testing)
+    androidTestImplementation(projects.core.testing)
 }

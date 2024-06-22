@@ -15,16 +15,16 @@
  *   limitations under the License.
  *
  */
+package com.android.socialworkreviewer.feature.category.navigation
 
-plugins {
-    alias(libs.plugins.com.android.socialworkreviewer.library)
-    alias(libs.plugins.kotlin.noarg)
-}
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
+import com.android.socialworkreviewer.feature.category.CategoryRoute
 
-android {
-    namespace = "com.android.socialworkreviewer.core.model"
-}
-
-noArg {
-    annotation("com.android.socialworkreviewer.core.model.NoArg")
+fun NavGraphBuilder.categoryScreen(
+    onCategoryClick: (String) -> Unit,
+) {
+    composable<CategoryRouteData> {
+        CategoryRoute(onCategoryClick = onCategoryClick)
+    }
 }

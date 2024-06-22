@@ -26,9 +26,14 @@ include(":app")
 
 include(":core:common")
 include(":core:design-system")
+include(":core:data")
 include(":core:model")
 include(":core:network")
 include(":core:screenshot-testing")
 include(":core:testing")
+include(":core:ui")
+
+include(":feature:category")
+include(":feature:question")
 
 include(":lint")

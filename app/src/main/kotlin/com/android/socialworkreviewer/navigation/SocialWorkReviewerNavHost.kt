@@ -15,16 +15,22 @@
  *   limitations under the License.
  *
  */
+package com.android.socialworkreviewer.navigation
 
-plugins {
-    alias(libs.plugins.com.android.socialworkreviewer.library)
-    alias(libs.plugins.kotlin.noarg)
-}
+import androidx.compose.runtime.Composable
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import com.android.socialworkreviewer.feature.category.navigation.CategoryRouteData
+import com.android.socialworkreviewer.feature.category.navigation.categoryScreen
 
-android {
-    namespace = "com.android.socialworkreviewer.core.model"
-}
-
-noArg {
-    annotation("com.android.socialworkreviewer.core.model.NoArg")
+@Composable
+fun SocialWorkReviewerNavHost(navController: NavHostController) {
+    NavHost(
+        navController = navController,
+        startDestination = CategoryRouteData::class,
+    ) {
+        categoryScreen(
+            onCategoryClick = {},
+        )
+    }
 }

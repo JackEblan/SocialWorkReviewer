@@ -4,5 +4,9 @@ import com.android.socialworkreviewer.core.model.Question
 import kotlinx.coroutines.flow.Flow
 
 interface QuestionDataSource {
-    fun getQuestions(category: String): Flow<List<Question>>
+    fun getQuestions(id: String): Flow<List<Question>>
+
+    companion object {
+        const val QUESTIONS_COLLECTION = "questions"
+    }
 }

@@ -46,6 +46,9 @@ android {
 dependencies {
     implementation(projects.core.designSystem)
 
+    implementation(projects.feature.category)
+    implementation(projects.feature.question)
+
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)

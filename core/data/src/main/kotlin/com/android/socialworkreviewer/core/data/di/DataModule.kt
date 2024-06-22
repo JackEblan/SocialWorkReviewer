@@ -15,13 +15,12 @@
  *   limitations under the License.
  *
  */
+package com.android.socialworkreviewer.core.data.di
 
-package com.android.socialworkreviewer.core.network.di
-
-import com.android.socialworkreviewer.core.network.firestore.CategoryDataSource
-import com.android.socialworkreviewer.core.network.firestore.DefaultCategoryDataSource
-import com.android.socialworkreviewer.core.network.firestore.DefaultQuestionDataSource
-import com.android.socialworkreviewer.core.network.firestore.QuestionDataSource
+import com.android.socialworkreviewer.core.data.repository.CategoryRepository
+import com.android.socialworkreviewer.core.data.repository.DefaultCategoryRepository
+import com.android.socialworkreviewer.core.data.repository.DefaultQuestionRepository
+import com.android.socialworkreviewer.core.data.repository.QuestionRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -30,13 +29,13 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal interface NetworkModule {
+internal interface DataModule {
 
     @Binds
     @Singleton
-    fun categoryDataSource(impl: DefaultCategoryDataSource): CategoryDataSource
+    fun categoryRepository(impl: DefaultCategoryRepository): CategoryRepository
 
     @Binds
     @Singleton
-    fun questionDataSource(impl: DefaultQuestionDataSource): QuestionDataSource
+    fun questionRepository(impl: DefaultQuestionRepository): QuestionRepository
 }
