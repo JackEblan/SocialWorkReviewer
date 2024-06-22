@@ -6,13 +6,13 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.snapshots
 import com.google.firebase.firestore.toObjects
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import javax.inject.Inject
 
 internal class DefaultCategoryDataSource @Inject constructor(private val firestore: FirebaseFirestore) :
     CategoryDataSource {
     override fun getCategories(): Flow<List<Category>> {
         return firestore.collection(CATEGORIES_COLLECTION).snapshots()
-            .map { it.toObjects<Category>() }
+            .mapNotNull { it.toObjects<Category>() }
     }
 }
