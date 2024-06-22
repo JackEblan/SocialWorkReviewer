@@ -29,13 +29,13 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal interface DataModule {
+abstract class DataModule {
 
     @Binds
     @Singleton
-    fun categoryRepository(impl: DefaultCategoryRepository): CategoryRepository
+    internal abstract fun categoryRepository(impl: DefaultCategoryRepository): CategoryRepository
 
     @Binds
     @Singleton
-    fun questionRepository(impl: DefaultQuestionRepository): QuestionRepository
+    internal abstract fun questionRepository(impl: DefaultQuestionRepository): QuestionRepository
 }
