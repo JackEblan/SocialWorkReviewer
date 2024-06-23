@@ -8,45 +8,95 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.socialworkreviewer.core.designsystem.icon.SocialWorkReviewerIcons
+import com.android.socialworkreviewer.core.model.Choice
+import com.android.socialworkreviewer.core.model.Question
 
 @Composable
-internal fun QuestionRoute(modifier: Modifier = Modifier) {
-    QuestionScreen(modifier = modifier)
+internal fun QuestionRoute(
+    modifier: Modifier = Modifier, viewModel: QuestionViewModel = hiltViewModel()
+) {
+    val questionUiState = viewModel.questionUiState.collectAsStateWithLifecycle().value
+
+    QuestionScreen(
+        modifier = modifier,
+        questionUiState = questionUiState,
+        onReadyClick = viewModel::getQuestions
+    )
 }
 
 @VisibleForTesting
 @Composable
-internal fun QuestionScreen(modifier: Modifier = Modifier) {
-    Scaffold(modifier = modifier, floatingActionButton = {
-        FloatingActionButton(onClick = {}) {
-            Icon(imageVector = SocialWorkReviewerIcons.Paused, contentDescription = "")
-        }
-    }) { paddingValues ->
+internal fun QuestionScreen(
+    modifier: Modifier = Modifier, questionUiState: QuestionUiState, onReadyClick: () -> Unit
+) {
+
+    val questionIndex by rememberSaveable { mutableIntStateOf(0) }
+
+    Scaffold(modifier = modifier) { paddingValues ->
         Column(
             modifier = Modifier
                 .consumeWindowInsets(paddingValues)
                 .padding(paddingValues)
         ) {
-            QuestionHeader()
+            when (questionUiState) {
+                is QuestionUiState.Success -> {
+                    if (questionUiState.questions.isNotEmpty()) {
+                        QuestionHeader()
 
-            QuestionBody(modifier = Modifier.weight(1f))
+                        QuestionBody(
+                            modifier = Modifier.weight(1f),
+                            question = questionUiState.questions[questionIndex],
+                        )
+                    }
+                }
+
+                QuestionUiState.Loading -> {
+
+                }
+
+                QuestionUiState.OnBoarding -> {
+                    OnBoarding(onReadyClick = onReadyClick)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun OnBoarding(modifier: Modifier = Modifier, onReadyClick: () -> Unit) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "Get Ready", style = MaterialTheme.typography.headlineMedium
+        )
+
+        Button(onClick = onReadyClick) {
+            Text(text = "Ready")
         }
     }
 }
@@ -66,7 +116,9 @@ private fun QuestionHeader(modifier: Modifier = Modifier) {
 
 @Composable
 private fun QuestionBody(
-    modifier: Modifier = Modifier, scrollState: ScrollState = rememberScrollState()
+    modifier: Modifier = Modifier,
+    scrollState: ScrollState = rememberScrollState(),
+    question: Question
 ) {
     Column(
         modifier = modifier
@@ -74,9 +126,9 @@ private fun QuestionBody(
             .padding(20.dp),
         verticalArrangement = Arrangement.Center
     ) {
-        Question()
+        QuestionText(question = question.question)
 
-        Choices()
+        ChoicesButtons(choices = question.choices, answerId = question.answerId)
     }
 }
 
@@ -116,43 +168,40 @@ private fun ScoreCounter(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun Question(modifier: Modifier = Modifier) {
+private fun QuestionText(modifier: Modifier = Modifier, question: String) {
     Box(
         modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "How old are you?", style = MaterialTheme.typography.headlineMedium
+            text = question, style = MaterialTheme.typography.headlineMedium
         )
     }
 }
 
 @Composable
-private fun Choices(modifier: Modifier = Modifier) {
+private fun ChoicesButtons(modifier: Modifier = Modifier, choices: List<Choice>, answerId: String) {
     Column(
         modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(20.dp))
 
-        OutlinedButton(onClick = {}, modifier = Modifier.fillMaxWidth()) {
-            Text(text = "One")
-        }
+        choices.forEach { choice ->
+            OutlinedButton(onClick = {
 
-        Spacer(modifier = Modifier.height(10.dp))
+            }, modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(imageVector = SocialWorkReviewerIcons.Check, contentDescription = "")
 
-        OutlinedButton(onClick = {}, modifier = Modifier.fillMaxWidth()) {
-            Text(text = "Two")
-        }
+                    Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                        Text(text = choice.content)
+                    }
+                }
+            }
 
-        Spacer(modifier = Modifier.height(10.dp))
-
-        OutlinedButton(onClick = {}, modifier = Modifier.fillMaxWidth()) {
-            Text(text = "Three")
-        }
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        OutlinedButton(onClick = {}, modifier = Modifier.fillMaxWidth()) {
-            Text(text = "Four")
+            Spacer(modifier = Modifier.height(10.dp))
         }
     }
 }
