@@ -61,11 +61,11 @@ internal fun CategoryScreen(
                 title = "Categories",
             )
         },
-    ) { innerPadding ->
+    ) { paddingValues ->
         Box(
             modifier = modifier
                 .fillMaxSize()
-                .consumeWindowInsets(innerPadding)
+                .consumeWindowInsets(paddingValues)
                 .semantics {
                     testTagsAsResourceId = true
                 }
@@ -79,7 +79,7 @@ internal fun CategoryScreen(
                 is CategoryUiState.Success -> SuccessState(
                     modifier = modifier,
                     categoryUiState = categoryUiState,
-                    contentPadding = innerPadding,
+                    contentPadding = paddingValues,
                     onCategoryClick = onCategoryClick,
                 )
             }

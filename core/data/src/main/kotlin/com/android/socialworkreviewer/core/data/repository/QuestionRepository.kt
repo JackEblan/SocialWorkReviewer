@@ -4,5 +4,5 @@ import com.android.socialworkreviewer.core.model.Question
 import kotlinx.coroutines.flow.Flow
 
 interface QuestionRepository {
-    fun getQuestions(category: String): Flow<List<Question>>
+    fun getQuestions(id: String): Flow<List<Question>>
 }

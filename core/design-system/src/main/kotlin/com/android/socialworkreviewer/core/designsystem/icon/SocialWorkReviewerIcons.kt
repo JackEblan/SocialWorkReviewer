@@ -17,4 +17,13 @@
  */
 package com.android.socialworkreviewer.core.designsystem.icon
 
-object SocialWorkReviewerIcons {}
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PauseCircle
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.PlayCircle
+
+object SocialWorkReviewerIcons {
+    val Paused = Icons.Default.Pause
+    val Play = Icons.Default.PlayArrow
+}

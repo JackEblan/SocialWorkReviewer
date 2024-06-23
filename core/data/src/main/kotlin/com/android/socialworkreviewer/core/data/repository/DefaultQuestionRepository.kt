@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 internal class DefaultQuestionRepository @Inject constructor(private val questionDataSource: QuestionDataSource) :
     QuestionRepository {
-    override fun getQuestions(category: String): Flow<List<Question>> {
-        return questionDataSource.getQuestions(id = category)
+    override fun getQuestions(id: String): Flow<List<Question>> {
+        return questionDataSource.getQuestions(id = id)
     }
 }
