@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
 
             SocialWorkReviewerTheme(
                 darkTheme = false,
-                androidTheme = false,
+                androidTheme = true,
                 disableDynamicTheming = false,
             ) {
                 SocialWorkReviewerBackground {

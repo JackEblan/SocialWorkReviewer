@@ -7,5 +7,7 @@ sealed interface QuestionUiState {
 
     data object Loading : QuestionUiState
 
-    data object OnBoarding : QuestionUiState
+    data object Ready : QuestionUiState
+
+    data object Finish : QuestionUiState
 }

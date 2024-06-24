@@ -22,7 +22,7 @@ class QuestionViewModel @Inject constructor(
 
     private val id = questionRouteData.id
 
-    private val _questionUiState = MutableStateFlow<QuestionUiState>(QuestionUiState.OnBoarding)
+    private val _questionUiState = MutableStateFlow<QuestionUiState>(QuestionUiState.Ready)
     val questionUiState = _questionUiState.asStateFlow()
 
     fun getQuestions() {
