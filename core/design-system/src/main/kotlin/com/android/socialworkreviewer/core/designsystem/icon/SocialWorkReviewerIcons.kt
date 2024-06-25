@@ -17,4 +17,9 @@
  */
 package com.android.socialworkreviewer.core.designsystem.icon
 
-object SocialWorkReviewerIcons
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+
+object SocialWorkReviewerIcons {
+    val Check = Icons.Default.Check
+}

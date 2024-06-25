@@ -13,22 +13,27 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.android.socialworkreviewer.core.designsystem.component.SocialWorkReviewerLoadingWheel
+import com.android.socialworkreviewer.core.designsystem.icon.SocialWorkReviewerIcons
 import com.android.socialworkreviewer.core.model.Choice
 import com.android.socialworkreviewer.core.model.Question
 
@@ -41,7 +46,7 @@ internal fun QuestionRoute(
     QuestionScreen(
         modifier = modifier,
         questionUiState = questionUiState,
-        onReadyClick = viewModel::getQuestions,
+        onGetQuestions = viewModel::getQuestions
     )
 }
 
@@ -50,38 +55,32 @@ internal fun QuestionRoute(
 internal fun QuestionScreen(
     modifier: Modifier = Modifier,
     questionUiState: QuestionUiState,
-    onReadyClick: () -> Unit,
+    onGetQuestions: () -> Unit,
 ) {
+    LaunchedEffect(key1 = true) {
+        onGetQuestions()
+    }
 
-    Scaffold(modifier = modifier) { paddingValues ->
-        Column(
+    Scaffold(modifier = modifier, floatingActionButton = {
+        FloatingActionButton(onClick = {}) {
+            Icon(imageVector = SocialWorkReviewerIcons.Check, contentDescription = "")
+        }
+    }) { paddingValues ->
+        Box(
             modifier = Modifier
+                .fillMaxSize()
                 .consumeWindowInsets(paddingValues)
                 .padding(paddingValues)
         ) {
             when (questionUiState) {
                 is QuestionUiState.Success -> {
                     if (questionUiState.questions.isNotEmpty()) {
-                        QuestionHeader(
-                            questionIndex = 0, questionSize = questionUiState.questions.size
-                        )
-
-                        QuestionBody(
-                            questions = questionUiState.questions,
-                        )
+                        SuccessState(questions = questionUiState.questions)
                     }
                 }
 
                 QuestionUiState.Loading -> {
-
-                }
-
-                QuestionUiState.Ready -> {
-                    ReadyScreen(onReadyClick = onReadyClick)
-                }
-
-                QuestionUiState.Finish -> {
-                    FinishScreen()
+                    LoadingState(modifier = Modifier.align(Alignment.Center))
                 }
             }
         }
@@ -89,37 +88,9 @@ internal fun QuestionScreen(
 }
 
 @Composable
-private fun ReadyScreen(modifier: Modifier = Modifier, onReadyClick: () -> Unit) {
-    Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "Get Ready", style = MaterialTheme.typography.headlineMedium
-        )
-
-        Button(onClick = onReadyClick) {
-            Text(text = "Ready")
-        }
-    }
-}
-
-@Composable
-private fun FinishScreen(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "Your score is", style = MaterialTheme.typography.headlineMedium
-        )
-    }
-}
-
-@Composable
-private fun QuestionHeader(modifier: Modifier = Modifier, questionIndex: Int, questionSize: Int) {
+private fun QuestionHeader(
+    modifier: Modifier = Modifier, questionIndex: Int, questionSize: Int
+) {
     Row(
         modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround
     ) {
@@ -128,33 +99,43 @@ private fun QuestionHeader(modifier: Modifier = Modifier, questionIndex: Int, qu
         )
 
         TimeCounter()
-
-        ScoreCounter()
     }
 }
 
 @Composable
-private fun QuestionBody(
+private fun SuccessState(
     modifier: Modifier = Modifier,
     scrollState: ScrollState = rememberScrollState(),
     questions: List<Question>,
 ) {
+    val pagerState = rememberPagerState(pageCount = {
+        questions.size
+    })
 
-    val questionIndex by rememberSaveable { mutableIntStateOf(0) }
+    val selectedChoices = remember {
+        mutableStateListOf<Choice>()
+    }
 
-    Column(
-        modifier = modifier.verticalScroll(scrollState), verticalArrangement = Arrangement.Center
-    ) {
-        QuestionText(question = questions[questionIndex].question)
+    Column(modifier = modifier) {
+        QuestionHeader(
+            questionIndex = pagerState.currentPage, questionSize = questions.size
+        )
 
-        if (questions[questionIndex].answersId.size > 1) {
-            MultipleChoices(
-                choices = questions[questionIndex].choices,
-            )
-        } else {
-            SingleChoice(
-                choices = questions[questionIndex].choices,
-            )
+        HorizontalPager(state = pagerState) { page ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState),
+            ) {
+                QuestionText(question = questions[page].question)
+
+                Choices(
+                    choices = questions[page].choices,
+                    selectedChoices = selectedChoices,
+                    onAddChoice = selectedChoices::add,
+                    onRemoveChoice = selectedChoices::remove
+                )
+            }
         }
     }
 }
@@ -186,17 +167,6 @@ private fun TimeCounter(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun ScoreCounter(modifier: Modifier = Modifier) {
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = "Score", style = MaterialTheme.typography.bodyMedium)
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Text(text = "15", style = MaterialTheme.typography.titleLarge)
-    }
-}
-
-@Composable
 private fun QuestionText(modifier: Modifier = Modifier, question: String) {
     Box(
         modifier = modifier
@@ -210,12 +180,15 @@ private fun QuestionText(modifier: Modifier = Modifier, question: String) {
 }
 
 @Composable
-private fun SingleChoice(
+private fun Choices(
     modifier: Modifier = Modifier,
     choices: List<Choice>,
+    selectedChoices: List<Choice>,
+    onAddChoice: (Choice) -> Unit,
+    onRemoveChoice: (Choice) -> Unit,
 ) {
     Column(
-        modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+        modifier = modifier.fillMaxWidth(),
     ) {
         choices.forEach { choice ->
             Row(
@@ -224,7 +197,13 @@ private fun SingleChoice(
                     .clickable { },
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Checkbox(checked = false, onCheckedChange = {})
+                Checkbox(checked = choice in selectedChoices, onCheckedChange = {
+                    if (choice !in selectedChoices) {
+                        onAddChoice(choice)
+                    } else {
+                        onRemoveChoice(choice)
+                    }
+                })
 
                 Box(
                     modifier = Modifier.fillMaxWidth()
@@ -239,30 +218,9 @@ private fun SingleChoice(
 }
 
 @Composable
-private fun MultipleChoices(
-    modifier: Modifier = Modifier,
-    choices: List<Choice>,
-) {
-    Column(
-        modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        choices.forEach { choice ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { },
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Checkbox(checked = false, onCheckedChange = {})
-
-                Box(
-                    modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
-                ) {
-                    Text(text = choice.content)
-                }
-            }
-
-            Spacer(modifier = Modifier.height(10.dp))
-        }
-    }
+private fun LoadingState(modifier: Modifier = Modifier) {
+    SocialWorkReviewerLoadingWheel(
+        modifier = modifier,
+        contentDescription = "SocialWorkReviewerLoadingWheel",
+    )
 }

@@ -22,17 +22,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.socialworkreviewer.core.designsystem.component.DynamicAsyncImage
 import com.android.socialworkreviewer.core.designsystem.component.SocialWorkReviewerLoadingWheel
-import com.android.socialworkreviewer.core.designsystem.theme.SocialWorkReviewerTheme
 import com.android.socialworkreviewer.core.model.Category
-import com.android.socialworkreviewer.core.ui.CategoryPreviewParameterProvider
-import com.android.socialworkreviewer.core.ui.DevicePreviews
 
 @Composable
 internal fun CategoryRoute(
@@ -150,32 +145,5 @@ private fun CategoryItem(
 
         Text(text = category.title, style = MaterialTheme.typography.titleLarge)
 
-    }
-}
-
-@Preview
-@Composable
-private fun CategoryItemPreview() {
-    CategoryItem(category = Category(
-        id = "",
-        title = "Human Behavior And Social Environment", imageUrl = "",
-    ), onCategoryClick = {})
-}
-
-@DevicePreviews
-@Composable
-private fun CategoryScreenLoadingStatePreview() {
-    SocialWorkReviewerTheme {
-        CategoryScreen(categoryUiState = CategoryUiState.Loading, onCategoryClick = {})
-    }
-}
-
-@DevicePreviews
-@Composable
-private fun CategoryScreenSuccessStatePreview(
-    @PreviewParameter(CategoryPreviewParameterProvider::class) categories: List<Category>,
-) {
-    SocialWorkReviewerTheme {
-        CategoryScreen(categoryUiState = CategoryUiState.Success(categories), onCategoryClick = {})
     }
 }

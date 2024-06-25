@@ -6,8 +6,4 @@ sealed interface QuestionUiState {
     data class Success(val questions: List<Question>) : QuestionUiState
 
     data object Loading : QuestionUiState
-
-    data object Ready : QuestionUiState
-
-    data object Finish : QuestionUiState
 }

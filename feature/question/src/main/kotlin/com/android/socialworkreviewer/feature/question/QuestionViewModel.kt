@@ -22,7 +22,7 @@ class QuestionViewModel @Inject constructor(
 
     private val id = questionRouteData.id
 
-    private val _questionUiState = MutableStateFlow<QuestionUiState>(QuestionUiState.Ready)
+    private val _questionUiState = MutableStateFlow<QuestionUiState>(QuestionUiState.Loading)
     val questionUiState = _questionUiState.asStateFlow()
 
     fun getQuestions() {
@@ -31,7 +31,7 @@ class QuestionViewModel @Inject constructor(
                 QuestionUiState.Success(
                     questions = questionRepository.getQuestions(
                         id = id
-                    )
+                    ),
                 )
             }
         }
