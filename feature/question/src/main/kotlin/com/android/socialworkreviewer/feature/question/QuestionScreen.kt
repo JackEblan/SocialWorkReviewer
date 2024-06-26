@@ -1,6 +1,7 @@
 package com.android.socialworkreviewer.feature.question
 
 import androidx.annotation.VisibleForTesting
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -30,10 +32,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.android.socialworkreviewer.core.designsystem.component.SocialWorkReviewerLoadingWheel
 import com.android.socialworkreviewer.core.designsystem.icon.SocialWorkReviewerIcons
 import com.android.socialworkreviewer.core.model.Answer
-import com.android.socialworkreviewer.core.model.Choice
 import com.android.socialworkreviewer.core.model.Question
 
 @Composable
@@ -49,8 +49,10 @@ internal fun QuestionRoute(
         questionUiState = questionUiState,
         answers = answers,
         onGetQuestions = viewModel::getQuestions,
+        onAddQuestions = viewModel::addQuestions,
         onAddAnswer = viewModel::addAnswer,
-        onRemoveAnswer = viewModel::removeAnswer
+        onRemoveAnswer = viewModel::removeAnswer,
+        onShowAnswers = viewModel::showAnswers
     )
 }
 
@@ -61,45 +63,54 @@ internal fun QuestionScreen(
     questionUiState: QuestionUiState,
     answers: List<Answer>,
     onGetQuestions: () -> Unit,
+    onAddQuestions: (List<Question>) -> Unit,
     onAddAnswer: (Answer) -> Unit,
-    onRemoveAnswer: (Answer) -> Unit
+    onRemoveAnswer: (Answer) -> Unit,
+    onShowAnswers: () -> Unit,
 ) {
+
     LaunchedEffect(key1 = true) {
         onGetQuestions()
     }
 
-    Scaffold(modifier = modifier, floatingActionButton = {
-        FloatingActionButton(onClick = {}) {
-            Icon(imageVector = SocialWorkReviewerIcons.Check, contentDescription = "")
-        }
-    }) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .consumeWindowInsets(paddingValues)
-                .padding(paddingValues)
-        ) {
-            when (questionUiState) {
-                is QuestionUiState.Success -> {
-                    if (questionUiState.questions.isNotEmpty()) {
-                        SuccessState(
-                            questions = questionUiState.questions, answers = answers,
-                            onAddAnswer = onAddAnswer,
-                            onRemoveAnswer = onRemoveAnswer,
-                        )
+    Crossfade(modifier = modifier, targetState = questionUiState, label = "") { state ->
+        when (state) {
+            is QuestionUiState.Success -> {
+                if (state.questions.isNotEmpty()) {
+                    SuccessState(
+                        questions = state.questions, answers = answers,
+                        onAddQuestions = onAddQuestions,
+                        onAddAnswer = onAddAnswer,
+                        onRemoveAnswer = onRemoveAnswer,
+                        onShowAnswers = onShowAnswers,
+                    )
+                }
+            }
+
+            QuestionUiState.Loading -> {
+                Scaffold { paddingValues ->
+                    Box(
+                        modifier = modifier
+                            .fillMaxSize()
+                            .consumeWindowInsets(paddingValues)
+                            .padding(paddingValues),
+                    ) {
+                        LoadingScreen(modifier = Modifier.align(Alignment.Center))
                     }
                 }
+            }
 
-                QuestionUiState.Loading -> {
-                    LoadingState(modifier = Modifier.align(Alignment.Center))
-                }
+            is QuestionUiState.ShowAnswer -> {
+                AnswerScreen(
+                    questions = state.questions, answers = answers
+                )
             }
         }
     }
 }
 
 @Composable
-private fun QuestionHeader(
+fun QuestionHeader(
     modifier: Modifier = Modifier, questionIndex: Int, questionSize: Int
 ) {
     Row(
@@ -119,41 +130,92 @@ private fun SuccessState(
     scrollState: ScrollState = rememberScrollState(),
     questions: List<Question>,
     answers: List<Answer>,
+    onAddQuestions: (List<Question>) -> Unit,
     onAddAnswer: (Answer) -> Unit,
     onRemoveAnswer: (Answer) -> Unit,
+    onShowAnswers: () -> Unit,
 ) {
+
+    LaunchedEffect(key1 = true) {
+        onAddQuestions(questions)
+    }
+
     val pagerState = rememberPagerState(pageCount = {
         questions.size
     })
 
-    Column(modifier = modifier) {
-        QuestionHeader(
-            questionIndex = pagerState.currentPage, questionSize = questions.size
-        )
+    Scaffold(floatingActionButton = {
+        FloatingActionButton(onClick = onShowAnswers) {
+            Icon(
+                imageVector = SocialWorkReviewerIcons.Check, contentDescription = ""
+            )
+        }
+    }) { paddingValues ->
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .consumeWindowInsets(paddingValues)
+                .padding(paddingValues),
+        ) {
+            QuestionHeader(
+                questionIndex = pagerState.currentPage, questionSize = questions.size
+            )
 
-        HorizontalPager(state = pagerState) { page ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(scrollState),
-            ) {
-                QuestionText(question = questions[page].question)
-
-                Choices(choices = questions[page].correctAnswers.plus(questions[page].wrongAnswers),
-                        selectedChoices = answers.map { it.choice },
-                        onAddChoice = { choice ->
-                            onAddAnswer(Answer(question = questions[page], choice = choice))
-                        },
-                        onRemoveChoice = { choice ->
-                            onRemoveAnswer(Answer(question = questions[page], choice = choice))
-                        })
-            }
+            QuestionPager(
+                pagerState = pagerState,
+                scrollState = scrollState,
+                questions = questions,
+                answers = answers,
+                onAddAnswer = onAddAnswer,
+                onRemoveAnswer = onRemoveAnswer
+            )
         }
     }
 }
 
 @Composable
-private fun QuestionCounter(modifier: Modifier = Modifier, questionIndex: Int, questionSize: Int) {
+private fun QuestionPager(
+    pagerState: PagerState,
+    scrollState: ScrollState = rememberScrollState(),
+    questions: List<Question>,
+    answers: List<Answer>,
+    onAddAnswer: (Answer) -> Unit,
+    onRemoveAnswer: (Answer) -> Unit,
+) {
+    HorizontalPager(state = pagerState) { page ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState),
+        ) {
+            QuestionText(question = questions[page].question)
+
+            Choices(choices = questions[page].correctChoices.plus(questions[page].wrongChoices),
+                    answers = answers.filter { it.question == questions[page] }.map { it.choice },
+                    onAddChoice = { choice ->
+                        onAddAnswer(
+                            Answer(
+                                question = questions[page], choice = choice
+                            )
+                        )
+                    },
+                    onRemoveChoice = { choice ->
+                        onRemoveAnswer(
+                            Answer(
+                                question = questions[page], choice = choice
+                            )
+                        )
+                    })
+
+        }
+    }
+
+}
+
+@Composable
+private fun QuestionCounter(
+    modifier: Modifier = Modifier, questionIndex: Int, questionSize: Int
+) {
     Column(
         modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -179,7 +241,7 @@ private fun TimeCounter(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun QuestionText(modifier: Modifier = Modifier, question: String) {
+fun QuestionText(modifier: Modifier = Modifier, question: String) {
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -194,11 +256,12 @@ private fun QuestionText(modifier: Modifier = Modifier, question: String) {
 @Composable
 private fun Choices(
     modifier: Modifier = Modifier,
-    choices: List<Choice>,
-    selectedChoices: List<Choice>,
-    onAddChoice: (Choice) -> Unit,
-    onRemoveChoice: (Choice) -> Unit,
+    choices: List<String>,
+    answers: List<String>,
+    onAddChoice: (String) -> Unit,
+    onRemoveChoice: (String) -> Unit,
 ) {
+
     Column(
         modifier = modifier.fillMaxWidth(),
     ) {
@@ -209,8 +272,8 @@ private fun Choices(
                     .clickable { },
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Checkbox(checked = choice in selectedChoices, onCheckedChange = {
-                    if (choice !in selectedChoices) {
+                Checkbox(checked = choice in answers, onCheckedChange = {
+                    if (choice !in answers) {
                         onAddChoice(choice)
                     } else {
                         onRemoveChoice(choice)
@@ -220,19 +283,11 @@ private fun Choices(
                 Box(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = choice.content)
+                    Text(text = choice)
                 }
             }
 
             Spacer(modifier = Modifier.height(10.dp))
         }
     }
-}
-
-@Composable
-private fun LoadingState(modifier: Modifier = Modifier) {
-    SocialWorkReviewerLoadingWheel(
-        modifier = modifier,
-        contentDescription = "SocialWorkReviewerLoadingWheel",
-    )
 }

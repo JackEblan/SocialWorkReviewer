@@ -7,6 +7,7 @@ import androidx.navigation.toRoute
 import com.android.socialworkreviewer.core.data.repository.AnswerRepository
 import com.android.socialworkreviewer.core.data.repository.QuestionRepository
 import com.android.socialworkreviewer.core.model.Answer
+import com.android.socialworkreviewer.core.model.Question
 import com.android.socialworkreviewer.feature.question.navigation.QuestionRouteData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -69,6 +70,18 @@ class QuestionViewModel @Inject constructor(
             _score.update {
                 answerRepository.getScore()
             }
+        }
+    }
+
+    fun addQuestions(value: List<Question>) {
+        viewModelScope.launch {
+            answerRepository.addQuestions(value = value)
+        }
+    }
+
+    fun showAnswers() {
+        _questionUiState.update {
+            QuestionUiState.ShowAnswer(answerRepository.questions)
         }
     }
 }

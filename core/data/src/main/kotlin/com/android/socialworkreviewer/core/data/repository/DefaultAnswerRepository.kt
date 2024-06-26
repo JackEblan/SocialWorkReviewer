@@ -3,6 +3,7 @@ package com.android.socialworkreviewer.core.data.repository
 import com.android.socialworkreviewer.core.common.Dispatcher
 import com.android.socialworkreviewer.core.common.SocialWorkReviewerDispatchers.Default
 import com.android.socialworkreviewer.core.model.Answer
+import com.android.socialworkreviewer.core.model.Question
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -23,6 +24,10 @@ internal class DefaultAnswerRepository @Inject constructor(
 
     private val currentAnswers get() = _answers.replayCache.firstOrNull() ?: emptyList()
 
+    private var _questions = emptyList<Question>()
+
+    override val questions get() = _questions
+
     override suspend fun addAnswer(answer: Answer) {
         _answers.emit((currentAnswers + answer))
     }
@@ -34,7 +39,11 @@ internal class DefaultAnswerRepository @Inject constructor(
     override suspend fun getScore(): Int {
         return withContext(defaultDispatcher) {
             currentAnswers.groupBy({ it.question }, { it.choice })
-                .count { it.value.containsAll(it.key.correctAnswers) }
+                .count { it.value.containsAll(it.key.correctChoices) }
         }
+    }
+
+    override fun addQuestions(value: List<Question>) {
+        _questions = value
     }
 }

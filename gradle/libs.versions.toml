@@ -23,7 +23,6 @@ androidxTestRunner = "1.5.2"
 androidxTracing = "1.3.0-alpha02"
 androidxUiAutomator = "2.3.0"
 coil = "2.6.0"
-dependencyGuard = "0.5.0"
 firebaseBom = "33.1.1"
 googleServices = "4.4.2"
 hilt = "2.51.1"
@@ -33,11 +32,7 @@ kotlin = "2.0.0"
 kotlinxCoroutines = "1.8.1"
 kotlinxSerializationJson = "1.6.3"
 ksp = "2.0.0-1.0.21"
-moduleGraph = "2.5.0"
 noarg = "2.0.0"
-protobuf = "4.26.1"
-protobufPlugin = "0.9.4"
-room = "2.6.1"
 robolectric = "4.12.2"
 roborazzi = "1.15.0"
 
@@ -93,29 +88,20 @@ kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8", v
 lint-api = { group = "com.android.tools.lint", name = "lint-api", version.ref = "androidTools" }
 lint-checks = { group = "com.android.tools.lint", name = "lint-checks", version.ref = "androidTools" }
 lint-tests = { group = "com.android.tools.lint", name = "lint-tests", version.ref = "androidTools" }
-protobuf-kotlin-lite = { group = "com.google.protobuf", name = "protobuf-kotlin-lite", version.ref = "protobuf" }
-protobuf-protoc = { group = "com.google.protobuf", name = "protoc", version.ref = "protobuf" }
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", version.ref = "roborazzi" }
-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
-room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
 
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
 compose-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
-room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "room" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 android-test = { id = "com.android.test", version.ref = "androidGradlePlugin" }
-baselineprofile = { id = "androidx.baselineprofile", version.ref = "androidxMacroBenchmark" }
 compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-dependencyGuard = { id = "com.dropbox.dependency-guard", version.ref = "dependencyGuard" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
@@ -123,10 +109,7 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-noarg = { id = "org.jetbrains.kotlin.plugin.noarg", version.ref = "noarg" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-moduleGraph = { id = "com.jraska.module.graph.assertion", version.ref = "moduleGraph" }
-protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
-room = { id = "androidx.room", version.ref = "room" }
 
 # Plugins defined by this project
 com-android-socialworkreviewer-application = { id = "com.android.socialworkreviewer.application", version = "unspecified" }
@@ -139,5 +122,4 @@ com-android-socialworkreviewer-libraryJacoco = { id = "com.android.socialworkrev
 com-android-socialworkreviewer-feature = { id = "com.android.socialworkreviewer.feature", version = "unspecified" }
 com-android-socialworkreviewer-hilt = { id = "com.android.socialworkreviewer.hilt", version = "unspecified" }
 com-android-socialworkreviewer-lint = { id = "com.android.socialworkreviewer.lint", version = "unspecified" }
-com-android-socialworkreviewer-room = { id = "com.android.socialworkreviewer.room", version = "unspecified" }
 com-android-socialworkreviewer-test = { id = "com.android.socialworkreviewer.test", version = "unspecified" }
