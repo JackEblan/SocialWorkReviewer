@@ -17,7 +17,9 @@
  */
 package com.android.socialworkreviewer.core.data.di
 
+import com.android.socialworkreviewer.core.data.repository.AnswerRepository
 import com.android.socialworkreviewer.core.data.repository.CategoryRepository
+import com.android.socialworkreviewer.core.data.repository.DefaultAnswerRepository
 import com.android.socialworkreviewer.core.data.repository.DefaultCategoryRepository
 import com.android.socialworkreviewer.core.data.repository.DefaultQuestionRepository
 import com.android.socialworkreviewer.core.data.repository.QuestionRepository
@@ -38,4 +40,8 @@ abstract class DataModule {
     @Binds
     @Singleton
     internal abstract fun questionRepository(impl: DefaultQuestionRepository): QuestionRepository
+
+    @Binds
+    @Singleton
+    internal abstract fun answerRepository(impl: DefaultAnswerRepository): AnswerRepository
 }

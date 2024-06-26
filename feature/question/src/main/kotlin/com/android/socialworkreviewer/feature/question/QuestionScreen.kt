@@ -17,7 +17,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -26,8 +25,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -35,6 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.socialworkreviewer.core.designsystem.component.SocialWorkReviewerLoadingWheel
 import com.android.socialworkreviewer.core.designsystem.icon.SocialWorkReviewerIcons
+import com.android.socialworkreviewer.core.model.Answer
 import com.android.socialworkreviewer.core.model.Choice
 import com.android.socialworkreviewer.core.model.Question
 
@@ -44,10 +42,15 @@ internal fun QuestionRoute(
 ) {
     val questionUiState = viewModel.questionUiState.collectAsStateWithLifecycle().value
 
+    val answers = viewModel.answers.collectAsStateWithLifecycle().value
+
     QuestionScreen(
         modifier = modifier,
         questionUiState = questionUiState,
-        onGetQuestions = viewModel::getQuestions
+        answers = answers,
+        onGetQuestions = viewModel::getQuestions,
+        onAddAnswer = viewModel::addAnswer,
+        onRemoveAnswer = viewModel::removeAnswer
     )
 }
 
@@ -56,7 +59,10 @@ internal fun QuestionRoute(
 internal fun QuestionScreen(
     modifier: Modifier = Modifier,
     questionUiState: QuestionUiState,
+    answers: List<Answer>,
     onGetQuestions: () -> Unit,
+    onAddAnswer: (Answer) -> Unit,
+    onRemoveAnswer: (Answer) -> Unit
 ) {
     LaunchedEffect(key1 = true) {
         onGetQuestions()
@@ -76,7 +82,11 @@ internal fun QuestionScreen(
             when (questionUiState) {
                 is QuestionUiState.Success -> {
                     if (questionUiState.questions.isNotEmpty()) {
-                        SuccessState(questions = questionUiState.questions)
+                        SuccessState(
+                            questions = questionUiState.questions, answers = answers,
+                            onAddAnswer = onAddAnswer,
+                            onRemoveAnswer = onRemoveAnswer,
+                        )
                     }
                 }
 
@@ -108,26 +118,15 @@ private fun SuccessState(
     modifier: Modifier = Modifier,
     scrollState: ScrollState = rememberScrollState(),
     questions: List<Question>,
+    answers: List<Answer>,
+    onAddAnswer: (Answer) -> Unit,
+    onRemoveAnswer: (Answer) -> Unit,
 ) {
     val pagerState = rememberPagerState(pageCount = {
         questions.size
     })
 
-    val answeredQuestions = remember {
-        mutableStateMapOf<Choice, Question>()
-    }
-
     Column(modifier = modifier) {
-        Button(onClick = {
-            val score = answeredQuestions.entries.groupBy({ it.value }, { it.key })
-                .count { it.value.containsAll(it.key.correctAnswers) }
-
-            println("Score: $score")
-
-        }) {
-            Text(text = "Calc")
-        }
-
         QuestionHeader(
             questionIndex = pagerState.currentPage, questionSize = questions.size
         )
@@ -141,12 +140,12 @@ private fun SuccessState(
                 QuestionText(question = questions[page].question)
 
                 Choices(choices = questions[page].correctAnswers.plus(questions[page].wrongAnswers),
-                        selectedChoices = answeredQuestions.keys.toList(),
+                        selectedChoices = answers.map { it.choice },
                         onAddChoice = { choice ->
-                            answeredQuestions[choice] = questions[page]
+                            onAddAnswer(Answer(question = questions[page], choice = choice))
                         },
                         onRemoveChoice = { choice ->
-                            answeredQuestions.remove(choice, questions[page])
+                            onRemoveAnswer(Answer(question = questions[page], choice = choice))
                         })
             }
         }
