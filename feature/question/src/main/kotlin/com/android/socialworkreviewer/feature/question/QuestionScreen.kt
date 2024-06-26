@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -24,9 +23,14 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -35,6 +39,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.socialworkreviewer.core.designsystem.icon.SocialWorkReviewerIcons
 import com.android.socialworkreviewer.core.model.Answer
 import com.android.socialworkreviewer.core.model.Question
+import kotlinx.coroutines.launch
 
 @Composable
 internal fun QuestionRoute(
@@ -42,16 +47,27 @@ internal fun QuestionRoute(
 ) {
     val questionUiState = viewModel.questionUiState.collectAsStateWithLifecycle().value
 
-    val answers = viewModel.answers.collectAsStateWithLifecycle().value
+    val selectedChoices = viewModel.selectedChoices.collectAsStateWithLifecycle().value
+
+    val scoreCount = viewModel.scoreCount.collectAsStateWithLifecycle().value
+
+    val answeredQuestionsCount =
+        viewModel.answeredQuestionsCount.collectAsStateWithLifecycle().value
+
+    val snackbarHostState = remember { SnackbarHostState() }
 
     QuestionScreen(
         modifier = modifier,
+        snackbarHostState = snackbarHostState,
         questionUiState = questionUiState,
-        answers = answers,
+        selectedChoices = selectedChoices,
+        scoreCount = scoreCount,
+        answeredQuestionsCount = answeredQuestionsCount,
         onGetQuestions = viewModel::getQuestions,
         onAddQuestions = viewModel::addQuestions,
+        onAddCurrentQuestion = viewModel::addCurrentQuestion,
         onUpdateAnswer = viewModel::updateAnswer,
-        onShowAnswers = viewModel::showAnswers
+        onShowAnswers = viewModel::showAnswers,
     )
 }
 
@@ -59,10 +75,14 @@ internal fun QuestionRoute(
 @Composable
 internal fun QuestionScreen(
     modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState,
     questionUiState: QuestionUiState,
-    answers: List<Answer>,
+    selectedChoices: List<String>,
+    scoreCount: Int,
+    answeredQuestionsCount: Int,
     onGetQuestions: () -> Unit,
     onAddQuestions: (List<Question>) -> Unit,
+    onAddCurrentQuestion: (Question) -> Unit,
     onUpdateAnswer: (Answer) -> Unit,
     onShowAnswers: () -> Unit,
 ) {
@@ -76,8 +96,11 @@ internal fun QuestionScreen(
             is QuestionUiState.Success -> {
                 if (state.questions.isNotEmpty()) {
                     SuccessState(
-                        questions = state.questions, answers = answers,
+                        snackbarHostState = snackbarHostState,
+                        questions = state.questions, selectedChoices = selectedChoices,
+                        answeredQuestionsCount = answeredQuestionsCount,
                         onAddQuestions = onAddQuestions,
+                        onAddCurrentQuestion = onAddCurrentQuestion,
                         onUpdateAnswer = onUpdateAnswer,
                         onShowAnswers = onShowAnswers,
                     )
@@ -99,7 +122,9 @@ internal fun QuestionScreen(
 
             is QuestionUiState.ShowAnswer -> {
                 AnswerScreen(
-                    questions = state.questions, answers = answers
+                    questions = state.questions, selectedChoices = selectedChoices,
+                    score = scoreCount,
+                    onAddCurrentQuestion = onAddCurrentQuestion,
                 )
             }
         }
@@ -124,23 +149,45 @@ private fun QuestionHeader(
 @Composable
 private fun SuccessState(
     modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState,
     scrollState: ScrollState = rememberScrollState(),
     questions: List<Question>,
-    answers: List<Answer>,
+    selectedChoices: List<String>,
+    answeredQuestionsCount: Int,
     onAddQuestions: (List<Question>) -> Unit,
+    onAddCurrentQuestion: (Question) -> Unit,
     onUpdateAnswer: (Answer) -> Unit,
     onShowAnswers: () -> Unit,
 ) {
-    LaunchedEffect(key1 = true) {
-        onAddQuestions(questions)
-    }
 
     val pagerState = rememberPagerState(pageCount = {
         questions.size
     })
 
-    Scaffold(floatingActionButton = {
-        FloatingActionButton(onClick = onShowAnswers) {
+    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(key1 = true) {
+        onAddQuestions(questions)
+    }
+
+    LaunchedEffect(key1 = pagerState) {
+        snapshotFlow { pagerState.currentPage }.collect { page ->
+            onAddCurrentQuestion(questions[page])
+        }
+    }
+
+    Scaffold(snackbarHost = {
+        SnackbarHost(hostState = snackbarHostState)
+    }, floatingActionButton = {
+        FloatingActionButton(onClick = {
+            if (answeredQuestionsCount < questions.size) {
+                scope.launch {
+                    snackbarHostState.showSnackbar("Bro")
+                }
+            } else {
+                onShowAnswers()
+            }
+        }) {
             Icon(
                 imageVector = SocialWorkReviewerIcons.Check, contentDescription = ""
             )
@@ -156,44 +203,46 @@ private fun SuccessState(
                 questionIndex = pagerState.currentPage, questionSize = questions.size
             )
 
-            QuestionPager(
-                pagerState = pagerState,
-                scrollState = scrollState,
-                questions = questions,
-                answers = answers,
-                onUpdateAnswer = onUpdateAnswer,
-            )
+            HorizontalPager(state = pagerState) { page ->
+                QuestionPage(
+                    page = page,
+                    isScrollInProgress = pagerState.isScrollInProgress,
+                    scrollState = scrollState,
+                    questions = questions,
+                    selectedChoices = selectedChoices,
+                    onUpdateAnswer = onUpdateAnswer,
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun QuestionPager(
-    pagerState: PagerState,
-    scrollState: ScrollState = rememberScrollState(),
+private fun QuestionPage(
+    page: Int,
+    isScrollInProgress: Boolean,
+    scrollState: ScrollState,
     questions: List<Question>,
-    answers: List<Answer>,
+    selectedChoices: List<String>,
     onUpdateAnswer: (Answer) -> Unit,
 ) {
-    HorizontalPager(state = pagerState) { page ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState),
-        ) {
-            QuestionText(question = questions[page].question)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState),
+    ) {
+        QuestionText(question = questions[page].question)
 
-            QuestionChoices(choices = questions[page].correctChoices.plus(questions[page].wrongChoices),
-                            selectedChoices = answers.filter { it.question == questions[page] }
-                                .map { it.choice },
-                            onUpdateAnswer = { choice ->
-                                onUpdateAnswer(
-                                    Answer(
-                                        question = questions[page], choice = choice
-                                    )
+        QuestionChoices(isScrollInProgress = isScrollInProgress,
+                        choices = questions[page].correctChoices.plus(questions[page].wrongChoices),
+                        selectedChoices = selectedChoices,
+                        onUpdateAnswer = { choice ->
+                            onUpdateAnswer(
+                                Answer(
+                                    question = questions[page], choice = choice
                                 )
-                            })
-        }
+                            )
+                        })
     }
 }
 
@@ -241,6 +290,7 @@ private fun QuestionTimeCounter(modifier: Modifier = Modifier) {
 @Composable
 private fun QuestionChoices(
     modifier: Modifier = Modifier,
+    isScrollInProgress: Boolean,
     choices: List<String>,
     selectedChoices: List<String>,
     onUpdateAnswer: (String) -> Unit,
@@ -255,9 +305,10 @@ private fun QuestionChoices(
                     .clickable { },
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Checkbox(checked = choice in selectedChoices, onCheckedChange = {
-                    onUpdateAnswer(choice)
-                })
+                Checkbox(checked = choice in selectedChoices && isScrollInProgress.not(),
+                         onCheckedChange = {
+                             onUpdateAnswer(choice)
+                         })
 
                 Box(
                     modifier = Modifier.fillMaxWidth()

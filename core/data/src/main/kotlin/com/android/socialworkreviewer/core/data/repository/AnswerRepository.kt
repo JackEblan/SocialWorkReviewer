@@ -5,13 +5,13 @@ import com.android.socialworkreviewer.core.model.Question
 import kotlinx.coroutines.flow.Flow
 
 interface AnswerRepository {
-    val answers: Flow<List<Answer>>
+    val answersFlow: Flow<List<Answer>>
+
+    val answeredQuestionsFlow: Flow<Map<Question, List<String>>>
 
     val questions: List<Question>
 
     suspend fun updateAnswer(answer: Answer)
-
-    suspend fun getScore(): Int
 
     fun addQuestions(value: List<Question>)
 }

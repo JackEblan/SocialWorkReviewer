@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -22,23 +21,32 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.android.socialworkreviewer.core.model.Answer
 import com.android.socialworkreviewer.core.model.Question
 
 @Composable
-fun AnswerScreen(
+internal fun AnswerScreen(
     modifier: Modifier = Modifier,
     scrollState: ScrollState = rememberScrollState(),
     questions: List<Question>,
-    answers: List<Answer>,
+    selectedChoices: List<String>,
+    score: Int,
+    onAddCurrentQuestion: (Question) -> Unit,
 ) {
     val pagerState = rememberPagerState(pageCount = {
         questions.size
     })
+
+    LaunchedEffect(key1 = pagerState) {
+        snapshotFlow { pagerState.currentPage }.collect { page ->
+            onAddCurrentQuestion(questions[page])
+        }
+    }
 
     Scaffold { paddingValues ->
         Column(
@@ -48,29 +56,33 @@ fun AnswerScreen(
                 .padding(paddingValues),
         ) {
             AnswerHeader(
-                questionIndex = pagerState.currentPage, questionSize = questions.size
+                answerIndex = pagerState.currentPage, score = score, answerSize = questions.size
             )
 
-            AnswerPager(
-                pagerState = pagerState,
-                scrollState = scrollState,
-                questions = questions,
-                answers = answers,
-            )
+            HorizontalPager(state = pagerState) { page ->
+                AnswerPage(
+                    page = page,
+                    scrollState = scrollState,
+                    questions = questions,
+                    selectedChoices = selectedChoices,
+                )
+            }
         }
     }
 }
 
 @Composable
 private fun AnswerHeader(
-    modifier: Modifier = Modifier, questionIndex: Int, questionSize: Int
+    modifier: Modifier = Modifier, answerIndex: Int, score: Int, answerSize: Int
 ) {
     Row(
         modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround
     ) {
         AnswerCounter(
-            questionIndex = questionIndex, questionSize = questionSize
+            answerIndex = answerIndex, answerSize = answerSize
         )
+
+        ScoreCounter(score = score, answerSize = answerSize)
 
         AnswerTimeCounter()
     }
@@ -78,17 +90,34 @@ private fun AnswerHeader(
 
 @Composable
 private fun AnswerCounter(
-    modifier: Modifier = Modifier, questionIndex: Int, questionSize: Int
+    modifier: Modifier = Modifier, answerIndex: Int, answerSize: Int
 ) {
     Column(
         modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Question", style = MaterialTheme.typography.bodyMedium)
+        Text(text = "Answer", style = MaterialTheme.typography.bodyMedium)
 
         Spacer(modifier = Modifier.height(10.dp))
 
         Text(
-            text = "${questionIndex + 1}/$questionSize", style = MaterialTheme.typography.titleLarge
+            text = "${answerIndex + 1}/$answerSize", style = MaterialTheme.typography.titleLarge
+        )
+    }
+}
+
+@Composable
+private fun ScoreCounter(
+    modifier: Modifier = Modifier, score: Int, answerSize: Int
+) {
+    Column(
+        modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = "Score", style = MaterialTheme.typography.bodyMedium)
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Text(
+            text = "$score/$answerSize", style = MaterialTheme.typography.titleLarge
         )
     }
 }
@@ -105,27 +134,24 @@ private fun AnswerTimeCounter(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun AnswerPager(
-    pagerState: PagerState,
-    scrollState: ScrollState = rememberScrollState(),
+private fun AnswerPage(
+    page: Int,
+    scrollState: ScrollState,
     questions: List<Question>,
-    answers: List<Answer>,
+    selectedChoices: List<String>,
 ) {
-    HorizontalPager(state = pagerState) { page ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState),
-        ) {
-            AnswerText(question = questions[page].question)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState),
+    ) {
+        AnswerText(question = questions[page].question)
 
-            AnswerChoices(
-                choices = questions[page].correctChoices.plus(questions[page].wrongChoices),
-                correctChoices = questions[page].correctChoices,
-                selectedChoices = answers.filter { it.question == questions[page] }
-                    .map { it.choice },
-            )
-        }
+        AnswerChoices(
+            choices = questions[page].correctChoices.plus(questions[page].wrongChoices),
+            correctChoices = questions[page].correctChoices,
+            selectedChoices = selectedChoices,
+        )
     }
 }
 

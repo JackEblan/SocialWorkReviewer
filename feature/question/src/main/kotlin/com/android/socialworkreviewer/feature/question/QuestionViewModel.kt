@@ -13,6 +13,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -32,10 +34,29 @@ class QuestionViewModel @Inject constructor(
     private val _questionUiState = MutableStateFlow<QuestionUiState>(QuestionUiState.Loading)
     val questionUiState = _questionUiState.asStateFlow()
 
-    private val _score = MutableStateFlow(0)
-    val score = _score.asStateFlow()
+    val scoreCount = answerRepository.answeredQuestionsFlow.map { answeredQuestions ->
+        answeredQuestions.count {
+            it.value.containsAll(it.key.correctChoices)
+        }
+    }.stateIn(
+        scope = viewModelScope, started = SharingStarted.WhileSubscribed(5_000), initialValue = 0
+    )
 
-    val answers = answerRepository.answers.stateIn(
+    val answeredQuestionsCount =
+        answerRepository.answeredQuestionsFlow.map { answeredQuestions -> answeredQuestions.size }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = 0
+            )
+
+    private val _currentQuestion = MutableStateFlow<Question?>(null)
+
+    val selectedChoices = combine(
+        _currentQuestion, answerRepository.answersFlow
+    ) { question, answer ->
+        answer.filter { it.question == question }.map { it.choice }
+    }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = emptyList()
@@ -59,12 +80,8 @@ class QuestionViewModel @Inject constructor(
         }
     }
 
-    fun getScore() {
-        viewModelScope.launch {
-            _score.update {
-                answerRepository.getScore()
-            }
-        }
+    fun addCurrentQuestion(question: Question) {
+        _currentQuestion.update { question }
     }
 
     fun addQuestions(value: List<Question>) {

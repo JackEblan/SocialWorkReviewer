@@ -15,25 +15,25 @@ internal class DefaultAnswerRepository @Inject constructor(
     @Dispatcher(Default) private val defaultDispatcher: CoroutineDispatcher
 ) : AnswerRepository {
 
-    private val _answers = MutableSharedFlow<List<Answer>>(
+    private val _answersFlow = MutableSharedFlow<List<Answer>>(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
 
     private var _questions = emptyList<Question>()
 
-    private val currentAnswers get() = _answers.replayCache.firstOrNull() ?: emptyList()
+    private val _answeredQuestionsFlow = MutableSharedFlow<Map<Question, List<String>>>(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    )
 
-    override val answers = _answers.asSharedFlow()
+    private val currentAnswers get() = _answersFlow.replayCache.firstOrNull() ?: emptyList()
+
+    override val answersFlow = _answersFlow.asSharedFlow()
 
     override val questions get() = _questions
 
-    override suspend fun getScore(): Int {
-        return withContext(defaultDispatcher) {
-            currentAnswers.groupBy({ it.question }, { it.choice })
-                .count { it.value.containsAll(it.key.correctChoices) }
-        }
-    }
+    override val answeredQuestionsFlow = _answeredQuestionsFlow.asSharedFlow()
 
     override fun addQuestions(value: List<Question>) {
         _questions = value
@@ -41,9 +41,15 @@ internal class DefaultAnswerRepository @Inject constructor(
 
     override suspend fun updateAnswer(answer: Answer) {
         if (answer in currentAnswers) {
-            _answers.emit((currentAnswers - answer))
+            _answersFlow.emit((currentAnswers - answer))
         } else {
-            _answers.emit((currentAnswers + answer))
+            _answersFlow.emit((currentAnswers + answer))
         }
+
+        val answeredQuestions = withContext(defaultDispatcher) {
+            currentAnswers.groupBy({ it.question }, { it.choice })
+        }
+
+        _answeredQuestionsFlow.emit(answeredQuestions)
     }
 }
