@@ -53,15 +53,9 @@ class QuestionViewModel @Inject constructor(
         }
     }
 
-    fun addAnswer(answer: Answer) {
+    fun updateAnswer(answer: Answer) {
         viewModelScope.launch {
-            answerRepository.addAnswer(answer = answer)
-        }
-    }
-
-    fun removeAnswer(answer: Answer) {
-        viewModelScope.launch {
-            answerRepository.removeAnswer(answer = answer)
+            answerRepository.updateAnswer(answer = answer)
         }
     }
 

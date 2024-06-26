@@ -50,8 +50,7 @@ internal fun QuestionRoute(
         answers = answers,
         onGetQuestions = viewModel::getQuestions,
         onAddQuestions = viewModel::addQuestions,
-        onAddAnswer = viewModel::addAnswer,
-        onRemoveAnswer = viewModel::removeAnswer,
+        onUpdateAnswer = viewModel::updateAnswer,
         onShowAnswers = viewModel::showAnswers
     )
 }
@@ -64,8 +63,7 @@ internal fun QuestionScreen(
     answers: List<Answer>,
     onGetQuestions: () -> Unit,
     onAddQuestions: (List<Question>) -> Unit,
-    onAddAnswer: (Answer) -> Unit,
-    onRemoveAnswer: (Answer) -> Unit,
+    onUpdateAnswer: (Answer) -> Unit,
     onShowAnswers: () -> Unit,
 ) {
 
@@ -80,8 +78,7 @@ internal fun QuestionScreen(
                     SuccessState(
                         questions = state.questions, answers = answers,
                         onAddQuestions = onAddQuestions,
-                        onAddAnswer = onAddAnswer,
-                        onRemoveAnswer = onRemoveAnswer,
+                        onUpdateAnswer = onUpdateAnswer,
                         onShowAnswers = onShowAnswers,
                     )
                 }
@@ -110,7 +107,7 @@ internal fun QuestionScreen(
 }
 
 @Composable
-fun QuestionHeader(
+private fun QuestionHeader(
     modifier: Modifier = Modifier, questionIndex: Int, questionSize: Int
 ) {
     Row(
@@ -120,7 +117,7 @@ fun QuestionHeader(
             questionIndex = questionIndex, questionSize = questionSize
         )
 
-        TimeCounter()
+        QuestionTimeCounter()
     }
 }
 
@@ -131,11 +128,9 @@ private fun SuccessState(
     questions: List<Question>,
     answers: List<Answer>,
     onAddQuestions: (List<Question>) -> Unit,
-    onAddAnswer: (Answer) -> Unit,
-    onRemoveAnswer: (Answer) -> Unit,
+    onUpdateAnswer: (Answer) -> Unit,
     onShowAnswers: () -> Unit,
 ) {
-
     LaunchedEffect(key1 = true) {
         onAddQuestions(questions)
     }
@@ -166,8 +161,7 @@ private fun SuccessState(
                 scrollState = scrollState,
                 questions = questions,
                 answers = answers,
-                onAddAnswer = onAddAnswer,
-                onRemoveAnswer = onRemoveAnswer
+                onUpdateAnswer = onUpdateAnswer,
             )
         }
     }
@@ -179,8 +173,7 @@ private fun QuestionPager(
     scrollState: ScrollState = rememberScrollState(),
     questions: List<Question>,
     answers: List<Answer>,
-    onAddAnswer: (Answer) -> Unit,
-    onRemoveAnswer: (Answer) -> Unit,
+    onUpdateAnswer: (Answer) -> Unit,
 ) {
     HorizontalPager(state = pagerState) { page ->
         Column(
@@ -190,26 +183,31 @@ private fun QuestionPager(
         ) {
             QuestionText(question = questions[page].question)
 
-            Choices(choices = questions[page].correctChoices.plus(questions[page].wrongChoices),
-                    answers = answers.filter { it.question == questions[page] }.map { it.choice },
-                    onAddChoice = { choice ->
-                        onAddAnswer(
-                            Answer(
-                                question = questions[page], choice = choice
-                            )
-                        )
-                    },
-                    onRemoveChoice = { choice ->
-                        onRemoveAnswer(
-                            Answer(
-                                question = questions[page], choice = choice
-                            )
-                        )
-                    })
-
+            QuestionChoices(choices = questions[page].correctChoices.plus(questions[page].wrongChoices),
+                            selectedChoices = answers.filter { it.question == questions[page] }
+                                .map { it.choice },
+                            onUpdateAnswer = { choice ->
+                                onUpdateAnswer(
+                                    Answer(
+                                        question = questions[page], choice = choice
+                                    )
+                                )
+                            })
         }
     }
+}
 
+@Composable
+private fun QuestionText(modifier: Modifier = Modifier, question: String) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(20.dp)
+    ) {
+        Text(
+            text = question, style = MaterialTheme.typography.headlineMedium
+        )
+    }
 }
 
 @Composable
@@ -230,7 +228,7 @@ private fun QuestionCounter(
 }
 
 @Composable
-private fun TimeCounter(modifier: Modifier = Modifier) {
+private fun QuestionTimeCounter(modifier: Modifier = Modifier) {
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Text(text = "Time", style = MaterialTheme.typography.bodyMedium)
 
@@ -241,27 +239,12 @@ private fun TimeCounter(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun QuestionText(modifier: Modifier = Modifier, question: String) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(20.dp)
-    ) {
-        Text(
-            text = question, style = MaterialTheme.typography.headlineMedium
-        )
-    }
-}
-
-@Composable
-private fun Choices(
+private fun QuestionChoices(
     modifier: Modifier = Modifier,
     choices: List<String>,
-    answers: List<String>,
-    onAddChoice: (String) -> Unit,
-    onRemoveChoice: (String) -> Unit,
+    selectedChoices: List<String>,
+    onUpdateAnswer: (String) -> Unit,
 ) {
-
     Column(
         modifier = modifier.fillMaxWidth(),
     ) {
@@ -272,12 +255,8 @@ private fun Choices(
                     .clickable { },
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Checkbox(checked = choice in answers, onCheckedChange = {
-                    if (choice !in answers) {
-                        onAddChoice(choice)
-                    } else {
-                        onRemoveChoice(choice)
-                    }
+                Checkbox(checked = choice in selectedChoices, onCheckedChange = {
+                    onUpdateAnswer(choice)
                 })
 
                 Box(

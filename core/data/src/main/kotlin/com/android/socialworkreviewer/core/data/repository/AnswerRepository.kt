@@ -9,9 +9,7 @@ interface AnswerRepository {
 
     val questions: List<Question>
 
-    suspend fun addAnswer(answer: Answer)
-
-    suspend fun removeAnswer(answer: Answer)
+    suspend fun updateAnswer(answer: Answer)
 
     suspend fun getScore(): Int
 

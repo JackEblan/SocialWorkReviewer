@@ -1,6 +1,7 @@
 package com.android.socialworkreviewer.feature.question
 
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +18,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,7 +47,7 @@ fun AnswerScreen(
                 .consumeWindowInsets(paddingValues)
                 .padding(paddingValues),
         ) {
-            QuestionHeader(
+            AnswerHeader(
                 questionIndex = pagerState.currentPage, questionSize = questions.size
             )
 
@@ -56,6 +58,49 @@ fun AnswerScreen(
                 answers = answers,
             )
         }
+    }
+}
+
+@Composable
+private fun AnswerHeader(
+    modifier: Modifier = Modifier, questionIndex: Int, questionSize: Int
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        AnswerCounter(
+            questionIndex = questionIndex, questionSize = questionSize
+        )
+
+        AnswerTimeCounter()
+    }
+}
+
+@Composable
+private fun AnswerCounter(
+    modifier: Modifier = Modifier, questionIndex: Int, questionSize: Int
+) {
+    Column(
+        modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = "Question", style = MaterialTheme.typography.bodyMedium)
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Text(
+            text = "${questionIndex + 1}/$questionSize", style = MaterialTheme.typography.titleLarge
+        )
+    }
+}
+
+@Composable
+private fun AnswerTimeCounter(modifier: Modifier = Modifier) {
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(text = "Time", style = MaterialTheme.typography.bodyMedium)
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Text(text = "10", style = MaterialTheme.typography.titleLarge)
     }
 }
 
@@ -72,18 +117,33 @@ private fun AnswerPager(
                 .fillMaxSize()
                 .verticalScroll(scrollState),
         ) {
-            QuestionText(question = questions[page].question)
+            AnswerText(question = questions[page].question)
 
-            Choices(choices = questions[page].correctChoices.plus(questions[page].wrongChoices),
-                    correctChoices = questions[page].correctChoices,
-                    selectedChoices = answers.map { it.choice })
+            AnswerChoices(
+                choices = questions[page].correctChoices.plus(questions[page].wrongChoices),
+                correctChoices = questions[page].correctChoices,
+                selectedChoices = answers.filter { it.question == questions[page] }
+                    .map { it.choice },
+            )
         }
     }
-
 }
 
 @Composable
-private fun Choices(
+private fun AnswerText(modifier: Modifier = Modifier, question: String) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(20.dp)
+    ) {
+        Text(
+            text = question, style = MaterialTheme.typography.headlineMedium
+        )
+    }
+}
+
+@Composable
+private fun AnswerChoices(
     modifier: Modifier = Modifier,
     choices: List<String>,
     correctChoices: List<String>,

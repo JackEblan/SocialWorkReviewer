@@ -20,21 +20,13 @@ internal class DefaultAnswerRepository @Inject constructor(
         onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
 
-    override val answers = _answers.asSharedFlow()
+    private var _questions = emptyList<Question>()
 
     private val currentAnswers get() = _answers.replayCache.firstOrNull() ?: emptyList()
 
-    private var _questions = emptyList<Question>()
+    override val answers = _answers.asSharedFlow()
 
     override val questions get() = _questions
-
-    override suspend fun addAnswer(answer: Answer) {
-        _answers.emit((currentAnswers + answer))
-    }
-
-    override suspend fun removeAnswer(answer: Answer) {
-        _answers.emit((currentAnswers - answer))
-    }
 
     override suspend fun getScore(): Int {
         return withContext(defaultDispatcher) {
@@ -45,5 +37,13 @@ internal class DefaultAnswerRepository @Inject constructor(
 
     override fun addQuestions(value: List<Question>) {
         _questions = value
+    }
+
+    override suspend fun updateAnswer(answer: Answer) {
+        if (answer in currentAnswers) {
+            _answers.emit((currentAnswers - answer))
+        } else {
+            _answers.emit((currentAnswers + answer))
+        }
     }
 }
