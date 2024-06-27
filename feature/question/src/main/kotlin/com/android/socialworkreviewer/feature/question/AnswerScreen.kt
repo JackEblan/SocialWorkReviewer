@@ -62,6 +62,7 @@ internal fun AnswerScreen(
             HorizontalPager(state = pagerState) { page ->
                 AnswerPage(
                     page = page,
+                    isScrollInProgress = pagerState.isScrollInProgress,
                     scrollState = scrollState,
                     questions = questions,
                     selectedChoices = selectedChoices,
@@ -136,6 +137,7 @@ private fun AnswerTimeCounter(modifier: Modifier = Modifier) {
 @Composable
 private fun AnswerPage(
     page: Int,
+    isScrollInProgress: Boolean,
     scrollState: ScrollState,
     questions: List<Question>,
     selectedChoices: List<String>,
@@ -148,6 +150,7 @@ private fun AnswerPage(
         AnswerText(question = questions[page].question)
 
         AnswerChoices(
+            isScrollInProgress = isScrollInProgress,
             choices = questions[page].choices,
             correctChoices = questions[page].correctChoices,
             selectedChoices = selectedChoices,
@@ -171,6 +174,7 @@ private fun AnswerText(modifier: Modifier = Modifier, question: String) {
 @Composable
 private fun AnswerChoices(
     modifier: Modifier = Modifier,
+    isScrollInProgress: Boolean,
     choices: List<String>,
     correctChoices: List<String>,
     selectedChoices: List<String>,
@@ -183,15 +187,18 @@ private fun AnswerChoices(
         modifier = modifier.fillMaxWidth(),
     ) {
         choices.forEach { choice ->
-            val checked = choice in correctChoices || choice in selectedChoices
+            val correctChoice = isScrollInProgress.not() && choice in correctChoices
+
+            val wrongChoice =
+                isScrollInProgress.not() && choice !in correctChoices && choice in selectedChoices
 
             Row(
                 modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(
-                    checked = checked,
+                    checked = correctChoice || wrongChoice,
                     onCheckedChange = {},
-                    colors = if (choice !in correctChoices) wrongChoiceColor else CheckboxDefaults.colors()
+                    colors = if (wrongChoice) wrongChoiceColor else CheckboxDefaults.colors()
                 )
 
                 Box(
