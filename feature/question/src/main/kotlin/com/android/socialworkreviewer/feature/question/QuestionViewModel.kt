@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.android.socialworkreviewer.core.data.repository.AnswerRepository
+import com.android.socialworkreviewer.core.data.repository.CategoryRepository
 import com.android.socialworkreviewer.core.data.repository.QuestionRepository
 import com.android.socialworkreviewer.core.model.Answer
 import com.android.socialworkreviewer.core.model.Question
@@ -24,7 +25,8 @@ import javax.inject.Inject
 class QuestionViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val questionRepository: QuestionRepository,
-    private val answerRepository: AnswerRepository
+    private val answerRepository: AnswerRepository,
+    private val categoryRepository: CategoryRepository,
 ) : ViewModel() {
 
     private val questionRouteData = savedStateHandle.toRoute<QuestionRouteData>()
@@ -62,12 +64,16 @@ class QuestionViewModel @Inject constructor(
         initialValue = emptyList()
     )
 
-    fun getQuestions() {
+    fun getQuestions(numberOfQuestions: Int, minutes: Int) {
         viewModelScope.launch {
+            _questionUiState.update {
+                QuestionUiState.Loading
+            }
+
             _questionUiState.update {
                 QuestionUiState.Success(
                     questions = questionRepository.getQuestions(
-                        id = id
+                        id = id, numberOfQuestions = numberOfQuestions
                     ),
                 )
             }
@@ -92,7 +98,15 @@ class QuestionViewModel @Inject constructor(
 
     fun showAnswers() {
         _questionUiState.update {
-            QuestionUiState.ShowAnswer(answerRepository.questions)
+            QuestionUiState.ShowAnswers(answerRepository.questions)
+        }
+    }
+
+    fun getQuestionSettings() {
+        viewModelScope.launch {
+            _questionUiState.update {
+                QuestionUiState.QuestionSettings(categoryRepository.getQuestionSettingsByCategory(id = id))
+            }
         }
     }
 }

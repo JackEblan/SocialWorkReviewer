@@ -18,13 +18,8 @@
 
 plugins {
     alias(libs.plugins.com.android.socialworkreviewer.library)
-    alias(libs.plugins.kotlin.noarg)
 }
 
 android {
     namespace = "com.android.socialworkreviewer.core.model"
-}
-
-noArg {
-    annotation("com.android.socialworkreviewer.core.model.NoArg")
 }

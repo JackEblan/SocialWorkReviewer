@@ -1,4 +1,4 @@
-package com.android.socialworkreviewer.core.model
+package com.android.socialworkreviewer.core.network.model
 
 /**
  * Firebase Firestore requires your Firestore objects to have a constructor with no arguments.

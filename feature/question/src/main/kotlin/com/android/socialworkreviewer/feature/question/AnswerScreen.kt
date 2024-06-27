@@ -148,7 +148,7 @@ private fun AnswerPage(
         AnswerText(question = questions[page].question)
 
         AnswerChoices(
-            choices = questions[page].correctChoices.plus(questions[page].wrongChoices),
+            choices = questions[page].choices,
             correctChoices = questions[page].correctChoices,
             selectedChoices = selectedChoices,
         )
@@ -175,25 +175,23 @@ private fun AnswerChoices(
     correctChoices: List<String>,
     selectedChoices: List<String>,
 ) {
+    val wrongChoiceColor = CheckboxDefaults.colors().copy(
+        checkedBoxColor = Color.Red, checkedBorderColor = Color.Red
+    )
+
     Column(
         modifier = modifier.fillMaxWidth(),
     ) {
         choices.forEach { choice ->
-            val correctAnswer = choice in correctChoices || choice in selectedChoices
-
-            val wrongAnswer = choice !in correctChoices && choice in selectedChoices
-
-            val wrongAnswerColor = CheckboxDefaults.colors().copy(
-                checkedBoxColor = Color.Red, checkedBorderColor = Color.Red
-            )
+            val checked = choice in correctChoices || choice in selectedChoices
 
             Row(
                 modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(
-                    checked = correctAnswer || wrongAnswer,
+                    checked = checked,
                     onCheckedChange = {},
-                    colors = if (wrongAnswer) wrongAnswerColor else CheckboxDefaults.colors()
+                    colors = if (choice !in correctChoices) wrongChoiceColor else CheckboxDefaults.colors()
                 )
 
                 Box(

@@ -20,10 +20,15 @@ plugins {
     alias(libs.plugins.com.android.socialworkreviewer.library)
     alias(libs.plugins.com.android.socialworkreviewer.libraryJacoco)
     alias(libs.plugins.com.android.socialworkreviewer.hilt)
+    alias(libs.plugins.kotlin.noarg)
 }
 
 android {
     namespace = "com.android.socialworkreviewer.core.network"
+}
+
+noArg {
+    annotation("com.android.socialworkreviewer.core.network.model.NoArg")
 }
 
 dependencies {

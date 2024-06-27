@@ -63,11 +63,12 @@ internal fun QuestionRoute(
         selectedChoices = selectedChoices,
         scoreCount = scoreCount,
         answeredQuestionsCount = answeredQuestionsCount,
-        onGetQuestions = viewModel::getQuestions,
+        onGetQuestionSettings = viewModel::getQuestionSettings,
         onAddQuestions = viewModel::addQuestions,
         onAddCurrentQuestion = viewModel::addCurrentQuestion,
         onUpdateAnswer = viewModel::updateAnswer,
         onShowAnswers = viewModel::showAnswers,
+        onGetQuestions = viewModel::getQuestions
     )
 }
 
@@ -80,15 +81,15 @@ internal fun QuestionScreen(
     selectedChoices: List<String>,
     scoreCount: Int,
     answeredQuestionsCount: Int,
-    onGetQuestions: () -> Unit,
+    onGetQuestionSettings: () -> Unit,
     onAddQuestions: (List<Question>) -> Unit,
     onAddCurrentQuestion: (Question) -> Unit,
     onUpdateAnswer: (Answer) -> Unit,
     onShowAnswers: () -> Unit,
+    onGetQuestions: (Int, Int) -> Unit
 ) {
-
     LaunchedEffect(key1 = true) {
-        onGetQuestions()
+        onGetQuestionSettings()
     }
 
     Crossfade(modifier = modifier, targetState = questionUiState, label = "") { state ->
@@ -120,11 +121,17 @@ internal fun QuestionScreen(
                 }
             }
 
-            is QuestionUiState.ShowAnswer -> {
+            is QuestionUiState.ShowAnswers -> {
                 AnswerScreen(
                     questions = state.questions, selectedChoices = selectedChoices,
                     score = scoreCount,
                     onAddCurrentQuestion = onAddCurrentQuestion,
+                )
+            }
+
+            is QuestionUiState.QuestionSettings -> {
+                QuestionSettingsScreen(
+                    questionSettings = state.questionSettings, onGetQuestions = onGetQuestions
                 )
             }
         }
@@ -182,7 +189,7 @@ private fun SuccessState(
         FloatingActionButton(onClick = {
             if (answeredQuestionsCount < questions.size) {
                 scope.launch {
-                    snackbarHostState.showSnackbar("Bro")
+                    snackbarHostState.showSnackbar("Please answer all the questions.")
                 }
             } else {
                 onShowAnswers()
@@ -234,7 +241,7 @@ private fun QuestionPage(
         QuestionText(question = questions[page].question)
 
         QuestionChoices(isScrollInProgress = isScrollInProgress,
-                        choices = questions[page].correctChoices.plus(questions[page].wrongChoices),
+                        choices = questions[page].choices,
                         selectedChoices = selectedChoices,
                         onUpdateAnswer = { choice ->
                             onUpdateAnswer(
