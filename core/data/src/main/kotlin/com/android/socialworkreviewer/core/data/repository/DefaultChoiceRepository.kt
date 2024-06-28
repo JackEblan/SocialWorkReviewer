@@ -15,7 +15,7 @@ internal class DefaultChoiceRepository @Inject constructor(
     @Dispatcher(Default) private val defaultDispatcher: CoroutineDispatcher
 ) : ChoiceRepository {
 
-    private val _answersFlow = MutableSharedFlow<List<Choice>>(
+    private val _choicesFlow = MutableSharedFlow<List<Choice>>(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
@@ -27,9 +27,9 @@ internal class DefaultChoiceRepository @Inject constructor(
 
     private var _questions = emptyList<Question>()
 
-    private val currentAnswers get() = _answersFlow.replayCache.firstOrNull() ?: emptyList()
+    private val currentAnswers get() = _choicesFlow.replayCache.firstOrNull() ?: emptyList()
 
-    override val choicesFlow = _answersFlow.asSharedFlow()
+    override val choicesFlow = _choicesFlow.asSharedFlow()
 
     override val questions get() = _questions
 
@@ -41,9 +41,9 @@ internal class DefaultChoiceRepository @Inject constructor(
 
     override suspend fun updateChoice(choice: Choice) {
         if (choice in currentAnswers) {
-            _answersFlow.emit((currentAnswers - choice))
+            _choicesFlow.emit(currentAnswers - choice)
         } else {
-            _answersFlow.emit((currentAnswers + choice))
+            _choicesFlow.emit(currentAnswers + choice)
         }
 
         val answeredQuestions = withContext(defaultDispatcher) {
