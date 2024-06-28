@@ -310,9 +310,9 @@ private fun QuestionChoices(
         choices.forEach { choice ->
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { },
-                verticalAlignment = Alignment.CenterVertically
+                    .fillMaxWidth().clickable {
+                        onUpdateAnswer(choice)
+                    }, verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(checked = choice in selectedChoices && isScrollInProgress.not(),
                          onCheckedChange = {
