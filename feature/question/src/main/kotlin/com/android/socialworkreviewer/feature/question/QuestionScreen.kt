@@ -54,6 +54,12 @@ internal fun QuestionRoute(
     val answeredQuestionsCount =
         viewModel.answeredQuestionsCount.collectAsStateWithLifecycle().value
 
+    val countDownTimeUntilFinished =
+        viewModel.countDownTimeUntilFinished.collectAsStateWithLifecycle().value
+
+    val countDownTimerFinished =
+        viewModel.countDownTimerFinished.collectAsStateWithLifecycle().value
+
     val snackbarHostState = remember { SnackbarHostState() }
 
     QuestionScreen(
@@ -62,8 +68,13 @@ internal fun QuestionRoute(
         questionUiState = questionUiState,
         selectedChoices = selectedChoices,
         scoreCount = scoreCount,
-        answeredQuestionsCount = answeredQuestionsCount, onGetCategory = viewModel::getCategory,
+        countDownTimeUntilFinished = countDownTimeUntilFinished,
+        answeredQuestionsCount = answeredQuestionsCount,
+        countDownTimerFinished = countDownTimerFinished,
+        onGetCategory = viewModel::getCategory,
         onAddQuestions = viewModel::addQuestions,
+        onStartCountDownTimer = viewModel::startCountDownTimer,
+        onCancelCountDownTimer = viewModel::cancelCountDownTimer,
         onAddCurrentQuestion = viewModel::addCurrentQuestion,
         onUpdateAnswer = viewModel::updateChoice,
         onShowAnswers = viewModel::showCorrectChoices,
@@ -75,11 +86,17 @@ internal fun QuestionRoute(
 @Composable
 internal fun QuestionScreen(
     modifier: Modifier = Modifier,
-    snackbarHostState: SnackbarHostState, questionUiState: QuestionUiState?,
+    snackbarHostState: SnackbarHostState,
+    questionUiState: QuestionUiState?,
     selectedChoices: List<String>,
     scoreCount: Int,
-    answeredQuestionsCount: Int, onGetCategory: () -> Unit,
+    countDownTimeUntilFinished: String,
+    answeredQuestionsCount: Int,
+    countDownTimerFinished: Boolean,
+    onGetCategory: () -> Unit,
     onAddQuestions: (List<Question>) -> Unit,
+    onStartCountDownTimer: () -> Unit,
+    onCancelCountDownTimer: () -> Unit,
     onAddCurrentQuestion: (Question) -> Unit,
     onUpdateAnswer: (Choice) -> Unit,
     onShowAnswers: () -> Unit,
@@ -93,7 +110,11 @@ internal fun QuestionScreen(
                         snackbarHostState = snackbarHostState,
                         questions = state.questions, selectedChoices = selectedChoices,
                         answeredQuestionsCount = answeredQuestionsCount,
+                        countDownTimerFinished = countDownTimerFinished,
+                        countDownTimeUntilFinished = countDownTimeUntilFinished,
                         onAddQuestions = onAddQuestions,
+                        onStartCountDownTimer = onStartCountDownTimer,
+                        onCancelCountDownTimer = onCancelCountDownTimer,
                         onAddCurrentQuestion = onAddCurrentQuestion,
                         onUpdateAnswer = onUpdateAnswer,
                         onShowAnswers = onShowAnswers,
@@ -109,6 +130,7 @@ internal fun QuestionScreen(
                 CorrectChoicesScreen(
                     questions = state.questions, selectedChoices = selectedChoices,
                     score = scoreCount,
+                    lastCountDownTime = state.lastCountDownTime,
                     onAddCurrentQuestion = onAddCurrentQuestion,
                 )
             }
@@ -130,7 +152,10 @@ internal fun QuestionScreen(
 
 @Composable
 private fun QuestionHeader(
-    modifier: Modifier = Modifier, questionIndex: Int, questionSize: Int
+    modifier: Modifier = Modifier,
+    questionIndex: Int,
+    questionSize: Int,
+    countDownTimeUntilFinished: String,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround
@@ -139,7 +164,7 @@ private fun QuestionHeader(
             questionIndex = questionIndex, questionSize = questionSize
         )
 
-        QuestionTimeCounter()
+        QuestionTimeCounter(countDownTimeUntilFinished = countDownTimeUntilFinished)
     }
 }
 
@@ -151,12 +176,15 @@ private fun Questions(
     questions: List<Question>,
     selectedChoices: List<String>,
     answeredQuestionsCount: Int,
+    countDownTimerFinished: Boolean,
+    countDownTimeUntilFinished: String,
     onAddQuestions: (List<Question>) -> Unit,
+    onStartCountDownTimer: () -> Unit,
+    onCancelCountDownTimer: () -> Unit,
     onAddCurrentQuestion: (Question) -> Unit,
     onUpdateAnswer: (Choice) -> Unit,
     onShowAnswers: () -> Unit,
 ) {
-
     val pagerState = rememberPagerState(pageCount = {
         questions.size
     })
@@ -165,6 +193,14 @@ private fun Questions(
 
     LaunchedEffect(key1 = true) {
         onAddQuestions(questions)
+        onStartCountDownTimer()
+    }
+
+    LaunchedEffect(key1 = countDownTimerFinished) {
+        if (countDownTimerFinished) {
+            onCancelCountDownTimer()
+            onShowAnswers()
+        }
     }
 
     LaunchedEffect(key1 = pagerState) {
@@ -197,7 +233,9 @@ private fun Questions(
                 .padding(paddingValues),
         ) {
             QuestionHeader(
-                questionIndex = pagerState.currentPage, questionSize = questions.size
+                questionIndex = pagerState.currentPage,
+                questionSize = questions.size,
+                countDownTimeUntilFinished = countDownTimeUntilFinished,
             )
 
             HorizontalPager(state = pagerState) { page ->
@@ -230,16 +268,16 @@ private fun QuestionPage(
     ) {
         QuestionText(question = questions[page].question)
 
-        QuestionChoices(isScrollInProgress = isScrollInProgress,
-                        choices = questions[page].choices,
-                        selectedChoices = selectedChoices,
-                        onUpdateAnswer = { choice ->
-                            onUpdateAnswer(
-                                Choice(
-                                    question = questions[page], choice = choice
-                                )
-                            )
-                        })
+        QuestionChoicesSelection(isScrollInProgress = isScrollInProgress,
+                                 choices = questions[page].choices,
+                                 selectedChoices = selectedChoices,
+                                 onUpdateAnswer = { choice ->
+                                     onUpdateAnswer(
+                                         Choice(
+                                             question = questions[page], choice = choice
+                                         )
+                                     )
+                                 })
     }
 }
 
@@ -274,18 +312,18 @@ private fun QuestionCounter(
 }
 
 @Composable
-private fun QuestionTimeCounter(modifier: Modifier = Modifier) {
+private fun QuestionTimeCounter(modifier: Modifier = Modifier, countDownTimeUntilFinished: String) {
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Text(text = "Time", style = MaterialTheme.typography.bodyMedium)
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        Text(text = "10", style = MaterialTheme.typography.titleLarge)
+        Text(text = countDownTimeUntilFinished, style = MaterialTheme.typography.titleLarge)
     }
 }
 
 @Composable
-private fun QuestionChoices(
+private fun QuestionChoicesSelection(
     modifier: Modifier = Modifier,
     isScrollInProgress: Boolean,
     choices: List<String>,

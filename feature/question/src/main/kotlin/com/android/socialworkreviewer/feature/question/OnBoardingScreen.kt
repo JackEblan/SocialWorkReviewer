@@ -32,7 +32,7 @@ import com.android.socialworkreviewer.core.model.Category
 import com.android.socialworkreviewer.core.model.QuestionSetting
 
 @Composable
-fun LoadingOnBoardingScreen(
+internal fun LoadingOnBoardingScreen(
     modifier: Modifier = Modifier,
     onGetCategory: () -> Unit,
 ) {

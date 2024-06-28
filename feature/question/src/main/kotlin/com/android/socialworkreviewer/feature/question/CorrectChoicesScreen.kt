@@ -36,6 +36,7 @@ internal fun CorrectChoicesScreen(
     questions: List<Question>,
     selectedChoices: List<String>,
     score: Int,
+    lastCountDownTime: String,
     onAddCurrentQuestion: (Question) -> Unit,
 ) {
     val pagerState = rememberPagerState(pageCount = {
@@ -56,7 +57,10 @@ internal fun CorrectChoicesScreen(
                 .padding(paddingValues),
         ) {
             CorrectChoicesHeader(
-                answerIndex = pagerState.currentPage, score = score, answerSize = questions.size
+                answerIndex = pagerState.currentPage,
+                score = score,
+                answerSize = questions.size,
+                lastCountDownTime = lastCountDownTime
             )
 
             HorizontalPager(state = pagerState) { page ->
@@ -74,7 +78,11 @@ internal fun CorrectChoicesScreen(
 
 @Composable
 private fun CorrectChoicesHeader(
-    modifier: Modifier = Modifier, answerIndex: Int, score: Int, answerSize: Int
+    modifier: Modifier = Modifier,
+    answerIndex: Int,
+    score: Int,
+    answerSize: Int,
+    lastCountDownTime: String
 ) {
     Row(
         modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround
@@ -85,7 +93,7 @@ private fun CorrectChoicesHeader(
 
         CorrectChoicesScoreCounter(score = score, answerSize = answerSize)
 
-        CorrectChoicesTimeCounter()
+        CorrectChoicesTimeCounter(lastCountDownTime = lastCountDownTime)
     }
 }
 
@@ -124,13 +132,13 @@ private fun CorrectChoicesScoreCounter(
 }
 
 @Composable
-private fun CorrectChoicesTimeCounter(modifier: Modifier = Modifier) {
+private fun CorrectChoicesTimeCounter(modifier: Modifier = Modifier, lastCountDownTime: String) {
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Text(text = "Time", style = MaterialTheme.typography.bodyMedium)
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        Text(text = "10", style = MaterialTheme.typography.titleLarge)
+        Text(text = lastCountDownTime, style = MaterialTheme.typography.titleLarge)
     }
 }
 
@@ -147,9 +155,9 @@ private fun CorrectChoicesPage(
             .fillMaxSize()
             .verticalScroll(scrollState),
     ) {
-        AnswerText(question = questions[page].question)
+        CorrectChoicesQuestionText(question = questions[page].question)
 
-        AnswerChoices(
+        CorrectChoicesSelection(
             isScrollInProgress = isScrollInProgress,
             choices = questions[page].choices,
             correctChoices = questions[page].correctChoices,
@@ -159,7 +167,7 @@ private fun CorrectChoicesPage(
 }
 
 @Composable
-private fun AnswerText(modifier: Modifier = Modifier, question: String) {
+private fun CorrectChoicesQuestionText(modifier: Modifier = Modifier, question: String) {
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -172,7 +180,7 @@ private fun AnswerText(modifier: Modifier = Modifier, question: String) {
 }
 
 @Composable
-private fun AnswerChoices(
+private fun CorrectChoicesSelection(
     modifier: Modifier = Modifier,
     isScrollInProgress: Boolean,
     choices: List<String>,

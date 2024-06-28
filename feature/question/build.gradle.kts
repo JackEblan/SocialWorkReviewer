@@ -30,6 +30,8 @@ android {
 dependencies {
     implementation(projects.core.data)
 
+    implementation(projects.framework.countdownTimer)
+
     testImplementation(libs.hilt.android.testing)
     testImplementation(libs.robolectric)
     testImplementation(projects.core.testing)

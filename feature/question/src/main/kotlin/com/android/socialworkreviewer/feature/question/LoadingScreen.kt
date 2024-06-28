@@ -12,7 +12,7 @@ import com.android.socialworkreviewer.core.designsystem.component.SocialWorkRevi
 
 
 @Composable
-fun LoadingScreen(modifier: Modifier = Modifier) {
+internal fun LoadingScreen(modifier: Modifier = Modifier) {
     Scaffold { paddingValues ->
         Box(
             modifier = modifier
