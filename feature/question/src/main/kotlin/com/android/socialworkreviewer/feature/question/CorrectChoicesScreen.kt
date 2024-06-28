@@ -60,7 +60,7 @@ internal fun CorrectChoicesScreen(
             )
 
             HorizontalPager(state = pagerState) { page ->
-                AnswerPage(
+                CorrectChoicesPage(
                     page = page,
                     isScrollInProgress = pagerState.isScrollInProgress,
                     scrollState = scrollState,
@@ -135,7 +135,7 @@ private fun CorrectChoicesTimeCounter(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun AnswerPage(
+private fun CorrectChoicesPage(
     page: Int,
     isScrollInProgress: Boolean,
     scrollState: ScrollState,
@@ -166,7 +166,7 @@ private fun AnswerText(modifier: Modifier = Modifier, question: String) {
             .padding(20.dp)
     ) {
         Text(
-            text = question, style = MaterialTheme.typography.headlineMedium
+            text = question, style = MaterialTheme.typography.headlineLarge
         )
     }
 }

@@ -191,7 +191,7 @@ private fun SuccessState(
         FloatingActionButton(onClick = {
             if (answeredQuestionsCount < questions.size) {
                 scope.launch {
-                    snackbarHostState.showSnackbar("Please answer all the questions.")
+                    snackbarHostState.showSnackbar("Please answer all the questions")
                 }
             } else {
                 onShowAnswers()
@@ -263,7 +263,7 @@ private fun QuestionText(modifier: Modifier = Modifier, question: String) {
             .padding(20.dp)
     ) {
         Text(
-            text = question, style = MaterialTheme.typography.headlineMedium
+            text = question, style = MaterialTheme.typography.headlineLarge
         )
     }
 }
@@ -310,7 +310,8 @@ private fun QuestionChoices(
         choices.forEach { choice ->
             Row(
                 modifier = Modifier
-                    .fillMaxWidth().clickable {
+                    .fillMaxWidth()
+                    .clickable {
                         onUpdateAnswer(choice)
                     }, verticalAlignment = Alignment.CenterVertically
             ) {
