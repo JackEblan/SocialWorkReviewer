@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.android.socialworkreviewer.core.model.Question
 
 @Composable
-internal fun AnswerScreen(
+internal fun CorrectChoicesScreen(
     modifier: Modifier = Modifier,
     scrollState: ScrollState = rememberScrollState(),
     questions: List<Question>,
@@ -55,7 +55,7 @@ internal fun AnswerScreen(
                 .consumeWindowInsets(paddingValues)
                 .padding(paddingValues),
         ) {
-            AnswerHeader(
+            CorrectChoicesHeader(
                 answerIndex = pagerState.currentPage, score = score, answerSize = questions.size
             )
 
@@ -73,24 +73,24 @@ internal fun AnswerScreen(
 }
 
 @Composable
-private fun AnswerHeader(
+private fun CorrectChoicesHeader(
     modifier: Modifier = Modifier, answerIndex: Int, score: Int, answerSize: Int
 ) {
     Row(
         modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround
     ) {
-        AnswerCounter(
+        CorrectChoicesQuestionCounter(
             answerIndex = answerIndex, answerSize = answerSize
         )
 
-        ScoreCounter(score = score, answerSize = answerSize)
+        CorrectChoicesScoreCounter(score = score, answerSize = answerSize)
 
-        AnswerTimeCounter()
+        CorrectChoicesTimeCounter()
     }
 }
 
 @Composable
-private fun AnswerCounter(
+private fun CorrectChoicesQuestionCounter(
     modifier: Modifier = Modifier, answerIndex: Int, answerSize: Int
 ) {
     Column(
@@ -107,7 +107,7 @@ private fun AnswerCounter(
 }
 
 @Composable
-private fun ScoreCounter(
+private fun CorrectChoicesScoreCounter(
     modifier: Modifier = Modifier, score: Int, answerSize: Int
 ) {
     Column(
@@ -124,7 +124,7 @@ private fun ScoreCounter(
 }
 
 @Composable
-private fun AnswerTimeCounter(modifier: Modifier = Modifier) {
+private fun CorrectChoicesTimeCounter(modifier: Modifier = Modifier) {
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Text(text = "Time", style = MaterialTheme.typography.bodyMedium)
 

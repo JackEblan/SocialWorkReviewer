@@ -27,6 +27,9 @@ include(":app")
 include(":core:common")
 include(":core:design-system")
 include(":core:data")
+include(":core:datastore")
+include(":core:datastore-proto")
+include(":core:datastore-test")
 include(":core:domain")
 include(":core:model")
 include(":core:network")
@@ -36,5 +39,7 @@ include(":core:ui")
 
 include(":feature:category")
 include(":feature:question")
+
+include(":framework:countdown-timer")
 
 include(":lint")

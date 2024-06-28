@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.socialworkreviewer.core.designsystem.icon.SocialWorkReviewerIcons
-import com.android.socialworkreviewer.core.model.Answer
+import com.android.socialworkreviewer.core.model.Choice
 import com.android.socialworkreviewer.core.model.Question
 import kotlinx.coroutines.launch
 
@@ -63,11 +63,11 @@ internal fun QuestionRoute(
         selectedChoices = selectedChoices,
         scoreCount = scoreCount,
         answeredQuestionsCount = answeredQuestionsCount,
-        onGetQuestionSettings = viewModel::getQuestionSettings,
+        onGetQuestionSettings = viewModel::getCategory,
         onAddQuestions = viewModel::addQuestions,
         onAddCurrentQuestion = viewModel::addCurrentQuestion,
-        onUpdateAnswer = viewModel::updateAnswer,
-        onShowAnswers = viewModel::showAnswers,
+        onUpdateAnswer = viewModel::updateChoice,
+        onShowAnswers = viewModel::showCorrectChoices,
         onGetQuestions = viewModel::getQuestions
     )
 }
@@ -84,7 +84,7 @@ internal fun QuestionScreen(
     onGetQuestionSettings: () -> Unit,
     onAddQuestions: (List<Question>) -> Unit,
     onAddCurrentQuestion: (Question) -> Unit,
-    onUpdateAnswer: (Answer) -> Unit,
+    onUpdateAnswer: (Choice) -> Unit,
     onShowAnswers: () -> Unit,
     onGetQuestions: (Int, Int) -> Unit
 ) {
@@ -121,8 +121,8 @@ internal fun QuestionScreen(
                 }
             }
 
-            is QuestionUiState.ShowAnswers -> {
-                AnswerScreen(
+            is QuestionUiState.ShowCorrectChoices -> {
+                CorrectChoicesScreen(
                     questions = state.questions, selectedChoices = selectedChoices,
                     score = scoreCount,
                     onAddCurrentQuestion = onAddCurrentQuestion,
@@ -131,7 +131,9 @@ internal fun QuestionScreen(
 
             is QuestionUiState.QuestionSettings -> {
                 QuestionSettingsScreen(
-                    questionSettings = state.questionSettings, onGetQuestions = onGetQuestions
+                    imageUrl = state.category?.imageUrl,
+                    questionSettings = state.category?.questionSettings ?: emptyList(),
+                    onGetQuestions = onGetQuestions
                 )
             }
         }
@@ -163,7 +165,7 @@ private fun SuccessState(
     answeredQuestionsCount: Int,
     onAddQuestions: (List<Question>) -> Unit,
     onAddCurrentQuestion: (Question) -> Unit,
-    onUpdateAnswer: (Answer) -> Unit,
+    onUpdateAnswer: (Choice) -> Unit,
     onShowAnswers: () -> Unit,
 ) {
 
@@ -231,7 +233,7 @@ private fun QuestionPage(
     scrollState: ScrollState,
     questions: List<Question>,
     selectedChoices: List<String>,
-    onUpdateAnswer: (Answer) -> Unit,
+    onUpdateAnswer: (Choice) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -245,7 +247,7 @@ private fun QuestionPage(
                         selectedChoices = selectedChoices,
                         onUpdateAnswer = { choice ->
                             onUpdateAnswer(
-                                Answer(
+                                Choice(
                                     question = questions[page], choice = choice
                                 )
                             )

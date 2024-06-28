@@ -1,20 +1,26 @@
 package com.android.socialworkreviewer.feature.category
 
 import androidx.annotation.VisibleForTesting
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -27,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.socialworkreviewer.core.designsystem.component.DynamicAsyncImage
 import com.android.socialworkreviewer.core.designsystem.component.SocialWorkReviewerLoadingWheel
+import com.android.socialworkreviewer.core.designsystem.icon.SocialWorkReviewerIcons
 import com.android.socialworkreviewer.core.model.Category
 
 @Composable
@@ -64,7 +71,7 @@ internal fun CategoryScreen(
                 .semantics {
                     testTagsAsResourceId = true
                 }
-                .testTag("apps"),
+                .testTag("category"),
         ) {
             when (categoryUiState) {
                 CategoryUiState.Loading -> LoadingState(
@@ -88,12 +95,13 @@ private fun CategoryTopAppBar(
     modifier: Modifier = Modifier,
     title: String,
 ) {
-    TopAppBar(
-        title = {
-            Text(text = title)
-        },
-        modifier = modifier.testTag("category:topAppBar"),
-    )
+    CenterAlignedTopAppBar(title = {
+        Text(text = title)
+    }, modifier = modifier.testTag("category:centerAlignedTopAppBar"), actions = {
+        IconButton(onClick = {}) {
+            Icon(imageVector = SocialWorkReviewerIcons.Settings, contentDescription = "")
+        }
+    })
 }
 
 @Composable
@@ -132,18 +140,32 @@ private fun CategoryItem(
     category: Category,
     onCategoryClick: (String) -> Unit,
 ) {
-    Box(modifier = modifier
-        .clickable {
-            onCategoryClick(category.id)
-        }
-        .size(300.dp), contentAlignment = Alignment.Center) {
+    OutlinedCard(modifier = modifier
+        .fillMaxWidth()
+        .padding(10.dp), onClick = {
+        onCategoryClick(category.id)
+    }) {
         DynamicAsyncImage(
             model = category.imageUrl,
             contentDescription = "categoryImage",
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .height(200.dp)
+                .fillMaxWidth()
         )
 
-        Text(text = category.title, style = MaterialTheme.typography.titleLarge)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp)
+        ) {
 
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Text(text = category.title, style = MaterialTheme.typography.headlineLarge)
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Text(text = category.description, style = MaterialTheme.typography.bodyLarge)
+        }
     }
 }

@@ -1,7 +1,6 @@
 package com.android.socialworkreviewer.core.data.repository
 
 import com.android.socialworkreviewer.core.model.Category
-import com.android.socialworkreviewer.core.model.QuestionSetting
 import com.android.socialworkreviewer.core.network.firestore.CategoryDataSource
 import com.android.socialworkreviewer.core.network.model.asExternalModel
 import kotlinx.coroutines.flow.Flow
@@ -18,8 +17,7 @@ internal class DefaultCategoryRepository @Inject constructor(private val categor
             }
     }
 
-    override suspend fun getQuestionSettingsByCategory(id: String): List<QuestionSetting> {
-        return categoryDataSource.getCategoryDocument(id = id)?.asExternalModel()?.questionSettings
-            ?: emptyList()
+    override suspend fun getCategory(id: String): Category? {
+        return categoryDataSource.getCategoryDocument(id = id)?.asExternalModel()
     }
 }

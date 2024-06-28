@@ -4,10 +4,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.android.socialworkreviewer.core.data.repository.AnswerRepository
 import com.android.socialworkreviewer.core.data.repository.CategoryRepository
+import com.android.socialworkreviewer.core.data.repository.ChoiceRepository
 import com.android.socialworkreviewer.core.data.repository.QuestionRepository
-import com.android.socialworkreviewer.core.model.Answer
+import com.android.socialworkreviewer.core.model.Choice
 import com.android.socialworkreviewer.core.model.Question
 import com.android.socialworkreviewer.feature.question.navigation.QuestionRouteData
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,7 +25,7 @@ import javax.inject.Inject
 class QuestionViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val questionRepository: QuestionRepository,
-    private val answerRepository: AnswerRepository,
+    private val choiceRepository: ChoiceRepository,
     private val categoryRepository: CategoryRepository,
 ) : ViewModel() {
 
@@ -36,7 +36,7 @@ class QuestionViewModel @Inject constructor(
     private val _questionUiState = MutableStateFlow<QuestionUiState>(QuestionUiState.Loading)
     val questionUiState = _questionUiState.asStateFlow()
 
-    val scoreCount = answerRepository.answeredQuestionsFlow.map { answeredQuestions ->
+    val scoreCount = choiceRepository.answeredQuestionsFlow.map { answeredQuestions ->
         answeredQuestions.count {
             it.value.containsAll(it.key.correctChoices)
         }
@@ -45,7 +45,7 @@ class QuestionViewModel @Inject constructor(
     )
 
     val answeredQuestionsCount =
-        answerRepository.answeredQuestionsFlow.map { answeredQuestions -> answeredQuestions.size }
+        choiceRepository.answeredQuestionsFlow.map { answeredQuestions -> answeredQuestions.size }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000),
@@ -55,7 +55,7 @@ class QuestionViewModel @Inject constructor(
     private val _currentQuestion = MutableStateFlow<Question?>(null)
 
     val selectedChoices = combine(
-        _currentQuestion, answerRepository.answersFlow
+        _currentQuestion, choiceRepository.choicesFlow
     ) { question, answer ->
         answer.filter { it.question == question }.map { it.choice }
     }.stateIn(
@@ -80,9 +80,9 @@ class QuestionViewModel @Inject constructor(
         }
     }
 
-    fun updateAnswer(answer: Answer) {
+    fun updateChoice(choice: Choice) {
         viewModelScope.launch {
-            answerRepository.updateAnswer(answer = answer)
+            choiceRepository.updateChoice(choice = choice)
         }
     }
 
@@ -92,20 +92,20 @@ class QuestionViewModel @Inject constructor(
 
     fun addQuestions(value: List<Question>) {
         viewModelScope.launch {
-            answerRepository.addQuestions(value = value)
+            choiceRepository.addQuestions(value = value)
         }
     }
 
-    fun showAnswers() {
+    fun showCorrectChoices() {
         _questionUiState.update {
-            QuestionUiState.ShowAnswers(answerRepository.questions)
+            QuestionUiState.ShowCorrectChoices(choiceRepository.questions)
         }
     }
 
-    fun getQuestionSettings() {
+    fun getCategory() {
         viewModelScope.launch {
             _questionUiState.update {
-                QuestionUiState.QuestionSettings(categoryRepository.getQuestionSettingsByCategory(id = id))
+                QuestionUiState.QuestionSettings(categoryRepository.getCategory(id = id))
             }
         }
     }

@@ -27,12 +27,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import com.android.socialworkreviewer.core.designsystem.component.DynamicAsyncImage
 import com.android.socialworkreviewer.core.model.QuestionSetting
 
 @Composable
 internal fun QuestionSettingsScreen(
     modifier: Modifier = Modifier,
     scrollState: ScrollState = rememberScrollState(),
+    imageUrl: String?,
     questionSettings: List<QuestionSetting>,
     onGetQuestions: (Int, Int) -> Unit,
 ) {
@@ -45,15 +47,17 @@ internal fun QuestionSettingsScreen(
                 .consumeWindowInsets(paddingValues)
                 .padding(paddingValues),
         ) {
+            ImageBanner(modifier = modifier
+                .height(200.dp)
+                .fillMaxWidth(), imageUrl = imageUrl)
+
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
                     modifier = Modifier.padding(10.dp),
                     text = "How many questions would you like to take?",
-                    style = MaterialTheme.typography.headlineMedium
+                    style = MaterialTheme.typography.headlineLarge
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -61,7 +65,8 @@ internal fun QuestionSettingsScreen(
                 Column(
                     Modifier
                         .selectableGroup()
-                        .verticalScroll(scrollState)) {
+                        .verticalScroll(scrollState)
+                ) {
                     questionSettings.forEach { questionSetting ->
                         Row(
                             Modifier
@@ -112,4 +117,16 @@ internal fun QuestionSettingsScreen(
             }
         }
     }
+}
+
+@Composable
+private fun ImageBanner(modifier: Modifier = Modifier, imageUrl: String?) {
+    DynamicAsyncImage(
+        model = imageUrl, contentDescription = "categoryImage", modifier = modifier
+    )
+}
+
+@Composable
+private fun FirstQuestion(modifier: Modifier = Modifier) {
+
 }

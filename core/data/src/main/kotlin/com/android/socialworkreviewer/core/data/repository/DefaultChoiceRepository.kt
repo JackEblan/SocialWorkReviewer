@@ -2,7 +2,7 @@ package com.android.socialworkreviewer.core.data.repository
 
 import com.android.socialworkreviewer.core.common.Dispatcher
 import com.android.socialworkreviewer.core.common.SocialWorkReviewerDispatchers.Default
-import com.android.socialworkreviewer.core.model.Answer
+import com.android.socialworkreviewer.core.model.Choice
 import com.android.socialworkreviewer.core.model.Question
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.BufferOverflow
@@ -11,25 +11,25 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-internal class DefaultAnswerRepository @Inject constructor(
+internal class DefaultChoiceRepository @Inject constructor(
     @Dispatcher(Default) private val defaultDispatcher: CoroutineDispatcher
-) : AnswerRepository {
+) : ChoiceRepository {
 
-    private val _answersFlow = MutableSharedFlow<List<Answer>>(
+    private val _answersFlow = MutableSharedFlow<List<Choice>>(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
-
-    private var _questions = emptyList<Question>()
 
     private val _answeredQuestionsFlow = MutableSharedFlow<Map<Question, List<String>>>(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
 
+    private var _questions = emptyList<Question>()
+
     private val currentAnswers get() = _answersFlow.replayCache.firstOrNull() ?: emptyList()
 
-    override val answersFlow = _answersFlow.asSharedFlow()
+    override val choicesFlow = _answersFlow.asSharedFlow()
 
     override val questions get() = _questions
 
@@ -39,11 +39,11 @@ internal class DefaultAnswerRepository @Inject constructor(
         _questions = value
     }
 
-    override suspend fun updateAnswer(answer: Answer) {
-        if (answer in currentAnswers) {
-            _answersFlow.emit((currentAnswers - answer))
+    override suspend fun updateChoice(choice: Choice) {
+        if (choice in currentAnswers) {
+            _answersFlow.emit((currentAnswers - choice))
         } else {
-            _answersFlow.emit((currentAnswers + answer))
+            _answersFlow.emit((currentAnswers + choice))
         }
 
         val answeredQuestions = withContext(defaultDispatcher) {
