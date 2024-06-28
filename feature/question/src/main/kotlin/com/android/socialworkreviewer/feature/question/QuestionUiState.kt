@@ -4,11 +4,11 @@ import com.android.socialworkreviewer.core.model.Category
 import com.android.socialworkreviewer.core.model.Question
 
 sealed interface QuestionUiState {
-    data class Success(val questions: List<Question>) : QuestionUiState
+    data class Questions(val questions: List<Question>) : QuestionUiState
 
     data object Loading : QuestionUiState
 
     data class ShowCorrectChoices(val questions: List<Question>) : QuestionUiState
 
-    data class QuestionSettings(val category: Category?) : QuestionUiState
+    data class OnBoarding(val category: Category? = null) : QuestionUiState
 }

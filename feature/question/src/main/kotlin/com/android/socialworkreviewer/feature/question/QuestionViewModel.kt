@@ -33,7 +33,7 @@ class QuestionViewModel @Inject constructor(
 
     private val id = questionRouteData.id
 
-    private val _questionUiState = MutableStateFlow<QuestionUiState>(QuestionUiState.Loading)
+    private val _questionUiState = MutableStateFlow<QuestionUiState?>(null)
     val questionUiState = _questionUiState.asStateFlow()
 
     val scoreCount = choiceRepository.answeredQuestionsFlow.map { answeredQuestions ->
@@ -71,7 +71,7 @@ class QuestionViewModel @Inject constructor(
             }
 
             _questionUiState.update {
-                QuestionUiState.Success(
+                QuestionUiState.Questions(
                     questions = questionRepository.getQuestions(
                         id = id, numberOfQuestions = numberOfQuestions
                     ),
@@ -105,7 +105,11 @@ class QuestionViewModel @Inject constructor(
     fun getCategory() {
         viewModelScope.launch {
             _questionUiState.update {
-                QuestionUiState.QuestionSettings(categoryRepository.getCategory(id = id))
+                QuestionUiState.Loading
+            }
+
+            _questionUiState.update {
+                QuestionUiState.OnBoarding(categoryRepository.getCategory(id = id))
             }
         }
     }

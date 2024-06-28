@@ -19,6 +19,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -27,26 +28,40 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.android.socialworkreviewer.core.designsystem.component.DynamicAsyncImage
 import com.android.socialworkreviewer.core.designsystem.icon.SocialWorkReviewerIcons
+import com.android.socialworkreviewer.core.model.Category
 import com.android.socialworkreviewer.core.model.QuestionSetting
 
 @Composable
-internal fun QuestionSettingsScreen(
+fun LoadingOnBoardingScreen(
+    modifier: Modifier = Modifier,
+    onGetCategory: () -> Unit,
+) {
+    LaunchedEffect(key1 = true) {
+        onGetCategory()
+    }
+
+    LoadingScreen(modifier = modifier)
+}
+
+@Composable
+internal fun SuccessOnBoardingScreen(
     modifier: Modifier = Modifier,
     scrollState: ScrollState = rememberScrollState(),
-    imageUrl: String?,
-    questionSettings: List<QuestionSetting>,
+    category: Category,
     onGetQuestions: (Int, Int) -> Unit,
 ) {
     val quickModes = listOf("Yes", "No")
 
-    val (selectedQuickSetting, onQuickSettingSelected) = remember { mutableStateOf(questionSettings[0]) }
+    val (selectedQuestionSetting, onQuestionSettingSelected) = remember {
+        mutableStateOf(category.questionSettings.first())
+    }
 
     val (selectedQuickMode, onQuickModeSelected) = remember { mutableStateOf(quickModes[1]) }
 
     Scaffold(floatingActionButton = {
         FloatingActionButton(onClick = {
             onGetQuestions(
-                selectedQuickSetting.numberOfQuestions, selectedQuickSetting.minutes
+                selectedQuestionSetting.numberOfQuestions, selectedQuestionSetting.minutes
             )
         }) {
             Icon(imageVector = SocialWorkReviewerIcons.Question, contentDescription = "")
@@ -62,13 +77,13 @@ internal fun QuestionSettingsScreen(
             ImageBanner(
                 modifier = modifier
                     .height(200.dp)
-                    .fillMaxWidth(), imageUrl = imageUrl
+                    .fillMaxWidth(), imageUrl = category.imageUrl
             )
 
             FirstQuestion(
-                questionSettings = questionSettings,
-                selectedQuickSetting = selectedQuickSetting,
-                onQuickSettingSelected = onQuickSettingSelected
+                questionSettings = category.questionSettings,
+                selectedQuestionSetting = selectedQuestionSetting,
+                onQuestionSettingSelected = onQuestionSettingSelected
             )
 
             SecondQuestion(
@@ -91,8 +106,8 @@ private fun ImageBanner(modifier: Modifier = Modifier, imageUrl: String?) {
 private fun FirstQuestion(
     modifier: Modifier = Modifier,
     questionSettings: List<QuestionSetting>,
-    selectedQuickSetting: QuestionSetting,
-    onQuickSettingSelected: (QuestionSetting) -> Unit
+    selectedQuestionSetting: QuestionSetting,
+    onQuestionSettingSelected: (QuestionSetting) -> Unit
 ) {
     Spacer(modifier = Modifier.height(10.dp))
 
@@ -117,8 +132,8 @@ private fun FirstQuestion(
                         .fillMaxWidth()
                         .height(56.dp)
                         .selectable(
-                            selected = (questionSetting == selectedQuickSetting),
-                            onClick = { onQuickSettingSelected(questionSetting) },
+                            selected = (questionSetting == selectedQuestionSetting),
+                            onClick = { onQuestionSettingSelected(questionSetting) },
                             role = Role.RadioButton
                         )
                         .padding(horizontal = 16.dp),
@@ -126,7 +141,7 @@ private fun FirstQuestion(
                 ) {
 
                     RadioButton(
-                        selected = (questionSetting == selectedQuickSetting), onClick = null
+                        selected = (questionSetting == selectedQuestionSetting), onClick = null
                     )
                     Text(
                         text = "${questionSetting.numberOfQuestions} Questions in ${questionSetting.minutes} minutes",

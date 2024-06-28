@@ -62,8 +62,7 @@ internal fun QuestionRoute(
         questionUiState = questionUiState,
         selectedChoices = selectedChoices,
         scoreCount = scoreCount,
-        answeredQuestionsCount = answeredQuestionsCount,
-        onGetQuestionSettings = viewModel::getCategory,
+        answeredQuestionsCount = answeredQuestionsCount, onGetCategory = viewModel::getCategory,
         onAddQuestions = viewModel::addQuestions,
         onAddCurrentQuestion = viewModel::addCurrentQuestion,
         onUpdateAnswer = viewModel::updateChoice,
@@ -76,27 +75,21 @@ internal fun QuestionRoute(
 @Composable
 internal fun QuestionScreen(
     modifier: Modifier = Modifier,
-    snackbarHostState: SnackbarHostState,
-    questionUiState: QuestionUiState,
+    snackbarHostState: SnackbarHostState, questionUiState: QuestionUiState?,
     selectedChoices: List<String>,
     scoreCount: Int,
-    answeredQuestionsCount: Int,
-    onGetQuestionSettings: () -> Unit,
+    answeredQuestionsCount: Int, onGetCategory: () -> Unit,
     onAddQuestions: (List<Question>) -> Unit,
     onAddCurrentQuestion: (Question) -> Unit,
     onUpdateAnswer: (Choice) -> Unit,
     onShowAnswers: () -> Unit,
     onGetQuestions: (Int, Int) -> Unit
 ) {
-    LaunchedEffect(key1 = true) {
-        onGetQuestionSettings()
-    }
-
     Crossfade(modifier = modifier, targetState = questionUiState, label = "") { state ->
         when (state) {
-            is QuestionUiState.Success -> {
+            is QuestionUiState.Questions -> {
                 if (state.questions.isNotEmpty()) {
-                    SuccessState(
+                    Questions(
                         snackbarHostState = snackbarHostState,
                         questions = state.questions, selectedChoices = selectedChoices,
                         answeredQuestionsCount = answeredQuestionsCount,
@@ -109,16 +102,7 @@ internal fun QuestionScreen(
             }
 
             QuestionUiState.Loading -> {
-                Scaffold { paddingValues ->
-                    Box(
-                        modifier = modifier
-                            .fillMaxSize()
-                            .consumeWindowInsets(paddingValues)
-                            .padding(paddingValues),
-                    ) {
-                        LoadingScreen(modifier = Modifier.align(Alignment.Center))
-                    }
-                }
+                LoadingScreen()
             }
 
             is QuestionUiState.ShowCorrectChoices -> {
@@ -129,12 +113,16 @@ internal fun QuestionScreen(
                 )
             }
 
-            is QuestionUiState.QuestionSettings -> {
-                QuestionSettingsScreen(
-                    imageUrl = state.category?.imageUrl,
-                    questionSettings = state.category?.questionSettings ?: emptyList(),
-                    onGetQuestions = onGetQuestions
-                )
+            is QuestionUiState.OnBoarding -> {
+                if (state.category != null) {
+                    SuccessOnBoardingScreen(
+                        category = state.category, onGetQuestions = onGetQuestions
+                    )
+                }
+            }
+
+            null -> {
+                LoadingOnBoardingScreen(onGetCategory = onGetCategory)
             }
         }
     }
@@ -156,7 +144,7 @@ private fun QuestionHeader(
 }
 
 @Composable
-private fun SuccessState(
+private fun Questions(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
     scrollState: ScrollState = rememberScrollState(),
