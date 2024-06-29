@@ -40,7 +40,9 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.data)
     implementation(projects.core.designSystem)
+    implementation(projects.core.model)
 
     implementation(projects.feature.category)
     implementation(projects.feature.question)

@@ -15,24 +15,20 @@
  *   limitations under the License.
  *
  */
+package com.android.socialworkreviewer.core.data.repository
 
-plugins {
-    alias(libs.plugins.com.android.socialworkreviewer.library)
-    alias(libs.plugins.com.android.socialworkreviewer.libraryJacoco)
-    alias(libs.plugins.com.android.socialworkreviewer.hilt)
-}
+import com.android.socialworkreviewer.core.model.DarkThemeConfig
+import com.android.socialworkreviewer.core.model.ThemeBrand
+import com.android.socialworkreviewer.core.model.UserData
+import kotlinx.coroutines.flow.Flow
 
-android {
-    namespace = "com.android.socialworkreviewer.core.data"
-}
+interface UserDataRepository {
 
-dependencies {
-    implementation(projects.core.common)
-    implementation(projects.core.datastore)
-    implementation(projects.core.model)
-    implementation(projects.core.network)
+    val userData: Flow<UserData>
 
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(projects.core.datastoreTest)
-    testImplementation(projects.core.testing)
+    suspend fun setThemeBrand(themeBrand: ThemeBrand)
+
+    suspend fun setDarkThemeConfig(darkThemeConfig: DarkThemeConfig)
+
+    suspend fun setDynamicColor(useDynamicColor: Boolean)
 }

@@ -39,6 +39,7 @@ include(":core:ui")
 
 include(":feature:category")
 include(":feature:question")
+include(":feature:settings")
 
 include(":framework:countdown-timer")
 

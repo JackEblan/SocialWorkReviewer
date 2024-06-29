@@ -18,21 +18,15 @@
 
 plugins {
     alias(libs.plugins.com.android.socialworkreviewer.library)
-    alias(libs.plugins.com.android.socialworkreviewer.libraryJacoco)
     alias(libs.plugins.com.android.socialworkreviewer.hilt)
 }
 
 android {
-    namespace = "com.android.socialworkreviewer.core.data"
+    namespace = "com.android.socialworkreviewer.core.datastore.test"
 }
 
 dependencies {
+    implementation(libs.hilt.android.testing)
     implementation(projects.core.common)
     implementation(projects.core.datastore)
-    implementation(projects.core.model)
-    implementation(projects.core.network)
-
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(projects.core.datastoreTest)
-    testImplementation(projects.core.testing)
 }

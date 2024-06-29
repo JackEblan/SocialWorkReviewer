@@ -15,24 +15,8 @@
  *   limitations under the License.
  *
  */
+package com.android.socialworkreviewer.core.model
 
-plugins {
-    alias(libs.plugins.com.android.socialworkreviewer.library)
-    alias(libs.plugins.com.android.socialworkreviewer.libraryJacoco)
-    alias(libs.plugins.com.android.socialworkreviewer.hilt)
-}
-
-android {
-    namespace = "com.android.socialworkreviewer.core.data"
-}
-
-dependencies {
-    implementation(projects.core.common)
-    implementation(projects.core.datastore)
-    implementation(projects.core.model)
-    implementation(projects.core.network)
-
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(projects.core.datastoreTest)
-    testImplementation(projects.core.testing)
+enum class DarkThemeConfig(val title: String) {
+    FOLLOW_SYSTEM("Follow System"), LIGHT("Light"), DARK("Dark"),
 }

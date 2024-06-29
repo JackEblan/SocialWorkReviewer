@@ -23,16 +23,26 @@ plugins {
 }
 
 android {
-    namespace = "com.android.socialworkreviewer.core.data"
+    defaultConfig {
+        consumerProguardFiles("consumer-proguard-rules.pro")
+    }
+
+    namespace = "com.android.socialworkreviewer.core.datastore"
+
+    testOptions {
+        unitTests {
+            isReturnDefaultValues = true
+        }
+    }
 }
 
 dependencies {
-    implementation(projects.core.common)
-    implementation(projects.core.datastore)
-    implementation(projects.core.model)
-    implementation(projects.core.network)
+    api(libs.androidx.dataStore.core)
+    api(projects.core.datastoreProto)
 
-    testImplementation(libs.kotlinx.coroutines.test)
+    implementation(projects.core.common)
+    implementation(projects.core.model)
+
     testImplementation(projects.core.datastoreTest)
-    testImplementation(projects.core.testing)
+    testImplementation(libs.kotlinx.coroutines.test)
 }

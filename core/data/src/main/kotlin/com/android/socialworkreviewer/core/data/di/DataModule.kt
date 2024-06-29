@@ -17,12 +17,14 @@
  */
 package com.android.socialworkreviewer.core.data.di
 
-import com.android.socialworkreviewer.core.data.repository.ChoiceRepository
 import com.android.socialworkreviewer.core.data.repository.CategoryRepository
-import com.android.socialworkreviewer.core.data.repository.DefaultChoiceRepository
+import com.android.socialworkreviewer.core.data.repository.ChoiceRepository
 import com.android.socialworkreviewer.core.data.repository.DefaultCategoryRepository
+import com.android.socialworkreviewer.core.data.repository.DefaultChoiceRepository
 import com.android.socialworkreviewer.core.data.repository.DefaultQuestionRepository
+import com.android.socialworkreviewer.core.data.repository.DefaultUserDataRepository
 import com.android.socialworkreviewer.core.data.repository.QuestionRepository
+import com.android.socialworkreviewer.core.data.repository.UserDataRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -43,4 +45,8 @@ abstract class DataModule {
 
     @Binds
     internal abstract fun answerRepository(impl: DefaultChoiceRepository): ChoiceRepository
+
+    @Binds
+    @Singleton
+    internal abstract fun userDataRepository(impl: DefaultUserDataRepository): UserDataRepository
 }

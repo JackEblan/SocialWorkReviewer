@@ -18,21 +18,32 @@
 
 plugins {
     alias(libs.plugins.com.android.socialworkreviewer.library)
-    alias(libs.plugins.com.android.socialworkreviewer.libraryJacoco)
-    alias(libs.plugins.com.android.socialworkreviewer.hilt)
+    alias(libs.plugins.protobuf)
 }
 
 android {
-    namespace = "com.android.socialworkreviewer.core.data"
+    namespace = "com.android.socialworkreviewer.core.datastore.proto"
+}
+
+// Setup protobuf configuration, generating lite Java and Kotlin classes
+protobuf {
+    protoc {
+        artifact = libs.protobuf.protoc.get().toString()
+    }
+    generateProtoTasks {
+        all().forEach { task ->
+            task.builtins {
+                register("java") {
+                    option("lite")
+                }
+                register("kotlin") {
+                    option("lite")
+                }
+            }
+        }
+    }
 }
 
 dependencies {
-    implementation(projects.core.common)
-    implementation(projects.core.datastore)
-    implementation(projects.core.model)
-    implementation(projects.core.network)
-
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(projects.core.datastoreTest)
-    testImplementation(projects.core.testing)
+    api(libs.protobuf.kotlin.lite)
 }
