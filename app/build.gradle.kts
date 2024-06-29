@@ -46,6 +46,7 @@ dependencies {
 
     implementation(projects.feature.category)
     implementation(projects.feature.question)
+    implementation(projects.feature.settings)
 
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.activity.compose)

@@ -17,26 +17,25 @@
  */
 
 plugins {
-    alias(libs.plugins.com.android.socialworkreviewer.library)
+    alias(libs.plugins.com.android.socialworkreviewer.feature)
     alias(libs.plugins.com.android.socialworkreviewer.libraryCompose)
-    alias(libs.plugins.com.android.socialworkreviewer.hilt)
+    alias(libs.plugins.com.android.socialworkreviewer.libraryJacoco)
+    alias(libs.plugins.roborazzi)
 }
 
 android {
-    namespace = "com.android.socialworkreviewer.core.testing"
+    namespace = "com.android.socialworkreviewer.feature.settings"
 }
 
 dependencies {
-    api(kotlin("test"))
-    api(libs.androidx.compose.ui.test)
-    api(projects.core.data)
+    implementation(projects.core.data)
+    implementation(projects.core.domain)
 
-    debugApi(libs.androidx.compose.ui.test.manifest)
+    testImplementation(libs.hilt.android.testing)
+    testImplementation(libs.robolectric)
+    testImplementation(projects.core.testing)
+    testImplementation(projects.core.screenshotTesting)
+    testImplementation(libs.roborazzi)
 
-    implementation(libs.androidx.test.rules)
-    implementation(libs.hilt.android.testing)
-    implementation(libs.kotlinx.coroutines.test)
-
-    implementation(projects.core.common)
-    implementation(projects.core.model)
+    androidTestImplementation(projects.core.testing)
 }

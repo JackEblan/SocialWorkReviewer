@@ -41,11 +41,15 @@ internal fun CategoryRoute(
     modifier: Modifier = Modifier,
     viewModel: CategoryViewModel = hiltViewModel(),
     onCategoryClick: (String) -> Unit,
+    onSettingsClick: () -> Unit,
 ) {
     val categoryUiState = viewModel.categoryUiState.collectAsStateWithLifecycle().value
 
     CategoryScreen(
-        modifier = modifier, categoryUiState = categoryUiState, onCategoryClick = onCategoryClick
+        modifier = modifier,
+        categoryUiState = categoryUiState,
+        onCategoryClick = onCategoryClick,
+        onSettingsClick = onSettingsClick,
     )
 }
 
@@ -56,11 +60,13 @@ internal fun CategoryScreen(
     modifier: Modifier = Modifier,
     categoryUiState: CategoryUiState,
     onCategoryClick: (String) -> Unit,
+    onSettingsClick: () -> Unit,
 ) {
     Scaffold(
         topBar = {
             CategoryTopAppBar(
                 title = "Categories",
+                onSettingsClick = onSettingsClick,
             )
         },
     ) { paddingValues ->
@@ -94,11 +100,12 @@ internal fun CategoryScreen(
 private fun CategoryTopAppBar(
     modifier: Modifier = Modifier,
     title: String,
+    onSettingsClick: () -> Unit,
 ) {
     CenterAlignedTopAppBar(title = {
         Text(text = title)
     }, modifier = modifier.testTag("category:centerAlignedTopAppBar"), actions = {
-        IconButton(onClick = {}) {
+        IconButton(onClick = onSettingsClick) {
             Icon(imageVector = SocialWorkReviewerIcons.Settings, contentDescription = "")
         }
     })

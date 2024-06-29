@@ -15,17 +15,11 @@
  *   limitations under the License.
  *
  */
-package com.android.socialworkreviewer.core.designsystem.icon
+package com.android.socialworkreviewer.feature.settings
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.QuestionMark
-import androidx.compose.material.icons.filled.Settings
+import com.android.socialworkreviewer.core.model.UserData
 
-object SocialWorkReviewerIcons {
-    val Check = Icons.Default.Check
-    val Settings = Icons.Default.Settings
-    val Question = Icons.Default.QuestionMark
-    val ArrowBack = Icons.AutoMirrored.Filled.ArrowBack
+sealed interface SettingsUiState {
+    data object Loading : SettingsUiState
+    data class Success(val userData: UserData) : SettingsUiState
 }

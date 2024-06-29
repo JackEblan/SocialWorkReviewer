@@ -15,17 +15,24 @@
  *   limitations under the License.
  *
  */
-package com.android.socialworkreviewer.core.designsystem.icon
+package com.android.socialworkreviewer.feature.settings.navigation
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.QuestionMark
-import androidx.compose.material.icons.filled.Settings
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
+import com.android.socialworkreviewer.feature.settings.SettingsRoute
 
-object SocialWorkReviewerIcons {
-    val Check = Icons.Default.Check
-    val Settings = Icons.Default.Settings
-    val Question = Icons.Default.QuestionMark
-    val ArrowBack = Icons.AutoMirrored.Filled.ArrowBack
+fun NavController.navigateToSettings() {
+    navigate(SettingsRouteData)
+}
+
+fun NavGraphBuilder.settingsScreen(
+    onNavigationIconClick: () -> Unit,
+) {
+    composable<SettingsRouteData> {
+        SettingsRoute(
+            onNavigationIconClick = onNavigationIconClick,
+
+            )
+    }
 }

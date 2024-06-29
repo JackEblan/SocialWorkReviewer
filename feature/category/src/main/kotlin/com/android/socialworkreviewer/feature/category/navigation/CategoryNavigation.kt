@@ -23,8 +23,9 @@ import com.android.socialworkreviewer.feature.category.CategoryRoute
 
 fun NavGraphBuilder.categoryScreen(
     onCategoryClick: (String) -> Unit,
+    onSettingsClick: () -> Unit,
 ) {
     composable<CategoryRouteData> {
-        CategoryRoute(onCategoryClick = onCategoryClick)
+        CategoryRoute(onCategoryClick = onCategoryClick, onSettingsClick = onSettingsClick)
     }
 }

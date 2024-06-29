@@ -24,6 +24,8 @@ import com.android.socialworkreviewer.feature.category.navigation.CategoryRouteD
 import com.android.socialworkreviewer.feature.category.navigation.categoryScreen
 import com.android.socialworkreviewer.feature.question.navigation.navigateToQuestionScreen
 import com.android.socialworkreviewer.feature.question.navigation.questionScreen
+import com.android.socialworkreviewer.feature.settings.navigation.navigateToSettings
+import com.android.socialworkreviewer.feature.settings.navigation.settingsScreen
 
 @Composable
 fun SocialWorkReviewerNavHost(navController: NavHostController) {
@@ -33,8 +35,11 @@ fun SocialWorkReviewerNavHost(navController: NavHostController) {
     ) {
         categoryScreen(
             onCategoryClick = navController::navigateToQuestionScreen,
+            onSettingsClick = navController::navigateToSettings,
         )
 
         questionScreen()
+
+        settingsScreen(onNavigationIconClick = navController::navigateUp)
     }
 }
