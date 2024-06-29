@@ -20,7 +20,13 @@ internal class DefaultQuestionDataSource @Inject constructor(
         return withContext(ioDispatcher) {
             firestore.collection(CATEGORIES_COLLECTION).document(id)
                 .collection(QUESTIONS_COLLECTION).limit(numberOfQuestions.toLong()).get().await()
-                .mapNotNull { it.toObject() }
+                .mapNotNull { queryDocumentSnapshot ->
+                    try {
+                        queryDocumentSnapshot.toObject()
+                    } catch (e: RuntimeException) {
+                        null
+                    }
+                }
         }
     }
 }

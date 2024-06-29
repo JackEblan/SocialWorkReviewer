@@ -1,7 +1,6 @@
 package com.android.socialworkreviewer.feature.question
 
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -84,16 +83,22 @@ private fun CorrectChoicesHeader(
     answerSize: Int,
     lastCountDownTime: String
 ) {
+    Spacer(modifier = Modifier.height(10.dp))
+
     Row(
-        modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround
+        modifier = modifier.fillMaxWidth()
     ) {
         CorrectChoicesQuestionCounter(
-            answerIndex = answerIndex, answerSize = answerSize
+            modifier = Modifier.weight(1f), answerIndex = answerIndex, answerSize = answerSize
         )
 
-        CorrectChoicesScoreCounter(score = score, answerSize = answerSize)
+        CorrectChoicesScoreCounter(
+            modifier = Modifier.weight(2f), score = score, answerSize = answerSize
+        )
 
-        CorrectChoicesTimeCounter(lastCountDownTime = lastCountDownTime)
+        CorrectChoicesTimeCounter(
+            modifier = Modifier.weight(1f), lastCountDownTime = lastCountDownTime
+        )
     }
 }
 
@@ -101,15 +106,13 @@ private fun CorrectChoicesHeader(
 private fun CorrectChoicesQuestionCounter(
     modifier: Modifier = Modifier, answerIndex: Int, answerSize: Int
 ) {
-    Column(
-        modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = "Answer", style = MaterialTheme.typography.bodyMedium)
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(text = "Answer", style = MaterialTheme.typography.bodySmall)
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(5.dp))
 
         Text(
-            text = "${answerIndex + 1}/$answerSize", style = MaterialTheme.typography.titleLarge
+            text = "${answerIndex + 1}/$answerSize", style = MaterialTheme.typography.bodySmall
         )
     }
 }
@@ -121,12 +124,12 @@ private fun CorrectChoicesScoreCounter(
     Column(
         modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Score", style = MaterialTheme.typography.bodyMedium)
+        Text(text = "Score", style = MaterialTheme.typography.headlineSmall)
 
         Spacer(modifier = Modifier.height(10.dp))
 
         Text(
-            text = "$score/$answerSize", style = MaterialTheme.typography.titleLarge
+            text = "$score/$answerSize", style = MaterialTheme.typography.headlineSmall
         )
     }
 }
@@ -134,11 +137,11 @@ private fun CorrectChoicesScoreCounter(
 @Composable
 private fun CorrectChoicesTimeCounter(modifier: Modifier = Modifier, lastCountDownTime: String) {
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = "Time", style = MaterialTheme.typography.bodyMedium)
+        Text(text = "Time", style = MaterialTheme.typography.bodySmall)
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(5.dp))
 
-        Text(text = lastCountDownTime, style = MaterialTheme.typography.titleLarge)
+        Text(text = lastCountDownTime, style = MaterialTheme.typography.bodySmall)
     }
 }
 
