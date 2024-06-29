@@ -1,6 +1,12 @@
 package com.android.socialworkreviewer.feature.question
 
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +27,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,7 +38,6 @@ import com.android.socialworkreviewer.core.model.Question
 @Composable
 internal fun CorrectChoicesScreen(
     modifier: Modifier = Modifier,
-    scrollState: ScrollState = rememberScrollState(),
     questions: List<Question>,
     selectedChoices: List<String>,
     score: Int,
@@ -66,7 +72,6 @@ internal fun CorrectChoicesScreen(
                 CorrectChoicesPage(
                     page = page,
                     isScrollInProgress = pagerState.isScrollInProgress,
-                    scrollState = scrollState,
                     questions = questions,
                     selectedChoices = selectedChoices,
                 )
@@ -100,6 +105,8 @@ private fun CorrectChoicesHeader(
             modifier = Modifier.weight(1f), lastCountDownTime = lastCountDownTime
         )
     }
+
+    Spacer(modifier = Modifier.height(10.dp))
 }
 
 @Composable
@@ -121,15 +128,30 @@ private fun CorrectChoicesQuestionCounter(
 private fun CorrectChoicesScoreCounter(
     modifier: Modifier = Modifier, score: Int, answerSize: Int
 ) {
+    val infiniteTransition = rememberInfiniteTransition(label = "infinite transition")
+
+    val animatedColor by infiniteTransition.animateColor(
+        initialValue = Color(0xFF00BCD4),
+        targetValue = Color(0xFF9C27B0),
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1000), repeatMode = RepeatMode.Reverse
+        ),
+        label = "color"
+    )
+
     Column(
         modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Score", style = MaterialTheme.typography.headlineSmall)
+        Text(
+            text = "Score", style = MaterialTheme.typography.headlineSmall, color = animatedColor
+        )
 
         Spacer(modifier = Modifier.height(10.dp))
 
         Text(
-            text = "$score/$answerSize", style = MaterialTheme.typography.headlineSmall
+            text = "$score/$answerSize",
+            style = MaterialTheme.typography.headlineSmall,
+            color = animatedColor
         )
     }
 }
@@ -147,14 +169,15 @@ private fun CorrectChoicesTimeCounter(modifier: Modifier = Modifier, lastCountDo
 
 @Composable
 private fun CorrectChoicesPage(
+    modifier: Modifier = Modifier,
+    scrollState: ScrollState = rememberScrollState(),
     page: Int,
     isScrollInProgress: Boolean,
-    scrollState: ScrollState,
     questions: List<Question>,
     selectedChoices: List<String>,
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState),
     ) {
@@ -204,7 +227,10 @@ private fun CorrectChoicesSelection(
                 isScrollInProgress.not() && choice !in correctChoices && choice in selectedChoices
 
             Row(
-                modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { },
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(
                     checked = correctChoice || wrongChoice,

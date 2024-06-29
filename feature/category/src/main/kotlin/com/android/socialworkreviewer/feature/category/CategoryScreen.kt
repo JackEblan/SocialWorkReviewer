@@ -30,6 +30,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
@@ -126,8 +128,16 @@ private fun CategoryTopAppBar(
     title: String,
     onSettingsClick: () -> Unit,
 ) {
+    val gradientColors = listOf(Color(0xFF00BCD4), Color(0xFF03A9F4), Color(0xFF9C27B0))
+
     CenterAlignedTopAppBar(title = {
-        Text(text = title)
+        Text(
+            text = title, style = MaterialTheme.typography.headlineSmall.copy(
+                brush = Brush.linearGradient(
+                    colors = gradientColors
+                )
+            )
+        )
     }, modifier = modifier.testTag("category:centerAlignedTopAppBar"), actions = {
         IconButton(onClick = onSettingsClick) {
             Icon(imageVector = SocialWorkReviewerIcons.Settings, contentDescription = "")

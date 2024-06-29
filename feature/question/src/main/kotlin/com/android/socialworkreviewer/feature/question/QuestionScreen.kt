@@ -166,13 +166,14 @@ private fun QuestionHeader(
 
         QuestionTimeCounter(countDownTimeUntilFinished = countDownTimeUntilFinished)
     }
+
+    Spacer(modifier = Modifier.height(10.dp))
 }
 
 @Composable
 private fun Questions(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
-    scrollState: ScrollState = rememberScrollState(),
     questions: List<Question>,
     selectedChoices: List<String>,
     answeredQuestionsCount: Int,
@@ -238,11 +239,12 @@ private fun Questions(
                 countDownTimeUntilFinished = countDownTimeUntilFinished,
             )
 
-            HorizontalPager(state = pagerState) { page ->
+            HorizontalPager(
+                modifier = Modifier.fillMaxSize(), state = pagerState
+            ) { page ->
                 QuestionPage(
                     page = page,
                     isScrollInProgress = pagerState.isScrollInProgress,
-                    scrollState = scrollState,
                     questions = questions,
                     selectedChoices = selectedChoices,
                     onUpdateAnswer = onUpdateAnswer,
@@ -254,15 +256,16 @@ private fun Questions(
 
 @Composable
 private fun QuestionPage(
+    modifier: Modifier = Modifier,
+    scrollState: ScrollState = rememberScrollState(),
     page: Int,
     isScrollInProgress: Boolean,
-    scrollState: ScrollState,
     questions: List<Question>,
     selectedChoices: List<String>,
     onUpdateAnswer: (Choice) -> Unit,
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState),
     ) {
