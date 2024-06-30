@@ -1,6 +1,5 @@
 package com.android.socialworkreviewer.feature.question
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
@@ -13,21 +12,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -43,18 +41,19 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import com.android.socialworkreviewer.core.designsystem.icon.SocialWorkReviewerIcons
+import com.android.socialworkreviewer.core.model.Choice
 import com.android.socialworkreviewer.core.model.Question
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun CorrectChoicesScreen(
+internal fun QuickQuestionsScreen(
     modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState,
     questions: List<Question>,
     selectedChoices: List<String>,
-    score: Int,
-    lastCountDownTime: String,
+    onAddQuestions: (List<Question>) -> Unit,
     onAddCurrentQuestion: (Question) -> Unit,
+    onUpdateChoice: (Choice) -> Unit,
 ) {
     val pagerState = rememberPagerState(pageCount = {
         questions.size
@@ -68,19 +67,27 @@ internal fun CorrectChoicesScreen(
         label = "animatedProgress"
     )
 
+    LaunchedEffect(key1 = true) {
+        onAddQuestions(questions)
+    }
+
     LaunchedEffect(key1 = pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { page ->
             onAddCurrentQuestion(questions[page])
         }
     }
 
-    Scaffold(topBar = {
-        CorrectChoicesTopAppBar(
-            title = "Your score is $score/${questions.size}",
-            scrollBehavior = scrollBehavior,
-            lastCountDownTime = lastCountDownTime
-        )
-    }) { paddingValues ->
+    Scaffold(
+        topBar = {
+            QuickQuestionTopAppBar(
+                title = "Quick Questions",
+                scrollBehavior = scrollBehavior,
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
+    ) { paddingValues ->
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -98,13 +105,16 @@ internal fun CorrectChoicesScreen(
                 strokeCap = StrokeCap.Round,
             )
 
-            HorizontalPager(state = pagerState) { page ->
-                CorrectChoicesPage(
+            HorizontalPager(
+                modifier = Modifier.fillMaxSize(), state = pagerState
+            ) { page ->
+                QuickQuestionPage(
                     modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                     page = page,
                     isScrollInProgress = pagerState.isScrollInProgress,
                     questions = questions,
                     selectedChoices = selectedChoices,
+                    onUpdateChoice = onUpdateChoice,
                 )
             }
         }
@@ -112,32 +122,38 @@ internal fun CorrectChoicesScreen(
 }
 
 @Composable
-private fun CorrectChoicesPage(
+private fun QuickQuestionPage(
     modifier: Modifier = Modifier,
     scrollState: ScrollState = rememberScrollState(),
     page: Int,
     isScrollInProgress: Boolean,
     questions: List<Question>,
     selectedChoices: List<String>,
+    onUpdateChoice: (Choice) -> Unit,
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState),
     ) {
-        CorrectChoicesQuestionText(question = questions[page].question)
+        QuickQuestionText(question = questions[page].question)
 
-        CorrectChoicesSelection(
-            isScrollInProgress = isScrollInProgress,
-            choices = questions[page].choices,
-            correctChoices = questions[page].correctChoices,
-            selectedChoices = selectedChoices,
-        )
+        QuickQuestionChoicesSelection(isScrollInProgress = isScrollInProgress,
+                                      choices = questions[page].choices,
+                                      correctChoices = questions[page].correctChoices,
+                                      selectedChoices = selectedChoices,
+                                      onUpdateChoice = { choice ->
+                                          onUpdateChoice(
+                                              Choice(
+                                                  question = questions[page], choice = choice
+                                              )
+                                          )
+                                      })
     }
 }
 
 @Composable
-private fun CorrectChoicesQuestionText(modifier: Modifier = Modifier, question: String) {
+private fun QuickQuestionText(modifier: Modifier = Modifier, question: String) {
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -152,12 +168,13 @@ private fun CorrectChoicesQuestionText(modifier: Modifier = Modifier, question: 
 }
 
 @Composable
-private fun CorrectChoicesSelection(
+private fun QuickQuestionChoicesSelection(
     modifier: Modifier = Modifier,
     isScrollInProgress: Boolean,
     choices: List<String>,
     correctChoices: List<String>,
     selectedChoices: List<String>,
+    onUpdateChoice: (String) -> Unit,
 ) {
     val wrongChoiceColor = CheckboxDefaults.colors().copy(
         checkedBoxColor = MaterialTheme.colorScheme.error,
@@ -168,21 +185,29 @@ private fun CorrectChoicesSelection(
         modifier = modifier.fillMaxWidth(),
     ) {
         choices.forEach { choice ->
-            val correctChoice = isScrollInProgress.not() && choice in correctChoices
+            val selectedChoice = isScrollInProgress.not() && choice in selectedChoices
+
+            val correctChoice =
+                isScrollInProgress.not() && selectedChoices.size == correctChoices.size && choice in correctChoices
 
             val wrongChoice =
-                isScrollInProgress.not() && choice !in correctChoices && choice in selectedChoices
+                isScrollInProgress.not() && selectedChoices.size == correctChoices.size && choice !in correctChoices && choice in selectedChoices
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { },
-                verticalAlignment = Alignment.CenterVertically
+                    .clickable {
+                        if (selectedChoice.not() && selectedChoices.size < correctChoices.size) {
+                            onUpdateChoice(choice)
+                        }
+                    }, verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(
-                    checked = correctChoice || wrongChoice,
-                    onCheckedChange = {},
-                    colors = if (wrongChoice) wrongChoiceColor else CheckboxDefaults.colors()
+                    checked = selectedChoice || correctChoice || wrongChoice, onCheckedChange = {
+                        if (selectedChoice.not() && selectedChoices.size < correctChoices.size) {
+                            onUpdateChoice(choice)
+                        }
+                    }, colors = if (wrongChoice) wrongChoiceColor else CheckboxDefaults.colors()
                 )
 
                 Box(
@@ -199,17 +224,15 @@ private fun CorrectChoicesSelection(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CorrectChoicesTopAppBar(
+private fun QuickQuestionTopAppBar(
     modifier: Modifier = Modifier,
     title: String,
     scrollBehavior: TopAppBarScrollBehavior,
-    lastCountDownTime: String,
 ) {
     val gradientColors = listOf(Color(0xFF00BCD4), Color(0xFF03A9F4), Color(0xFF9C27B0))
 
     LargeTopAppBar(
         title = {
-
             Text(
                 text = title,
                 style = MaterialTheme.typography.headlineSmall.copy(
@@ -219,24 +242,7 @@ private fun CorrectChoicesTopAppBar(
                 ),
             )
         },
-        modifier = modifier.testTag("correctChoices:largeTopAppBar"),
-        actions = {
-            ElevatedCard(modifier = Modifier
-                .padding(end = 5.dp)
-                .animateContentSize(),
-                         onClick = {}) {
-                Row(
-                    modifier = Modifier.padding(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(imageVector = SocialWorkReviewerIcons.AccessTime, contentDescription = "")
-
-                    Spacer(modifier = Modifier.width(5.dp))
-
-                    Text(text = lastCountDownTime)
-                }
-            }
-        },
+        modifier = modifier.testTag("quickQuestion:largeTopAppBar"),
         scrollBehavior = scrollBehavior,
     )
 }

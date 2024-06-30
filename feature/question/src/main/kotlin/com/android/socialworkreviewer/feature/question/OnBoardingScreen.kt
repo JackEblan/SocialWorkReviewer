@@ -15,7 +15,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -30,6 +30,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.socialworkreviewer.core.designsystem.icon.SocialWorkReviewerIcons
 import com.android.socialworkreviewer.core.model.Category
+import com.android.socialworkreviewer.core.model.QuestionSetting
 
 @Composable
 internal fun LoadingOnBoardingScreen(
@@ -48,9 +49,14 @@ internal fun SuccessOnBoardingScreen(
     modifier: Modifier = Modifier,
     category: Category,
     onGetQuestions: (Int, Int) -> Unit,
+    onGetQuickQuestions: () -> Unit,
 ) {
 
-    Scaffold(topBar = {
+    Scaffold(floatingActionButton = {
+        FloatingActionButton(onClick = onGetQuickQuestions) {
+            Icon(imageVector = SocialWorkReviewerIcons.Bolt, contentDescription = "")
+        }
+    }, topBar = {
         OnBoardingTopAppBar(title = "Questions")
     }) { paddingValues ->
         LazyVerticalGrid(
@@ -65,63 +71,57 @@ internal fun SuccessOnBoardingScreen(
                     )
 
                 }) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp),
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(10.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                            ) {
-                                Icon(
-                                    modifier = Modifier.size(40.dp),
-                                    imageVector = SocialWorkReviewerIcons.Question,
-                                    contentDescription = ""
-                                )
-
-                                Spacer(modifier = Modifier.height(10.dp))
-
-                                Text(
-                                    text = "${questionSetting.numberOfQuestions} questions",
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                            }
-
-                            Column(
-                                modifier = Modifier.padding(10.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                            ) {
-                                Icon(
-                                    modifier = Modifier.size(40.dp),
-                                    imageVector = SocialWorkReviewerIcons.AccessTime,
-                                    contentDescription = ""
-                                )
-
-                                Spacer(modifier = Modifier.height(10.dp))
-
-                                Text(
-                                    text = "${questionSetting.minutes} minutes",
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(20.dp))
-
-                        FilledTonalIconButton(
-                            modifier = Modifier.align(Alignment.End),
-                            onClick = {}) {
-                            Icon(
-                                imageVector = SocialWorkReviewerIcons.Bolt, contentDescription = ""
-                            )
-                        }
-                    }
+                    QuestionSettingItem(questionSetting = questionSetting)
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun QuestionSettingItem(modifier: Modifier = Modifier, questionSetting: QuestionSetting) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(10.dp),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Column(
+                modifier = Modifier.padding(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Icon(
+                    modifier = Modifier.size(40.dp),
+                    imageVector = SocialWorkReviewerIcons.Question,
+                    contentDescription = ""
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Text(
+                    text = "${questionSetting.numberOfQuestions} questions",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+
+            Column(
+                modifier = Modifier.padding(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Icon(
+                    modifier = Modifier.size(40.dp),
+                    imageVector = SocialWorkReviewerIcons.AccessTime,
+                    contentDescription = ""
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Text(
+                    text = "${questionSetting.minutes} minutes",
+                    style = MaterialTheme.typography.bodyLarge
+                )
             }
         }
     }

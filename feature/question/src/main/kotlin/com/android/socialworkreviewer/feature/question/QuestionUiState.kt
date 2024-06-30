@@ -12,4 +12,6 @@ sealed interface QuestionUiState {
         QuestionUiState
 
     data class OnBoarding(val category: Category? = null) : QuestionUiState
+
+    data class QuickQuestions(val questions: List<Question>) : QuestionUiState
 }

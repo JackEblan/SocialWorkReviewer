@@ -27,7 +27,7 @@ internal class DefaultChoiceRepository @Inject constructor(
 
     private var _questions = emptyList<Question>()
 
-    private val currentAnswers get() = _choicesFlow.replayCache.firstOrNull() ?: emptyList()
+    private val selectedChoices get() = _choicesFlow.replayCache.firstOrNull() ?: emptyList()
 
     override val choicesFlow = _choicesFlow.asSharedFlow()
 
@@ -40,14 +40,14 @@ internal class DefaultChoiceRepository @Inject constructor(
     }
 
     override suspend fun updateChoice(choice: Choice) {
-        if (choice in currentAnswers) {
-            _choicesFlow.emit(currentAnswers - choice)
+        if (choice in selectedChoices) {
+            _choicesFlow.emit(selectedChoices - choice)
         } else {
-            _choicesFlow.emit(currentAnswers + choice)
+            _choicesFlow.emit(selectedChoices + choice)
         }
 
         val answeredQuestions = withContext(defaultDispatcher) {
-            currentAnswers.groupBy({ it.question }, { it.choice })
+            selectedChoices.groupBy({ it.question }, { it.choice })
         }
 
         _answeredQuestionsFlow.emit(answeredQuestions)

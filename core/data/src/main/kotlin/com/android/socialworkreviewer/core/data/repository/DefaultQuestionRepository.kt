@@ -6,18 +6,16 @@ import javax.inject.Inject
 
 internal class DefaultQuestionRepository @Inject constructor(private val questionDataSource: QuestionDataSource) :
     QuestionRepository {
-    override suspend fun getQuestions(id: String, numberOfQuestions: Int): List<Question> {
-        return questionDataSource.getQuestions(id = id, numberOfQuestions = numberOfQuestions)
-            .map { questionDocument ->
+    override suspend fun getQuestions(id: String): List<Question> {
+        return questionDataSource.getQuestions(id = id).map { questionDocument ->
+            Question(
+                question = questionDocument.question,
+                correctChoices = questionDocument.correctChoices,
+                wrongChoices = questionDocument.wrongChoices,
+                choices = questionDocument.correctChoices.plus(questionDocument.wrongChoices)
+                    .shuffled()
+            )
 
-                Question(
-                    question = questionDocument.question,
-                    correctChoices = questionDocument.correctChoices,
-                    wrongChoices = questionDocument.wrongChoices,
-                    choices = questionDocument.correctChoices.plus(questionDocument.wrongChoices)
-                        .shuffled()
-                )
-
-            }.shuffled()
+        }.shuffled()
     }
 }

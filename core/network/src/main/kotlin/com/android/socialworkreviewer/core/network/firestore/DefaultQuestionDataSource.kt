@@ -16,10 +16,10 @@ internal class DefaultQuestionDataSource @Inject constructor(
     private val firestore: FirebaseFirestore,
     @Dispatcher(SocialWorkReviewerDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
 ) : QuestionDataSource {
-    override suspend fun getQuestions(id: String, numberOfQuestions: Int): List<QuestionDocument> {
+    override suspend fun getQuestions(id: String): List<QuestionDocument> {
         return withContext(ioDispatcher) {
             firestore.collection(CATEGORIES_COLLECTION).document(id)
-                .collection(QUESTIONS_COLLECTION).limit(numberOfQuestions.toLong()).get().await()
+                .collection(QUESTIONS_COLLECTION).get().await()
                 .mapNotNull { queryDocumentSnapshot ->
                     try {
                         queryDocumentSnapshot.toObject()

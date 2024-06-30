@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.android.socialworkreviewer.core.data.repository.CategoryRepository
 import com.android.socialworkreviewer.core.data.repository.ChoiceRepository
-import com.android.socialworkreviewer.core.data.repository.QuestionRepository
+import com.android.socialworkreviewer.core.domain.GetQuestionsUseCase
 import com.android.socialworkreviewer.core.model.Choice
 import com.android.socialworkreviewer.core.model.Question
 import com.android.socialworkreviewer.feature.question.navigation.QuestionRouteData
@@ -28,10 +28,10 @@ import javax.inject.Inject
 @HiltViewModel
 class QuestionViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val questionRepository: QuestionRepository,
     private val choiceRepository: ChoiceRepository,
     private val categoryRepository: CategoryRepository,
     private val countDownTimerWrapper: CountDownTimerWrapper,
+    private val getQuestionsUseCase: GetQuestionsUseCase,
 ) : ViewModel() {
 
     private val questionRouteData = savedStateHandle.toRoute<QuestionRouteData>()
@@ -99,9 +99,23 @@ class QuestionViewModel @Inject constructor(
 
             _questionUiState.update {
                 QuestionUiState.Questions(
-                    questions = questionRepository.getQuestions(
+                    questions = getQuestionsUseCase(
                         id = id, numberOfQuestions = numberOfQuestions
                     ),
+                )
+            }
+        }
+    }
+
+    fun getQuickQuestions() {
+        viewModelScope.launch {
+            _questionUiState.update {
+                QuestionUiState.Loading
+            }
+
+            _questionUiState.update {
+                QuestionUiState.QuickQuestions(
+                    questions = getQuestionsUseCase(id = id),
                 )
             }
         }

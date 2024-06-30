@@ -2,6 +2,7 @@ package com.android.socialworkreviewer.feature.question
 
 import androidx.annotation.VisibleForTesting
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
@@ -20,8 +21,8 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeTopAppBar
@@ -90,9 +91,10 @@ internal fun QuestionRoute(
         onStartCountDownTimer = viewModel::startCountDownTimer,
         onCancelCountDownTimer = viewModel::cancelCountDownTimer,
         onAddCurrentQuestion = viewModel::addCurrentQuestion,
-        onUpdateAnswer = viewModel::updateChoice,
+        onUpdateChoice = viewModel::updateChoice,
         onShowAnswers = viewModel::showCorrectChoices,
-        onGetQuestions = viewModel::getQuestions
+        onGetQuestions = viewModel::getQuestions,
+        onGetQuickQuestions = viewModel::getQuickQuestions
     )
 }
 
@@ -112,9 +114,10 @@ internal fun QuestionScreen(
     onStartCountDownTimer: () -> Unit,
     onCancelCountDownTimer: () -> Unit,
     onAddCurrentQuestion: (Question) -> Unit,
-    onUpdateAnswer: (Choice) -> Unit,
+    onUpdateChoice: (Choice) -> Unit,
     onShowAnswers: () -> Unit,
-    onGetQuestions: (Int, Int) -> Unit
+    onGetQuestions: (Int, Int) -> Unit,
+    onGetQuickQuestions: () -> Unit,
 ) {
     Crossfade(modifier = modifier, targetState = questionUiState, label = "") { state ->
         when (state) {
@@ -130,7 +133,7 @@ internal fun QuestionScreen(
                         onStartCountDownTimer = onStartCountDownTimer,
                         onCancelCountDownTimer = onCancelCountDownTimer,
                         onAddCurrentQuestion = onAddCurrentQuestion,
-                        onUpdateAnswer = onUpdateAnswer,
+                        onUpdateChoice = onUpdateChoice,
                         onShowAnswers = onShowAnswers,
                     )
                 }
@@ -152,13 +155,26 @@ internal fun QuestionScreen(
             is QuestionUiState.OnBoarding -> {
                 if (state.category != null) {
                     SuccessOnBoardingScreen(
-                        category = state.category, onGetQuestions = onGetQuestions
+                        category = state.category,
+                        onGetQuestions = onGetQuestions,
+                        onGetQuickQuestions = onGetQuickQuestions
                     )
                 }
             }
 
             null -> {
                 LoadingOnBoardingScreen(onGetCategory = onGetCategory)
+            }
+
+            is QuestionUiState.QuickQuestions -> {
+                QuickQuestionsScreen(
+                    snackbarHostState = snackbarHostState,
+                    questions = state.questions,
+                    selectedChoices = selectedChoices,
+                    onAddQuestions = onAddQuestions,
+                    onAddCurrentQuestion = onAddCurrentQuestion,
+                    onUpdateChoice = onUpdateChoice,
+                )
             }
         }
     }
@@ -178,7 +194,7 @@ private fun Questions(
     onStartCountDownTimer: () -> Unit,
     onCancelCountDownTimer: () -> Unit,
     onAddCurrentQuestion: (Question) -> Unit,
-    onUpdateAnswer: (Choice) -> Unit,
+    onUpdateChoice: (Choice) -> Unit,
     onShowAnswers: () -> Unit,
 ) {
     val pagerState = rememberPagerState(pageCount = {
@@ -262,7 +278,7 @@ private fun Questions(
                     isScrollInProgress = pagerState.isScrollInProgress,
                     questions = questions,
                     selectedChoices = selectedChoices,
-                    onUpdateAnswer = onUpdateAnswer,
+                    onUpdateChoice = onUpdateChoice,
                 )
             }
         }
@@ -277,7 +293,7 @@ private fun QuestionPage(
     isScrollInProgress: Boolean,
     questions: List<Question>,
     selectedChoices: List<String>,
-    onUpdateAnswer: (Choice) -> Unit,
+    onUpdateChoice: (Choice) -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -289,8 +305,8 @@ private fun QuestionPage(
         QuestionChoicesSelection(isScrollInProgress = isScrollInProgress,
                                  choices = questions[page].choices,
                                  selectedChoices = selectedChoices,
-                                 onUpdateAnswer = { choice ->
-                                     onUpdateAnswer(
+                                 onUpdateChoice = { choice ->
+                                     onUpdateChoice(
                                          Choice(
                                              question = questions[page], choice = choice
                                          )
@@ -320,7 +336,7 @@ private fun QuestionChoicesSelection(
     isScrollInProgress: Boolean,
     choices: List<String>,
     selectedChoices: List<String>,
-    onUpdateAnswer: (String) -> Unit,
+    onUpdateChoice: (String) -> Unit,
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -330,12 +346,12 @@ private fun QuestionChoicesSelection(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        onUpdateAnswer(choice)
+                        onUpdateChoice(choice)
                     }, verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(checked = choice in selectedChoices && isScrollInProgress.not(),
                          onCheckedChange = {
-                             onUpdateAnswer(choice)
+                             onUpdateChoice(choice)
                          })
 
                 Box(
@@ -373,8 +389,14 @@ private fun QuestionTopAppBar(
         },
         modifier = modifier.testTag("question:largeTopAppBar"),
         actions = {
-            FilledTonalButton(modifier = Modifier.padding(end = 5.dp), onClick = {}) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+            ElevatedCard(modifier = Modifier
+                .padding(end = 5.dp)
+                .animateContentSize(),
+                         onClick = {}) {
+                Row(
+                    modifier = Modifier.padding(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Icon(imageVector = SocialWorkReviewerIcons.AccessTime, contentDescription = "")
 
                     Spacer(modifier = Modifier.width(5.dp))
