@@ -2,9 +2,9 @@ package com.android.socialworkreviewer.feature.question
 
 import androidx.annotation.VisibleForTesting
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,25 +14,39 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -150,26 +164,7 @@ internal fun QuestionScreen(
     }
 }
 
-@Composable
-private fun QuestionHeader(
-    modifier: Modifier = Modifier,
-    questionIndex: Int,
-    questionSize: Int,
-    countDownTimeUntilFinished: String,
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround
-    ) {
-        QuestionCounter(
-            questionIndex = questionIndex, questionSize = questionSize
-        )
-
-        QuestionTimeCounter(countDownTimeUntilFinished = countDownTimeUntilFinished)
-    }
-
-    Spacer(modifier = Modifier.height(10.dp))
-}
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Questions(
     modifier: Modifier = Modifier,
@@ -192,6 +187,14 @@ private fun Questions(
 
     val scope = rememberCoroutineScope()
 
+    val scrollBehavior = enterAlwaysScrollBehavior()
+
+    val animatedProgress by animateFloatAsState(
+        targetValue = pagerState.currentPage + 1f / questions.size,
+        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
+        label = "animatedProgress"
+    )
+
     LaunchedEffect(key1 = true) {
         onAddQuestions(questions)
         onStartCountDownTimer()
@@ -210,7 +213,13 @@ private fun Questions(
         }
     }
 
-    Scaffold(snackbarHost = {
+    Scaffold(topBar = {
+        QuestionTopAppBar(
+            title = "Questions",
+            scrollBehavior = scrollBehavior,
+            countDownTimeUntilFinished = countDownTimeUntilFinished
+        )
+    }, snackbarHost = {
         SnackbarHost(hostState = snackbarHostState)
     }, floatingActionButton = {
         FloatingActionButton(onClick = {
@@ -233,16 +242,22 @@ private fun Questions(
                 .consumeWindowInsets(paddingValues)
                 .padding(paddingValues),
         ) {
-            QuestionHeader(
-                questionIndex = pagerState.currentPage,
-                questionSize = questions.size,
-                countDownTimeUntilFinished = countDownTimeUntilFinished,
+            LinearProgressIndicator(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(30.dp)
+                    .padding(10.dp),
+                progress = {
+                    animatedProgress
+                },
+                strokeCap = StrokeCap.Round,
             )
 
             HorizontalPager(
                 modifier = Modifier.fillMaxSize(), state = pagerState
             ) { page ->
                 QuestionPage(
+                    modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                     page = page,
                     isScrollInProgress = pagerState.isScrollInProgress,
                     questions = questions,
@@ -289,40 +304,14 @@ private fun QuestionText(modifier: Modifier = Modifier, question: String) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(20.dp)
+            .padding(horizontal = 20.dp)
     ) {
         Text(
-            text = question, style = MaterialTheme.typography.headlineLarge
+            text = question, style = MaterialTheme.typography.headlineSmall
         )
     }
-}
 
-@Composable
-private fun QuestionCounter(
-    modifier: Modifier = Modifier, questionIndex: Int, questionSize: Int
-) {
-    Column(
-        modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = "Question", style = MaterialTheme.typography.bodyMedium)
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Text(
-            text = "${questionIndex + 1}/$questionSize", style = MaterialTheme.typography.titleLarge
-        )
-    }
-}
-
-@Composable
-private fun QuestionTimeCounter(modifier: Modifier = Modifier, countDownTimeUntilFinished: String) {
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = "Time", style = MaterialTheme.typography.bodyMedium)
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Text(text = countDownTimeUntilFinished, style = MaterialTheme.typography.titleLarge)
-    }
+    Spacer(modifier = Modifier.height(10.dp))
 }
 
 @Composable
@@ -359,4 +348,41 @@ private fun QuestionChoicesSelection(
             Spacer(modifier = Modifier.height(10.dp))
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun QuestionTopAppBar(
+    modifier: Modifier = Modifier,
+    title: String,
+    scrollBehavior: TopAppBarScrollBehavior,
+    countDownTimeUntilFinished: String,
+) {
+    val gradientColors = listOf(Color(0xFF00BCD4), Color(0xFF03A9F4), Color(0xFF9C27B0))
+
+    LargeTopAppBar(
+        title = {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.headlineSmall.copy(
+                    brush = Brush.linearGradient(
+                        colors = gradientColors
+                    )
+                ),
+            )
+        },
+        modifier = modifier.testTag("question:largeTopAppBar"),
+        actions = {
+            FilledTonalButton(modifier = Modifier.padding(end = 5.dp), onClick = {}) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(imageVector = SocialWorkReviewerIcons.AccessTime, contentDescription = "")
+
+                    Spacer(modifier = Modifier.width(5.dp))
+
+                    Text(text = countDownTimeUntilFinished)
+                }
+            }
+        },
+        scrollBehavior = scrollBehavior,
+    )
 }

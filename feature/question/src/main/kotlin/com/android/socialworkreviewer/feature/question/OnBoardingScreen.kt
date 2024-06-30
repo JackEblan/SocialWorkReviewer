@@ -1,11 +1,14 @@
 package com.android.socialworkreviewer.feature.question
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -52,7 +55,7 @@ internal fun SuccessOnBoardingScreen(
     }) { paddingValues ->
         LazyVerticalGrid(
             modifier = modifier.fillMaxSize(),
-            columns = GridCells.Fixed(2),
+            columns = GridCells.Adaptive(300.dp),
             contentPadding = paddingValues,
         ) {
             items(category.questionSettings) { questionSetting ->
@@ -67,19 +70,48 @@ internal fun SuccessOnBoardingScreen(
                             .fillMaxWidth()
                             .padding(10.dp),
                     ) {
-                        Text(
-                            text = "${questionSetting.numberOfQuestions} questions",
-                            style = MaterialTheme.typography.bodyLarge
-                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(10.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ) {
+                                Icon(
+                                    modifier = Modifier.size(40.dp),
+                                    imageVector = SocialWorkReviewerIcons.Question,
+                                    contentDescription = ""
+                                )
 
-                        Spacer(modifier = Modifier.height(10.dp))
+                                Spacer(modifier = Modifier.height(10.dp))
 
-                        Text(
-                            text = "${questionSetting.minutes} minutes",
-                            style = MaterialTheme.typography.bodyLarge
-                        )
+                                Text(
+                                    text = "${questionSetting.numberOfQuestions} questions",
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
 
-                        Spacer(modifier = Modifier.height(50.dp))
+                            Column(
+                                modifier = Modifier.padding(10.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ) {
+                                Icon(
+                                    modifier = Modifier.size(40.dp),
+                                    imageVector = SocialWorkReviewerIcons.AccessTime,
+                                    contentDescription = ""
+                                )
+
+                                Spacer(modifier = Modifier.height(10.dp))
+
+                                Text(
+                                    text = "${questionSetting.minutes} minutes",
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(20.dp))
 
                         FilledTonalIconButton(
                             modifier = Modifier.align(Alignment.End),

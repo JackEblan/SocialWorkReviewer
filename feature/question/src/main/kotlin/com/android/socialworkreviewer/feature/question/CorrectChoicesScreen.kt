@@ -1,10 +1,6 @@
 package com.android.socialworkreviewer.feature.question
 
-import androidx.compose.animation.animateColor
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -16,25 +12,40 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import com.android.socialworkreviewer.core.designsystem.icon.SocialWorkReviewerIcons
 import com.android.socialworkreviewer.core.model.Question
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun CorrectChoicesScreen(
     modifier: Modifier = Modifier,
@@ -48,28 +59,49 @@ internal fun CorrectChoicesScreen(
         questions.size
     })
 
+    val scrollBehavior = enterAlwaysScrollBehavior()
+
+    val animatedProgress by animateFloatAsState(
+        targetValue = pagerState.currentPage + 1f / questions.size,
+        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
+        label = "animatedProgress"
+    )
+
     LaunchedEffect(key1 = pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { page ->
             onAddCurrentQuestion(questions[page])
         }
     }
 
-    Scaffold { paddingValues ->
+    Scaffold(topBar = {
+        CorrectChoicesTopAppBar(
+            title = if (scrollBehavior.state.collapsedFraction == 1.0f) {
+                "Answers"
+            } else {
+                "Your score is $score/${questions.size}"
+            }, scrollBehavior = scrollBehavior, lastCountDownTime = lastCountDownTime
+        )
+    }) { paddingValues ->
         Column(
             modifier = modifier
                 .fillMaxSize()
                 .consumeWindowInsets(paddingValues)
                 .padding(paddingValues),
         ) {
-            CorrectChoicesHeader(
-                answerIndex = pagerState.currentPage,
-                score = score,
-                answerSize = questions.size,
-                lastCountDownTime = lastCountDownTime
+            LinearProgressIndicator(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(30.dp)
+                    .padding(10.dp),
+                progress = {
+                    animatedProgress
+                },
+                strokeCap = StrokeCap.Round,
             )
 
             HorizontalPager(state = pagerState) { page ->
                 CorrectChoicesPage(
+                    modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                     page = page,
                     isScrollInProgress = pagerState.isScrollInProgress,
                     questions = questions,
@@ -77,93 +109,6 @@ internal fun CorrectChoicesScreen(
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun CorrectChoicesHeader(
-    modifier: Modifier = Modifier,
-    answerIndex: Int,
-    score: Int,
-    answerSize: Int,
-    lastCountDownTime: String
-) {
-    Spacer(modifier = Modifier.height(10.dp))
-
-    Row(
-        modifier = modifier.fillMaxWidth()
-    ) {
-        CorrectChoicesQuestionCounter(
-            modifier = Modifier.weight(1f), answerIndex = answerIndex, answerSize = answerSize
-        )
-
-        CorrectChoicesScoreCounter(
-            modifier = Modifier.weight(2f), score = score, answerSize = answerSize
-        )
-
-        CorrectChoicesTimeCounter(
-            modifier = Modifier.weight(1f), lastCountDownTime = lastCountDownTime
-        )
-    }
-
-    Spacer(modifier = Modifier.height(10.dp))
-}
-
-@Composable
-private fun CorrectChoicesQuestionCounter(
-    modifier: Modifier = Modifier, answerIndex: Int, answerSize: Int
-) {
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = "Answer", style = MaterialTheme.typography.bodySmall)
-
-        Spacer(modifier = Modifier.height(5.dp))
-
-        Text(
-            text = "${answerIndex + 1}/$answerSize", style = MaterialTheme.typography.bodySmall
-        )
-    }
-}
-
-@Composable
-private fun CorrectChoicesScoreCounter(
-    modifier: Modifier = Modifier, score: Int, answerSize: Int
-) {
-    val infiniteTransition = rememberInfiniteTransition(label = "infinite transition")
-
-    val animatedColor by infiniteTransition.animateColor(
-        initialValue = Color(0xFF00BCD4),
-        targetValue = Color(0xFF9C27B0),
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1000), repeatMode = RepeatMode.Reverse
-        ),
-        label = "color"
-    )
-
-    Column(
-        modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Score", style = MaterialTheme.typography.headlineSmall, color = animatedColor
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Text(
-            text = "$score/$answerSize",
-            style = MaterialTheme.typography.headlineSmall,
-            color = animatedColor
-        )
-    }
-}
-
-@Composable
-private fun CorrectChoicesTimeCounter(modifier: Modifier = Modifier, lastCountDownTime: String) {
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = "Time", style = MaterialTheme.typography.bodySmall)
-
-        Spacer(modifier = Modifier.height(5.dp))
-
-        Text(text = lastCountDownTime, style = MaterialTheme.typography.bodySmall)
     }
 }
 
@@ -197,12 +142,14 @@ private fun CorrectChoicesQuestionText(modifier: Modifier = Modifier, question: 
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(20.dp)
+            .padding(horizontal = 20.dp)
     ) {
         Text(
-            text = question, style = MaterialTheme.typography.headlineLarge
+            text = question, style = MaterialTheme.typography.headlineSmall
         )
     }
+
+    Spacer(modifier = Modifier.height(10.dp))
 }
 
 @Composable
@@ -248,4 +195,42 @@ private fun CorrectChoicesSelection(
             Spacer(modifier = Modifier.height(10.dp))
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun CorrectChoicesTopAppBar(
+    modifier: Modifier = Modifier,
+    title: String,
+    scrollBehavior: TopAppBarScrollBehavior,
+    lastCountDownTime: String,
+) {
+    val gradientColors = listOf(Color(0xFF00BCD4), Color(0xFF03A9F4), Color(0xFF9C27B0))
+
+    LargeTopAppBar(
+        title = {
+
+            Text(
+                text = title,
+                style = MaterialTheme.typography.headlineSmall.copy(
+                    brush = Brush.linearGradient(
+                        colors = gradientColors
+                    )
+                ),
+            )
+        },
+        modifier = modifier.testTag("question:largeTopAppBar"),
+        actions = {
+            FilledTonalButton(modifier = Modifier.padding(end = 5.dp), onClick = {}) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(imageVector = SocialWorkReviewerIcons.AccessTime, contentDescription = "")
+
+                    Spacer(modifier = Modifier.width(5.dp))
+
+                    Text(text = lastCountDownTime)
+                }
+            }
+        },
+        scrollBehavior = scrollBehavior,
+    )
 }
