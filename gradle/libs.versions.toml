@@ -37,6 +37,7 @@ protobuf = "4.26.1"
 protobufPlugin = "0.9.4"
 robolectric = "4.12.2"
 roborazzi = "1.15.0"
+room = "2.6.1"
 
 [libraries]
 accompanist-testharness = { group = "com.google.accompanist", name = "accompanist-testharness", version.ref = "accompanist" }
@@ -94,12 +95,17 @@ protobuf-kotlin-lite = { group = "com.google.protobuf", name = "protobuf-kotlin-
 protobuf-protoc = { group = "com.google.protobuf", name = "protoc", version.ref = "protobuf" }
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", version.ref = "roborazzi" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
 
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
 compose-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
+room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "room" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
@@ -115,6 +121,7 @@ kotlin-noarg = { id = "org.jetbrains.kotlin.plugin.noarg", version.ref = "noarg"
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
+room = { id = "androidx.room", version.ref = "room" }
 
 # Plugins defined by this project
 com-android-socialworkreviewer-application = { id = "com.android.socialworkreviewer.application", version = "unspecified" }
@@ -127,4 +134,5 @@ com-android-socialworkreviewer-libraryJacoco = { id = "com.android.socialworkrev
 com-android-socialworkreviewer-feature = { id = "com.android.socialworkreviewer.feature", version = "unspecified" }
 com-android-socialworkreviewer-hilt = { id = "com.android.socialworkreviewer.hilt", version = "unspecified" }
 com-android-socialworkreviewer-lint = { id = "com.android.socialworkreviewer.lint", version = "unspecified" }
+com-android-socialworkreviewer-room = { id = "com.android.socialworkreviewer.room", version = "unspecified" }
 com-android-socialworkreviewer-test = { id = "com.android.socialworkreviewer.test", version = "unspecified" }

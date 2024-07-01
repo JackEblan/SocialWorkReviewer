@@ -17,7 +17,8 @@ internal class DefaultCategoryRepository @Inject constructor(private val categor
             }
     }
 
-    override suspend fun getCategory(id: String): Category? {
-        return categoryDataSource.getCategoryDocument(id = id)?.asExternalModel()
+    override suspend fun getCategory(categoryId: String): Category? {
+        return categoryDataSource.getCategoryDocument(categoryDocumentId = categoryId)
+            ?.asExternalModel()
     }
 }

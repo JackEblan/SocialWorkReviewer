@@ -17,8 +17,10 @@
  */
 package com.android.socialworkreviewer.core.data.di
 
+import com.android.socialworkreviewer.core.data.repository.AverageRepository
 import com.android.socialworkreviewer.core.data.repository.CategoryRepository
 import com.android.socialworkreviewer.core.data.repository.ChoiceRepository
+import com.android.socialworkreviewer.core.data.repository.DefaultAverageRepository
 import com.android.socialworkreviewer.core.data.repository.DefaultCategoryRepository
 import com.android.socialworkreviewer.core.data.repository.DefaultChoiceRepository
 import com.android.socialworkreviewer.core.data.repository.DefaultQuestionRepository
@@ -49,4 +51,8 @@ abstract class DataModule {
     @Binds
     @Singleton
     internal abstract fun userDataRepository(impl: DefaultUserDataRepository): UserDataRepository
+
+    @Binds
+    @Singleton
+    internal abstract fun averageRepository(impl: DefaultAverageRepository): AverageRepository
 }

@@ -4,7 +4,8 @@ import com.android.socialworkreviewer.core.model.Category
 import com.android.socialworkreviewer.core.model.Question
 
 sealed interface QuestionUiState {
-    data class Questions(val questions: List<Question>) : QuestionUiState
+    data class Questions(val questionSettingIndex: Int, val questions: List<Question>) :
+        QuestionUiState
 
     data object Loading : QuestionUiState
 

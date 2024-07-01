@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -48,7 +48,7 @@ internal fun LoadingOnBoardingScreen(
 internal fun SuccessOnBoardingScreen(
     modifier: Modifier = Modifier,
     category: Category,
-    onGetQuestions: (Int, Int) -> Unit,
+    onGetQuestions: (Int, QuestionSetting) -> Unit,
     onGetQuickQuestions: () -> Unit,
 ) {
 
@@ -64,10 +64,10 @@ internal fun SuccessOnBoardingScreen(
             columns = GridCells.Adaptive(300.dp),
             contentPadding = paddingValues,
         ) {
-            items(category.questionSettings) { questionSetting ->
+            itemsIndexed(category.questionSettings) { index, questionSetting ->
                 ElevatedCard(modifier = Modifier.padding(10.dp), onClick = {
                     onGetQuestions(
-                        questionSetting.numberOfQuestions, questionSetting.minutes
+                        index, questionSetting
                     )
 
                 }) {

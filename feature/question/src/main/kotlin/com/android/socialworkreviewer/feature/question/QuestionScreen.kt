@@ -54,6 +54,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.socialworkreviewer.core.designsystem.icon.SocialWorkReviewerIcons
 import com.android.socialworkreviewer.core.model.Choice
 import com.android.socialworkreviewer.core.model.Question
+import com.android.socialworkreviewer.core.model.QuestionSetting
 import kotlinx.coroutines.launch
 
 @Composable
@@ -115,8 +116,8 @@ internal fun QuestionScreen(
     onCancelCountDownTimer: () -> Unit,
     onAddCurrentQuestion: (Question) -> Unit,
     onUpdateChoice: (Choice) -> Unit,
-    onShowCorrectChoices: () -> Unit,
-    onGetQuestions: (Int, Int) -> Unit,
+    onShowCorrectChoices: (Int) -> Unit,
+    onGetQuestions: (Int, QuestionSetting) -> Unit,
     onGetQuickQuestions: () -> Unit,
 ) {
     Crossfade(modifier = modifier, targetState = questionUiState, label = "") { state ->
@@ -125,7 +126,9 @@ internal fun QuestionScreen(
                 if (state.questions.isNotEmpty()) {
                     Questions(
                         snackbarHostState = snackbarHostState,
-                        questions = state.questions, selectedChoices = selectedChoices,
+                        questionSettingIndex = state.questionSettingIndex,
+                        questions = state.questions,
+                        selectedChoices = selectedChoices,
                         questionsWithSelectedChoicesSize = questionsWithSelectedChoicesSize,
                         countDownTimerFinished = countDownTimerFinished,
                         countDownTimeUntilFinished = countDownTimeUntilFinished,
@@ -185,6 +188,7 @@ internal fun QuestionScreen(
 private fun Questions(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
+    questionSettingIndex: Int,
     questions: List<Question>,
     selectedChoices: List<String>,
     questionsWithSelectedChoicesSize: Int,
@@ -195,7 +199,7 @@ private fun Questions(
     onCancelCountDownTimer: () -> Unit,
     onAddCurrentQuestion: (Question) -> Unit,
     onUpdateChoice: (Choice) -> Unit,
-    onShowCorrectChoices: () -> Unit,
+    onShowCorrectChoices: (Int) -> Unit,
 ) {
     val pagerState = rememberPagerState(pageCount = {
         questions.size
@@ -219,7 +223,7 @@ private fun Questions(
     LaunchedEffect(key1 = countDownTimerFinished) {
         if (countDownTimerFinished) {
             onCancelCountDownTimer()
-            onShowCorrectChoices()
+            onShowCorrectChoices(questionSettingIndex)
         }
     }
 
@@ -244,7 +248,7 @@ private fun Questions(
                     snackbarHostState.showSnackbar("Please answer all the questions")
                 }
             } else {
-                onShowCorrectChoices()
+                onShowCorrectChoices(questionSettingIndex)
             }
         }) {
             Icon(

@@ -4,11 +4,14 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.android.socialworkreviewer.core.data.repository.AverageRepository
 import com.android.socialworkreviewer.core.data.repository.CategoryRepository
 import com.android.socialworkreviewer.core.data.repository.ChoiceRepository
 import com.android.socialworkreviewer.core.domain.GetQuestionsUseCase
+import com.android.socialworkreviewer.core.model.Average
 import com.android.socialworkreviewer.core.model.Choice
 import com.android.socialworkreviewer.core.model.Question
+import com.android.socialworkreviewer.core.model.QuestionSetting
 import com.android.socialworkreviewer.feature.question.navigation.QuestionRouteData
 import com.android.socialworkreviewer.framework.countdowntimer.CountDownTimerWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,6 +33,7 @@ class QuestionViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val choiceRepository: ChoiceRepository,
     private val categoryRepository: CategoryRepository,
+    private val averageRepository: AverageRepository,
     private val countDownTimerWrapper: CountDownTimerWrapper,
     private val getQuestionsUseCase: GetQuestionsUseCase,
 ) : ViewModel() {
@@ -92,9 +96,9 @@ class QuestionViewModel @Inject constructor(
         initialValue = false
     )
 
-    fun getQuestions(numberOfQuestions: Int, minutes: Int) {
+    fun getQuestions(questionSettingIndex: Int, questionSetting: QuestionSetting) {
         viewModelScope.launch {
-            _countDownTimeSelected.update { minutes }
+            _countDownTimeSelected.update { questionSetting.minutes }
 
             _questionUiState.update {
                 QuestionUiState.Loading
@@ -102,8 +106,9 @@ class QuestionViewModel @Inject constructor(
 
             _questionUiState.update {
                 QuestionUiState.Questions(
+                    questionSettingIndex = questionSettingIndex,
                     questions = getQuestionsUseCase(
-                        id = id, numberOfQuestions = numberOfQuestions
+                        id = id, numberOfQuestions = questionSetting.numberOfQuestions
                     ),
                 )
             }
@@ -140,7 +145,7 @@ class QuestionViewModel @Inject constructor(
         }
     }
 
-    fun showCorrectChoices() {
+    fun showCorrectChoices(questionSettingIndex: Int) {
         viewModelScope.launch {
             _questionUiState.update {
                 QuestionUiState.ShowCorrectChoices(
@@ -148,6 +153,15 @@ class QuestionViewModel @Inject constructor(
                     lastCountDownTime = countDownTimeUntilFinished.first()
                 )
             }
+
+            averageRepository.upsertAverage(
+                Average(
+                    questionSettingIndex = questionSettingIndex,
+                    score = scoreCount.value,
+                    numberOfQuestions = choiceRepository.questions.size,
+                    categoryId = id
+                )
+            )
         }
     }
 
@@ -158,7 +172,7 @@ class QuestionViewModel @Inject constructor(
             }
 
             _questionUiState.update {
-                QuestionUiState.OnBoarding(categoryRepository.getCategory(id = id))
+                QuestionUiState.OnBoarding(categoryRepository.getCategory(categoryId = id))
             }
         }
     }

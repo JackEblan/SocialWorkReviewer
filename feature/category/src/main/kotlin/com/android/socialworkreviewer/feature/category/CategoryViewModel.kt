@@ -2,7 +2,7 @@ package com.android.socialworkreviewer.feature.category
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.socialworkreviewer.core.data.repository.CategoryRepository
+import com.android.socialworkreviewer.core.domain.GetCategoriesAndAverageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -14,18 +14,18 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
-class CategoryViewModel @Inject constructor(categoryRepository: CategoryRepository) :
+class CategoryViewModel @Inject constructor(getCategoriesAndAverageUseCase: GetCategoriesAndAverageUseCase) :
     ViewModel() {
 
     private val _categoryErrorMessage = MutableStateFlow<String?>(null)
 
     val categoryErrorMessage = _categoryErrorMessage.asStateFlow()
 
-    val categoryUiState = categoryRepository.getCategories()
-        .catch { throwable -> _categoryErrorMessage.update { throwable.message } }
-        .map(CategoryUiState::Success).stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = CategoryUiState.Loading
-        )
+    val categoryUiState =
+        getCategoriesAndAverageUseCase().catch { throwable -> _categoryErrorMessage.update { throwable.message } }
+            .map(CategoryUiState::Success).stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = CategoryUiState.Loading
+            )
 }

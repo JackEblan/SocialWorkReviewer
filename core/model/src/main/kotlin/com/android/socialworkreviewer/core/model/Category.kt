@@ -5,5 +5,6 @@ data class Category(
     val title: String,
     val description: String,
     val imageUrl: String,
+    val average: Double = 0.0,
     val questionSettings: List<QuestionSetting>,
 )

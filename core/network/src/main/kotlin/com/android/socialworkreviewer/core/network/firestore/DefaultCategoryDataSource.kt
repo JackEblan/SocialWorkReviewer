@@ -24,9 +24,9 @@ internal class DefaultCategoryDataSource @Inject constructor(
             .mapNotNull { it.toObjects<CategoryDocument>() }
     }
 
-    override suspend fun getCategoryDocument(id: String): CategoryDocument? {
+    override suspend fun getCategoryDocument(categoryDocumentId: String): CategoryDocument? {
         return withContext(ioDispatcher) {
-            firestore.collection(CATEGORIES_COLLECTION).document(id).get().await()
+            firestore.collection(CATEGORIES_COLLECTION).document(categoryDocumentId).get().await()
                 .toObject<CategoryDocument>()
         }
     }

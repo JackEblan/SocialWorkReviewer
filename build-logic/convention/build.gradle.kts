@@ -42,6 +42,7 @@ dependencies {
     compileOnly(libs.compose.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
     compileOnly(libs.ksp.gradlePlugin)
+    compileOnly(libs.room.gradlePlugin)
 }
 
 tasks {
@@ -96,6 +97,11 @@ gradlePlugin {
         register("androidLint") {
             id = "com.android.socialworkreviewer.lint"
             implementationClass = "AndroidLintConventionPlugin"
+        }
+
+        register("androidRoom") {
+            id = "com.android.socialworkreviewer.room"
+            implementationClass = "AndroidRoomConventionPlugin"
         }
 
         register("androidTest") {

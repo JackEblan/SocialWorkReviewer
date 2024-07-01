@@ -20,20 +20,24 @@ plugins {
     alias(libs.plugins.com.android.socialworkreviewer.library)
     alias(libs.plugins.com.android.socialworkreviewer.libraryJacoco)
     alias(libs.plugins.com.android.socialworkreviewer.hilt)
+    alias(libs.plugins.com.android.socialworkreviewer.room)
 }
 
 android {
-    namespace = "com.android.socialworkreviewer.core.data"
+    defaultConfig {
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    namespace = "com.android.socialworkreviewer.core.database"
+
+    sourceSets {
+        getByName("androidTest").assets.srcDir("$projectDir/schemas")
+    }
 }
 
 dependencies {
-    implementation(projects.core.common)
-    implementation(projects.core.database)
-    implementation(projects.core.datastore)
     implementation(projects.core.model)
-    implementation(projects.core.network)
 
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(projects.core.datastoreTest)
-    testImplementation(projects.core.testing)
+    androidTestImplementation(libs.room.testing)
+    androidTestImplementation(projects.core.testing)
 }
