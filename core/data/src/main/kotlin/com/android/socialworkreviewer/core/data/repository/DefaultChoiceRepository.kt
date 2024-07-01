@@ -15,25 +15,26 @@ internal class DefaultChoiceRepository @Inject constructor(
     @Dispatcher(Default) private val defaultDispatcher: CoroutineDispatcher
 ) : ChoiceRepository {
 
-    private val _choicesFlow = MutableSharedFlow<List<Choice>>(
+    private val _selectedChoicesFlow = MutableSharedFlow<List<Choice>>(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
 
-    private val _answeredQuestionsFlow = MutableSharedFlow<Map<Question, List<String>>>(
+    private val _questionsWithSelectedChoicesFlow = MutableSharedFlow<Map<Question, List<String>>>(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
 
     private var _questions = emptyList<Question>()
 
-    private val selectedChoices get() = _choicesFlow.replayCache.firstOrNull() ?: emptyList()
+    private val selectedChoices
+        get() = _selectedChoicesFlow.replayCache.firstOrNull() ?: emptyList()
 
-    override val choicesFlow = _choicesFlow.asSharedFlow()
+    override val selectedChoicesFlow = _selectedChoicesFlow.asSharedFlow()
 
     override val questions get() = _questions
 
-    override val answeredQuestionsFlow = _answeredQuestionsFlow.asSharedFlow()
+    override val questionsWithSelectedChoicesFlow = _questionsWithSelectedChoicesFlow.asSharedFlow()
 
     override fun addQuestions(value: List<Question>) {
         _questions = value
@@ -41,15 +42,15 @@ internal class DefaultChoiceRepository @Inject constructor(
 
     override suspend fun updateChoice(choice: Choice) {
         if (choice in selectedChoices) {
-            _choicesFlow.emit(selectedChoices - choice)
+            _selectedChoicesFlow.emit(selectedChoices - choice)
         } else {
-            _choicesFlow.emit(selectedChoices + choice)
+            _selectedChoicesFlow.emit(selectedChoices + choice)
         }
 
-        val answeredQuestions = withContext(defaultDispatcher) {
+        val questionsWithSelectedChoices = withContext(defaultDispatcher) {
             selectedChoices.groupBy({ it.question }, { it.choice })
         }
 
-        _answeredQuestionsFlow.emit(answeredQuestions)
+        _questionsWithSelectedChoicesFlow.emit(questionsWithSelectedChoices)
     }
 }

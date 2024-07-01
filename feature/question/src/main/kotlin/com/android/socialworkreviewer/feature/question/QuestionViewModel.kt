@@ -45,16 +45,19 @@ class QuestionViewModel @Inject constructor(
 
     private val _currentQuestion = MutableStateFlow<Question?>(null)
 
-    val scoreCount = choiceRepository.answeredQuestionsFlow.map { answeredQuestions ->
-        answeredQuestions.count {
-            it.value.containsAll(it.key.correctChoices)
-        }
-    }.stateIn(
-        scope = viewModelScope, started = SharingStarted.WhileSubscribed(5_000), initialValue = 0
-    )
+    val scoreCount =
+        choiceRepository.questionsWithSelectedChoicesFlow.map { questionWithSelectedChoicesFlow ->
+            questionWithSelectedChoicesFlow.count {
+                it.value.containsAll(it.key.correctChoices)
+            }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = 0
+        )
 
-    val answeredQuestionsCount =
-        choiceRepository.answeredQuestionsFlow.map { answeredQuestions -> answeredQuestions.size }
+    val questionsWithSelectedChoicesSize =
+        choiceRepository.questionsWithSelectedChoicesFlow.map { questionWithSelectedChoicesFlow -> questionWithSelectedChoicesFlow.size }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000),
@@ -62,9 +65,9 @@ class QuestionViewModel @Inject constructor(
             )
 
     val selectedChoices = combine(
-        _currentQuestion, choiceRepository.choicesFlow
-    ) { question, answer ->
-        answer.filter { it.question == question }.map { it.choice }
+        _currentQuestion, choiceRepository.selectedChoicesFlow
+    ) { question, choices ->
+        choices.filter { it.question == question }.map { it.choice }
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),

@@ -66,8 +66,8 @@ internal fun QuestionRoute(
 
     val scoreCount = viewModel.scoreCount.collectAsStateWithLifecycle().value
 
-    val answeredQuestionsCount =
-        viewModel.answeredQuestionsCount.collectAsStateWithLifecycle().value
+    val questionsWithSelectedChoicesSize =
+        viewModel.questionsWithSelectedChoicesSize.collectAsStateWithLifecycle().value
 
     val countDownTimeUntilFinished =
         viewModel.countDownTimeUntilFinished.collectAsStateWithLifecycle().value
@@ -84,7 +84,7 @@ internal fun QuestionRoute(
         selectedChoices = selectedChoices,
         scoreCount = scoreCount,
         countDownTimeUntilFinished = countDownTimeUntilFinished,
-        answeredQuestionsCount = answeredQuestionsCount,
+        questionsWithSelectedChoicesSize = questionsWithSelectedChoicesSize,
         countDownTimerFinished = countDownTimerFinished,
         onGetCategory = viewModel::getCategory,
         onAddQuestions = viewModel::addQuestions,
@@ -92,7 +92,7 @@ internal fun QuestionRoute(
         onCancelCountDownTimer = viewModel::cancelCountDownTimer,
         onAddCurrentQuestion = viewModel::addCurrentQuestion,
         onUpdateChoice = viewModel::updateChoice,
-        onShowAnswers = viewModel::showCorrectChoices,
+        onShowCorrectChoices = viewModel::showCorrectChoices,
         onGetQuestions = viewModel::getQuestions,
         onGetQuickQuestions = viewModel::getQuickQuestions
     )
@@ -107,7 +107,7 @@ internal fun QuestionScreen(
     selectedChoices: List<String>,
     scoreCount: Int,
     countDownTimeUntilFinished: String,
-    answeredQuestionsCount: Int,
+    questionsWithSelectedChoicesSize: Int,
     countDownTimerFinished: Boolean,
     onGetCategory: () -> Unit,
     onAddQuestions: (List<Question>) -> Unit,
@@ -115,7 +115,7 @@ internal fun QuestionScreen(
     onCancelCountDownTimer: () -> Unit,
     onAddCurrentQuestion: (Question) -> Unit,
     onUpdateChoice: (Choice) -> Unit,
-    onShowAnswers: () -> Unit,
+    onShowCorrectChoices: () -> Unit,
     onGetQuestions: (Int, Int) -> Unit,
     onGetQuickQuestions: () -> Unit,
 ) {
@@ -126,7 +126,7 @@ internal fun QuestionScreen(
                     Questions(
                         snackbarHostState = snackbarHostState,
                         questions = state.questions, selectedChoices = selectedChoices,
-                        answeredQuestionsCount = answeredQuestionsCount,
+                        questionsWithSelectedChoicesSize = questionsWithSelectedChoicesSize,
                         countDownTimerFinished = countDownTimerFinished,
                         countDownTimeUntilFinished = countDownTimeUntilFinished,
                         onAddQuestions = onAddQuestions,
@@ -134,7 +134,7 @@ internal fun QuestionScreen(
                         onCancelCountDownTimer = onCancelCountDownTimer,
                         onAddCurrentQuestion = onAddCurrentQuestion,
                         onUpdateChoice = onUpdateChoice,
-                        onShowAnswers = onShowAnswers,
+                        onShowCorrectChoices = onShowCorrectChoices,
                     )
                 }
             }
@@ -187,7 +187,7 @@ private fun Questions(
     snackbarHostState: SnackbarHostState,
     questions: List<Question>,
     selectedChoices: List<String>,
-    answeredQuestionsCount: Int,
+    questionsWithSelectedChoicesSize: Int,
     countDownTimerFinished: Boolean,
     countDownTimeUntilFinished: String,
     onAddQuestions: (List<Question>) -> Unit,
@@ -195,7 +195,7 @@ private fun Questions(
     onCancelCountDownTimer: () -> Unit,
     onAddCurrentQuestion: (Question) -> Unit,
     onUpdateChoice: (Choice) -> Unit,
-    onShowAnswers: () -> Unit,
+    onShowCorrectChoices: () -> Unit,
 ) {
     val pagerState = rememberPagerState(pageCount = {
         questions.size
@@ -219,7 +219,7 @@ private fun Questions(
     LaunchedEffect(key1 = countDownTimerFinished) {
         if (countDownTimerFinished) {
             onCancelCountDownTimer()
-            onShowAnswers()
+            onShowCorrectChoices()
         }
     }
 
@@ -239,12 +239,12 @@ private fun Questions(
         SnackbarHost(hostState = snackbarHostState)
     }, floatingActionButton = {
         FloatingActionButton(onClick = {
-            if (answeredQuestionsCount < questions.size) {
+            if (questionsWithSelectedChoicesSize < questions.size) {
                 scope.launch {
                     snackbarHostState.showSnackbar("Please answer all the questions")
                 }
             } else {
-                onShowAnswers()
+                onShowCorrectChoices()
             }
         }) {
             Icon(

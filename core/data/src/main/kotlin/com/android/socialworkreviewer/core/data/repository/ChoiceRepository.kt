@@ -5,9 +5,9 @@ import com.android.socialworkreviewer.core.model.Question
 import kotlinx.coroutines.flow.Flow
 
 interface ChoiceRepository {
-    val choicesFlow: Flow<List<Choice>>
+    val selectedChoicesFlow: Flow<List<Choice>>
 
-    val answeredQuestionsFlow: Flow<Map<Question, List<String>>>
+    val questionsWithSelectedChoicesFlow: Flow<Map<Question, List<String>>>
 
     val questions: List<Question>
 
