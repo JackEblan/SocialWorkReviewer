@@ -20,7 +20,9 @@ package com.android.socialworkreviewer.core.network.di
 
 import com.android.socialworkreviewer.core.network.firestore.CategoryDataSource
 import com.android.socialworkreviewer.core.network.firestore.DefaultCategoryDataSource
+import com.android.socialworkreviewer.core.network.firestore.DefaultMessageDataSource
 import com.android.socialworkreviewer.core.network.firestore.DefaultQuestionDataSource
+import com.android.socialworkreviewer.core.network.firestore.MessageDataSource
 import com.android.socialworkreviewer.core.network.firestore.QuestionDataSource
 import dagger.Binds
 import dagger.Module
@@ -39,4 +41,8 @@ internal interface NetworkModule {
     @Binds
     @Singleton
     fun questionDataSource(impl: DefaultQuestionDataSource): QuestionDataSource
+
+    @Binds
+    @Singleton
+    fun messageDataSource(impl: DefaultMessageDataSource): MessageDataSource
 }

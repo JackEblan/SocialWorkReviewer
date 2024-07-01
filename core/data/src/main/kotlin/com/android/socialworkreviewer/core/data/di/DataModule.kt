@@ -23,8 +23,10 @@ import com.android.socialworkreviewer.core.data.repository.ChoiceRepository
 import com.android.socialworkreviewer.core.data.repository.DefaultAverageRepository
 import com.android.socialworkreviewer.core.data.repository.DefaultCategoryRepository
 import com.android.socialworkreviewer.core.data.repository.DefaultChoiceRepository
+import com.android.socialworkreviewer.core.data.repository.DefaultMessageRepository
 import com.android.socialworkreviewer.core.data.repository.DefaultQuestionRepository
 import com.android.socialworkreviewer.core.data.repository.DefaultUserDataRepository
+import com.android.socialworkreviewer.core.data.repository.MessageRepository
 import com.android.socialworkreviewer.core.data.repository.QuestionRepository
 import com.android.socialworkreviewer.core.data.repository.UserDataRepository
 import dagger.Binds
@@ -55,4 +57,8 @@ abstract class DataModule {
     @Binds
     @Singleton
     internal abstract fun averageRepository(impl: DefaultAverageRepository): AverageRepository
+
+    @Binds
+    @Singleton
+    internal abstract fun messageRepository(impl: DefaultMessageRepository): MessageRepository
 }

@@ -48,6 +48,7 @@ import com.android.socialworkreviewer.core.designsystem.component.DynamicAsyncIm
 import com.android.socialworkreviewer.core.designsystem.component.SocialWorkReviewerLoadingWheel
 import com.android.socialworkreviewer.core.designsystem.icon.SocialWorkReviewerIcons
 import com.android.socialworkreviewer.core.model.Category
+import com.android.socialworkreviewer.core.model.Message
 import kotlin.math.roundToInt
 
 @Composable
@@ -59,7 +60,9 @@ internal fun CategoryRoute(
 ) {
     val categoryUiState = viewModel.categoryUiState.collectAsStateWithLifecycle().value
 
-    val categoryErrorMessage = viewModel.categoryErrorMessage.collectAsStateWithLifecycle().value
+    val categoryError = viewModel.categoryError.collectAsStateWithLifecycle().value
+
+    val message = viewModel.message.collectAsStateWithLifecycle().value
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -67,7 +70,8 @@ internal fun CategoryRoute(
         modifier = modifier,
         snackbarHostState = snackbarHostState,
         categoryUiState = categoryUiState,
-        categoryErrorMessage = categoryErrorMessage,
+        categoryError = categoryError,
+        message = message,
         onCategoryClick = onCategoryClick,
         onSettingsClick = onSettingsClick,
     )
@@ -80,14 +84,26 @@ internal fun CategoryScreen(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
     categoryUiState: CategoryUiState,
-    categoryErrorMessage: String?,
+    categoryError: String?,
+    message: Message?,
     onCategoryClick: (String) -> Unit,
     onSettingsClick: () -> Unit,
 ) {
-    LaunchedEffect(key1 = categoryErrorMessage) {
-        if (categoryErrorMessage != null) {
+    LaunchedEffect(key1 = categoryError) {
+        if (categoryError != null) {
             snackbarHostState.showSnackbar(
-                message = categoryErrorMessage, duration = SnackbarDuration.Indefinite
+                message = categoryError, duration = SnackbarDuration.Indefinite
+            )
+        }
+    }
+
+    LaunchedEffect(key1 = message) {
+        if (message != null) {
+            snackbarHostState.showSnackbar(
+                actionLabel = "Dismiss",
+                message = message.message,
+                duration = SnackbarDuration.Indefinite,
+                withDismissAction = true
             )
         }
     }
@@ -246,6 +262,7 @@ fun AverageCircularProgressIndicator(modifier: Modifier = Modifier, average: Dou
             modifier = Modifier.fillMaxSize(),
             progress = { animatedProgress },
             strokeCap = StrokeCap.Round,
+            trackColor = ProgressIndicatorDefaults.linearTrackColor,
         )
     }
 }

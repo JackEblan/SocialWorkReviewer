@@ -127,6 +127,10 @@ private fun CorrectChoicesPage(
     ) {
         CorrectChoicesQuestionText(question = questions[page].question)
 
+        ChoicesType(
+            numberOfChoices = questions[page].correctChoices.size
+        )
+
         CorrectChoicesSelection(
             isScrollInProgress = isScrollInProgress,
             choices = questions[page].choices,

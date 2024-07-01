@@ -306,6 +306,10 @@ private fun QuestionPage(
     ) {
         QuestionText(question = questions[page].question)
 
+        ChoicesType(
+            numberOfChoices = questions[page].correctChoices.size
+        )
+
         QuestionChoicesSelection(isScrollInProgress = isScrollInProgress,
                                  choices = questions[page].choices,
                                  selectedChoices = selectedChoices,
@@ -328,6 +332,29 @@ private fun QuestionText(modifier: Modifier = Modifier, question: String) {
     ) {
         Text(
             text = question, style = MaterialTheme.typography.headlineSmall
+        )
+    }
+
+    Spacer(modifier = Modifier.height(10.dp))
+}
+
+@Composable
+internal fun ChoicesType(
+    modifier: Modifier = Modifier, numberOfChoices: Int
+) {
+    val choicesType = if (numberOfChoices > 1) "Multiple Choices" else "Single Choice"
+
+    Spacer(modifier = Modifier.height(10.dp))
+
+    ElevatedCard(
+        modifier = modifier
+            .padding(horizontal = 10.dp)
+            .animateContentSize()
+    ) {
+        Text(
+            modifier = Modifier.padding(5.dp),
+            text = choicesType,
+            style = MaterialTheme.typography.bodySmall
         )
     }
 
@@ -393,10 +420,11 @@ private fun QuestionTopAppBar(
         },
         modifier = modifier.testTag("question:largeTopAppBar"),
         actions = {
-            ElevatedCard(modifier = Modifier
-                .padding(end = 5.dp)
-                .animateContentSize(),
-                         onClick = {}) {
+            ElevatedCard(
+                modifier = Modifier
+                    .padding(end = 5.dp)
+                    .animateContentSize()
+            ) {
                 Row(
                     modifier = Modifier.padding(8.dp),
                     verticalAlignment = Alignment.CenterVertically
