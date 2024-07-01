@@ -72,6 +72,7 @@ internal fun CategoryRoute(
         categoryUiState = categoryUiState,
         categoryError = categoryError,
         message = message,
+        onGetMessage = viewModel::getMessage,
         onCategoryClick = onCategoryClick,
         onSettingsClick = onSettingsClick,
     )
@@ -86,9 +87,14 @@ internal fun CategoryScreen(
     categoryUiState: CategoryUiState,
     categoryError: String?,
     message: Message?,
+    onGetMessage: () -> Unit,
     onCategoryClick: (String) -> Unit,
     onSettingsClick: () -> Unit,
 ) {
+    LaunchedEffect(key1 = true) {
+        onGetMessage()
+    }
+
     LaunchedEffect(key1 = categoryError) {
         if (categoryError != null) {
             snackbarHostState.showSnackbar(
@@ -100,10 +106,8 @@ internal fun CategoryScreen(
     LaunchedEffect(key1 = message) {
         if (message != null) {
             snackbarHostState.showSnackbar(
-                actionLabel = "Dismiss",
                 message = message.message,
-                duration = SnackbarDuration.Indefinite,
-                withDismissAction = true
+                duration = SnackbarDuration.Short,
             )
         }
     }

@@ -2,6 +2,7 @@ package com.android.socialworkreviewer.core.network.model
 
 import com.android.socialworkreviewer.core.model.Message
 
+@NoArg
 data class MessageDocument(
     val title: String,
     val message: String,

@@ -138,6 +138,10 @@ private fun QuickQuestionPage(
     ) {
         QuickQuestionText(question = questions[page].question)
 
+        ChoicesType(
+            numberOfChoices = questions[page].correctChoices.size
+        )
+
         QuickQuestionChoicesSelection(isScrollInProgress = isScrollInProgress,
                                       choices = questions[page].choices,
                                       correctChoices = questions[page].correctChoices,

@@ -26,8 +26,15 @@ internal class DefaultCategoryDataSource @Inject constructor(
 
     override suspend fun getCategoryDocument(categoryDocumentId: String): CategoryDocument? {
         return withContext(ioDispatcher) {
-            firestore.collection(CATEGORIES_COLLECTION).document(categoryDocumentId).get().await()
-                .toObject<CategoryDocument>()
+            val documentSnapshot =
+                firestore.collection(CATEGORIES_COLLECTION).document(categoryDocumentId).get()
+                    .await()
+
+            try {
+                documentSnapshot.toObject<CategoryDocument>()
+            } catch (e: RuntimeException) {
+                null
+            }
         }
     }
 }

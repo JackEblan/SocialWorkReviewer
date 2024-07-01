@@ -18,8 +18,14 @@ internal class DefaultMessageDataSource @Inject constructor(
 ) : MessageDataSource {
     override suspend fun getMessage(): MessageDocument? {
         return withContext(ioDispatcher) {
-            firestore.collection(MESSAGES_COLLECTION).document(MESSAGES_DOCUMENT).get().await()
-                .toObject<MessageDocument>()
+            val documentSnapshot =
+                firestore.collection(MESSAGES_COLLECTION).document(MESSAGES_DOCUMENT).get().await()
+
+            try {
+                documentSnapshot.toObject<MessageDocument>()
+            } catch (e: RuntimeException) {
+                null
+            }
         }
     }
 }
