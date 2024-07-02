@@ -1,8 +1,10 @@
 package com.android.socialworkreviewer.core.network.model
 
+import androidx.annotation.Keep
 import com.android.socialworkreviewer.core.model.Category
 
 @NoArg
+@Keep
 data class CategoryDocument(
     val id: String,
     val title: String,
