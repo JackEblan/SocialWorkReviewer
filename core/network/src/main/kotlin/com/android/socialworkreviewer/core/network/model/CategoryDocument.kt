@@ -6,19 +6,20 @@ import com.android.socialworkreviewer.core.model.Category
 @NoArg
 @Keep
 data class CategoryDocument(
-    val id: String,
-    val title: String,
-    val description: String,
-    val imageUrl: String,
-    val questionSettings: List<QuestionSettingDocument>,
+    val id: String?,
+    val title: String?,
+    val description: String?,
+    val imageUrl: String?,
+    val questionSettings: List<QuestionSettingDocument>?,
 )
 
 fun CategoryDocument.asExternalModel(): Category {
     return Category(
-        id = id,
-        title = title,
-        description = description,
-        imageUrl = imageUrl,
-        questionSettings = questionSettings.map(QuestionSettingDocument::asExternalModel)
+        id = id.toString(),
+        title = title.toString(),
+        description = description.toString(),
+        imageUrl = imageUrl.toString(),
+        questionSettings = questionSettings?.map(QuestionSettingDocument::asExternalModel)
+            ?: emptyList()
     )
 }

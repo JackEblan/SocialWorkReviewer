@@ -7,7 +7,6 @@ import com.android.socialworkreviewer.core.network.model.CategoryDocument
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.snapshots
 import com.google.firebase.firestore.toObject
-import com.google.firebase.firestore.toObjects
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
@@ -21,7 +20,15 @@ internal class DefaultCategoryDataSource @Inject constructor(
 ) : CategoryDataSource {
     override fun getCategoryDocuments(): Flow<List<CategoryDocument>> {
         return firestore.collection(CATEGORIES_COLLECTION).snapshots()
-            .mapNotNull { it.toObjects<CategoryDocument>() }
+            .mapNotNull { querySnapshots ->
+                querySnapshots.mapNotNull { queryDocumentSnapshot ->
+                    try {
+                        queryDocumentSnapshot.toObject()
+                    } catch (e: RuntimeException) {
+                        null
+                    }
+                }
+            }
     }
 
     override suspend fun getCategoryDocument(categoryDocumentId: String): CategoryDocument? {

@@ -156,7 +156,7 @@ internal fun QuestionScreen(
             }
 
             is QuestionUiState.OnBoarding -> {
-                if (state.category != null) {
+                if (state.category != null && state.category.questionSettings.isNotEmpty()) {
                     SuccessOnBoardingScreen(
                         category = state.category,
                         onGetQuestions = onGetQuestions,
@@ -170,14 +170,16 @@ internal fun QuestionScreen(
             }
 
             is QuestionUiState.QuickQuestions -> {
-                QuickQuestionsScreen(
-                    snackbarHostState = snackbarHostState,
-                    questions = state.questions,
-                    selectedChoices = selectedChoices,
-                    onAddQuestions = onAddQuestions,
-                    onAddCurrentQuestion = onAddCurrentQuestion,
-                    onUpdateChoice = onUpdateChoice,
-                )
+                if (state.questions.isNotEmpty()) {
+                    QuickQuestionsScreen(
+                        snackbarHostState = snackbarHostState,
+                        questions = state.questions,
+                        selectedChoices = selectedChoices,
+                        onAddQuestions = onAddQuestions,
+                        onAddCurrentQuestion = onAddCurrentQuestion,
+                        onUpdateChoice = onUpdateChoice,
+                    )
+                }
             }
         }
     }

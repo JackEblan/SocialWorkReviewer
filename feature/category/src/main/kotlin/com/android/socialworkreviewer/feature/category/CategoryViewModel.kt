@@ -9,7 +9,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -21,22 +20,15 @@ class CategoryViewModel @Inject constructor(
     getCategoriesAndAverageUseCase: GetCategoriesAndAverageUseCase,
     private val messageRepository: MessageRepository
 ) : ViewModel() {
-
-    private val _categoryErrorMessage = MutableStateFlow<String?>(null)
-
-    val categoryError = _categoryErrorMessage.asStateFlow()
-
     private val _message = MutableStateFlow<Message?>(null)
 
     val message = _message.asStateFlow()
 
-    val categoryUiState =
-        getCategoriesAndAverageUseCase().catch { throwable -> _categoryErrorMessage.update { throwable.message } }
-            .map(CategoryUiState::Success).stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = CategoryUiState.Loading
-            )
+    val categoryUiState = getCategoriesAndAverageUseCase().map(CategoryUiState::Success).stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = CategoryUiState.Loading
+    )
 
     fun getMessage() {
         viewModelScope.launch {

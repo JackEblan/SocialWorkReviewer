@@ -60,8 +60,6 @@ internal fun CategoryRoute(
 ) {
     val categoryUiState = viewModel.categoryUiState.collectAsStateWithLifecycle().value
 
-    val categoryError = viewModel.categoryError.collectAsStateWithLifecycle().value
-
     val message = viewModel.message.collectAsStateWithLifecycle().value
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -70,7 +68,6 @@ internal fun CategoryRoute(
         modifier = modifier,
         snackbarHostState = snackbarHostState,
         categoryUiState = categoryUiState,
-        categoryError = categoryError,
         message = message,
         onGetMessage = viewModel::getMessage,
         onCategoryClick = onCategoryClick,
@@ -85,7 +82,6 @@ internal fun CategoryScreen(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
     categoryUiState: CategoryUiState,
-    categoryError: String?,
     message: Message?,
     onGetMessage: () -> Unit,
     onCategoryClick: (String) -> Unit,
@@ -93,14 +89,6 @@ internal fun CategoryScreen(
 ) {
     LaunchedEffect(key1 = true) {
         onGetMessage()
-    }
-
-    LaunchedEffect(key1 = categoryError) {
-        if (categoryError != null) {
-            snackbarHostState.showSnackbar(
-                message = categoryError, duration = SnackbarDuration.Indefinite
-            )
-        }
     }
 
     LaunchedEffect(key1 = message) {

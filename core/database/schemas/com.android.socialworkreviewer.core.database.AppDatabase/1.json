@@ -1,0 +1,52 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "df737c1f1fb2c635d0ea3212ed475aa9",
+    "entities": [
+      {
+        "tableName": "AverageEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`questionSettingIndex` INTEGER NOT NULL, `score` INTEGER NOT NULL, `numberOfQuestions` INTEGER NOT NULL, `categoryId` TEXT NOT NULL, PRIMARY KEY(`questionSettingIndex`))",
+        "fields": [
+          {
+            "fieldPath": "questionSettingIndex",
+            "columnName": "questionSettingIndex",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "score",
+            "columnName": "score",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "numberOfQuestions",
+            "columnName": "numberOfQuestions",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "categoryId",
+            "columnName": "categoryId",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "questionSettingIndex"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'df737c1f1fb2c635d0ea3212ed475aa9')"
+    ]
+  }
+}
