@@ -1,7 +1,6 @@
 package com.android.socialworkreviewer.feature.category
 
 import androidx.annotation.VisibleForTesting
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,9 +12,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -29,7 +28,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -44,11 +42,11 @@ import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.android.socialworkreviewer.core.designsystem.component.DynamicAsyncImage
+import coil.compose.AsyncImage
 import com.android.socialworkreviewer.core.designsystem.component.SocialWorkReviewerLoadingWheel
 import com.android.socialworkreviewer.core.designsystem.icon.SocialWorkReviewerIcons
+import com.android.socialworkreviewer.core.model.Announcement
 import com.android.socialworkreviewer.core.model.Category
-import com.android.socialworkreviewer.core.model.Message
 import kotlin.math.roundToInt
 
 @Composable
@@ -60,13 +58,9 @@ internal fun CategoryRoute(
 ) {
     val categoryUiState = viewModel.categoryUiState.collectAsStateWithLifecycle().value
 
-    val message = viewModel.message.collectAsStateWithLifecycle().value
-
     CategoryScreen(
         modifier = modifier,
         categoryUiState = categoryUiState,
-        message = message,
-        onGetMessage = viewModel::getMessage,
         onCategoryClick = onCategoryClick,
         onSettingsClick = onSettingsClick,
     )
@@ -78,23 +72,15 @@ internal fun CategoryRoute(
 internal fun CategoryScreen(
     modifier: Modifier = Modifier,
     categoryUiState: CategoryUiState,
-    message: Message?,
-    onGetMessage: () -> Unit,
     onCategoryClick: (String) -> Unit,
     onSettingsClick: () -> Unit,
 ) {
     val topAppBarScrollBehavior = enterAlwaysScrollBehavior()
 
-    LaunchedEffect(key1 = true) {
-        onGetMessage()
-    }
-
     Scaffold(
         topBar = {
             CategoryTopAppBar(
                 topAppBarScrollBehavior = topAppBarScrollBehavior,
-                title = "Categories",
-                message = message,
                 onSettingsClick = onSettingsClick,
             )
         },
@@ -130,29 +116,19 @@ internal fun CategoryScreen(
 private fun CategoryTopAppBar(
     modifier: Modifier = Modifier,
     topAppBarScrollBehavior: TopAppBarScrollBehavior,
-    title: String,
-    message: Message?,
     onSettingsClick: () -> Unit,
 ) {
     val gradientColors = listOf(Color(0xFF00BCD4), Color(0xFF03A9F4), Color(0xFF9C27B0))
 
     LargeTopAppBar(
         title = {
-            Column {
-                Text(
-                    text = title, style = MaterialTheme.typography.headlineSmall.copy(
-                        brush = Brush.linearGradient(
-                            colors = gradientColors
-                        )
+            Text(
+                text = "Categories", style = MaterialTheme.typography.headlineSmall.copy(
+                    brush = Brush.linearGradient(
+                        colors = gradientColors
                     )
                 )
-
-                AnimatedVisibility(visible = topAppBarScrollBehavior.state.collapsedFraction == 0f && message != null) {
-                    Text(
-                        text = message!!.message, style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-            }
+            )
         },
         modifier = modifier.testTag("category:centerAlignedTopAppBar"),
         actions = {
@@ -179,17 +155,26 @@ private fun SuccessState(
     contentPadding: PaddingValues,
     onCategoryClick: (String) -> Unit,
 ) {
-
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(300.dp),
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Adaptive(300.dp),
         modifier = modifier
             .fillMaxSize()
             .testTag("category:lazyVerticalGrid"),
         contentPadding = contentPadding,
     ) {
-        items(categoryUiState.categories) { category ->
+        items(categoryUiState.announcements, key = { announcement ->
+            announcement.id
+        }) { announcement ->
+            AnnouncementItem(modifier = Modifier.animateItem(), announcement = announcement)
+        }
+
+        items(categoryUiState.categories, key = { category ->
+            category.id
+        }) { category ->
             CategoryItem(
-                category = category, onCategoryClick = onCategoryClick
+                modifier = Modifier.animateItem(),
+                category = category,
+                onCategoryClick = onCategoryClick
             )
         }
     }
@@ -206,12 +191,9 @@ private fun CategoryItem(
         .padding(10.dp), onClick = {
         onCategoryClick(category.id)
     }) {
-        DynamicAsyncImage(
+        AsyncImage(
             model = category.imageUrl,
             contentDescription = "categoryImage",
-            modifier = Modifier
-                .height(200.dp)
-                .fillMaxWidth()
         )
 
         Column(
@@ -232,6 +214,36 @@ private fun CategoryItem(
 
             AverageCircularProgressIndicator(
                 modifier = Modifier.align(Alignment.End), average = category.average
+            )
+        }
+    }
+}
+
+@Composable
+private fun AnnouncementItem(
+    modifier: Modifier = Modifier, announcement: Announcement?
+) {
+    OutlinedCard(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp)
+        ) {
+            Text(
+                text = announcement?.title ?: "Social Work Reviewer",
+                style = MaterialTheme.typography.headlineSmall
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Text(
+                text = announcement?.message
+                    ?: "High quality questions to challenge your knowledge",
+                style = MaterialTheme.typography.bodyLarge
             )
         }
     }
