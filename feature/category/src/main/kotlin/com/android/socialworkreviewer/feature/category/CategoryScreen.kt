@@ -1,6 +1,7 @@
 package com.android.socialworkreviewer.feature.category
 
 import androidx.annotation.VisibleForTesting
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,29 +16,28 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
@@ -62,11 +62,8 @@ internal fun CategoryRoute(
 
     val message = viewModel.message.collectAsStateWithLifecycle().value
 
-    val snackbarHostState = remember { SnackbarHostState() }
-
     CategoryScreen(
         modifier = modifier,
-        snackbarHostState = snackbarHostState,
         categoryUiState = categoryUiState,
         message = message,
         onGetMessage = viewModel::getMessage,
@@ -75,44 +72,36 @@ internal fun CategoryRoute(
     )
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @VisibleForTesting
 @Composable
 internal fun CategoryScreen(
     modifier: Modifier = Modifier,
-    snackbarHostState: SnackbarHostState,
     categoryUiState: CategoryUiState,
     message: Message?,
     onGetMessage: () -> Unit,
     onCategoryClick: (String) -> Unit,
     onSettingsClick: () -> Unit,
 ) {
+    val topAppBarScrollBehavior = enterAlwaysScrollBehavior()
+
     LaunchedEffect(key1 = true) {
         onGetMessage()
     }
 
-    LaunchedEffect(key1 = message) {
-        if (message != null) {
-            snackbarHostState.showSnackbar(
-                message = message.message,
-                duration = SnackbarDuration.Short,
-            )
-        }
-    }
-
     Scaffold(
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
-        },
         topBar = {
             CategoryTopAppBar(
+                topAppBarScrollBehavior = topAppBarScrollBehavior,
                 title = "Categories",
+                message = message,
                 onSettingsClick = onSettingsClick,
             )
         },
     ) { paddingValues ->
         Box(
             modifier = modifier
+                .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
                 .fillMaxSize()
                 .consumeWindowInsets(paddingValues)
                 .semantics {
@@ -140,24 +129,39 @@ internal fun CategoryScreen(
 @Composable
 private fun CategoryTopAppBar(
     modifier: Modifier = Modifier,
+    topAppBarScrollBehavior: TopAppBarScrollBehavior,
     title: String,
+    message: Message?,
     onSettingsClick: () -> Unit,
 ) {
     val gradientColors = listOf(Color(0xFF00BCD4), Color(0xFF03A9F4), Color(0xFF9C27B0))
 
-    CenterAlignedTopAppBar(title = {
-        Text(
-            text = title, style = MaterialTheme.typography.headlineSmall.copy(
-                brush = Brush.linearGradient(
-                    colors = gradientColors
+    LargeTopAppBar(
+        title = {
+            Column {
+                Text(
+                    text = title, style = MaterialTheme.typography.headlineSmall.copy(
+                        brush = Brush.linearGradient(
+                            colors = gradientColors
+                        )
+                    )
                 )
-            )
-        )
-    }, modifier = modifier.testTag("category:centerAlignedTopAppBar"), actions = {
-        IconButton(onClick = onSettingsClick) {
-            Icon(imageVector = SocialWorkReviewerIcons.Settings, contentDescription = "")
-        }
-    })
+
+                AnimatedVisibility(visible = topAppBarScrollBehavior.state.collapsedFraction == 0f && message != null) {
+                    Text(
+                        text = message!!.message, style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            }
+        },
+        modifier = modifier.testTag("category:centerAlignedTopAppBar"),
+        actions = {
+            IconButton(onClick = onSettingsClick) {
+                Icon(imageVector = SocialWorkReviewerIcons.Settings, contentDescription = "")
+            }
+        },
+        scrollBehavior = topAppBarScrollBehavior,
+    )
 }
 
 @Composable

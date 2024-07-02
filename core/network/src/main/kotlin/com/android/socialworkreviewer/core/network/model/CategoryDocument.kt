@@ -7,6 +7,7 @@ import com.android.socialworkreviewer.core.model.Category
 @Keep
 data class CategoryDocument(
     val id: String?,
+    val orderNumber: Int?,
     val title: String?,
     val description: String?,
     val imageUrl: String?,
@@ -15,7 +16,7 @@ data class CategoryDocument(
 
 fun CategoryDocument.asExternalModel(): Category {
     return Category(
-        id = id.toString(),
+        id = id.toString(), orderNumber = orderNumber ?: 0,
         title = title.toString(),
         description = description.toString(),
         imageUrl = imageUrl.toString(),
