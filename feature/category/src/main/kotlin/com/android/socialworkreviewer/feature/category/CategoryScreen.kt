@@ -1,9 +1,14 @@
 package com.android.socialworkreviewer.feature.category
 
 import androidx.annotation.VisibleForTesting
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -37,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
@@ -53,7 +59,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.android.socialworkreviewer.core.designsystem.component.SocialWorkReviewerLoadingWheel
-import com.android.socialworkreviewer.core.designsystem.component.shimmerBrush
 import com.android.socialworkreviewer.core.designsystem.icon.SocialWorkReviewerIcons
 import com.android.socialworkreviewer.core.model.Announcement
 import com.android.socialworkreviewer.core.model.Category
@@ -110,12 +115,18 @@ internal fun CategoryScreen(
                     modifier = Modifier.align(Alignment.Center),
                 )
 
-                is CategoryUiState.Success -> SuccessState(
-                    modifier = modifier,
-                    categoryUiState = categoryUiState,
-                    contentPadding = paddingValues,
-                    onCategoryClick = onCategoryClick,
-                )
+                is CategoryUiState.Success -> {
+                    if (categoryUiState.announcements.isNotEmpty() && categoryUiState.categories.isNotEmpty()) {
+                        SuccessState(
+                            modifier = modifier,
+                            categoryUiState = categoryUiState,
+                            contentPadding = paddingValues,
+                            onCategoryClick = onCategoryClick,
+                        )
+                    } else {
+                        EmptyState(text = "No Categories found!")
+                    }
+                }
             }
         }
     }
@@ -275,19 +286,35 @@ private fun CategoryHeaderImage(
     )
     val isLocalInspection = LocalInspectionMode.current
 
+    val transition = rememberInfiniteTransition(label = "Transition")
+
+    val lightGrayAnimation by transition.animateColor(
+        initialValue = Color.LightGray.copy(alpha = 0.2f),
+        targetValue = Color.LightGray,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 800), repeatMode = RepeatMode.Reverse
+        ),
+        label = "LightGrayAnimation"
+    )
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(180.dp)
-            .background(shimmerBrush(showShimmer = isLoading, targetValue = 1300f)),
+            .height(180.dp),
         contentAlignment = Alignment.Center,
     ) {
         Image(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(180.dp),
+                .height(180.dp)
+                .drawBehind {
+                    drawRect(
+                        color = if (isLoading) lightGrayAnimation else Color.Transparent,
+                        size = size,
+                    )
+                },
             contentScale = ContentScale.Crop,
-            painter = if (isError.not() && !isLocalInspection) {
+            painter = if (isError.not() && isLocalInspection.not()) {
                 imageLoader
             } else {
                 painterResource(com.android.socialworkreviewer.core.designsystem.R.drawable.ic_placeholder)
@@ -320,5 +347,29 @@ fun AverageCircularProgressIndicator(modifier: Modifier = Modifier, average: Dou
             strokeCap = StrokeCap.Round,
             trackColor = ProgressIndicatorDefaults.linearTrackColor,
         )
+    }
+}
+
+@Composable
+private fun EmptyState(
+    modifier: Modifier = Modifier,
+    text: String,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .testTag("category:emptyListPlaceHolderScreen"),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Icon(
+            imageVector = SocialWorkReviewerIcons.Question,
+            contentDescription = null,
+            modifier = Modifier.size(100.dp),
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Text(text = text, style = MaterialTheme.typography.bodyLarge)
     }
 }
