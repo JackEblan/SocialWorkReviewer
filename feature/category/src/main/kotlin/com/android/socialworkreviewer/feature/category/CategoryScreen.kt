@@ -2,6 +2,8 @@ package com.android.socialworkreviewer.feature.category
 
 import androidx.annotation.VisibleForTesting
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -29,6 +31,9 @@ import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -36,14 +41,19 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.android.socialworkreviewer.core.designsystem.component.SocialWorkReviewerLoadingWheel
+import com.android.socialworkreviewer.core.designsystem.component.shimmerBrush
 import com.android.socialworkreviewer.core.designsystem.icon.SocialWorkReviewerIcons
 import com.android.socialworkreviewer.core.model.Announcement
 import com.android.socialworkreviewer.core.model.Category
@@ -191,9 +201,8 @@ private fun CategoryItem(
         .padding(10.dp), onClick = {
         onCategoryClick(category.id)
     }) {
-        AsyncImage(
-            model = category.imageUrl,
-            contentDescription = "categoryImage",
+        CategoryHeaderImage(
+            headerImageUrl = category.imageUrl,
         )
 
         Column(
@@ -246,6 +255,45 @@ private fun AnnouncementItem(
                 style = MaterialTheme.typography.bodyLarge
             )
         }
+    }
+}
+
+@Composable
+private fun CategoryHeaderImage(
+    headerImageUrl: String?,
+) {
+    var isLoading by remember { mutableStateOf(true) }
+
+    var isError by remember { mutableStateOf(false) }
+
+    val imageLoader = rememberAsyncImagePainter(
+        model = headerImageUrl,
+        onState = { state ->
+            isLoading = state is AsyncImagePainter.State.Loading
+            isError = state is AsyncImagePainter.State.Error
+        },
+    )
+    val isLocalInspection = LocalInspectionMode.current
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(180.dp)
+            .background(shimmerBrush(showShimmer = isLoading, targetValue = 1300f)),
+        contentAlignment = Alignment.Center,
+    ) {
+        Image(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(180.dp),
+            contentScale = ContentScale.Crop,
+            painter = if (isError.not() && !isLocalInspection) {
+                imageLoader
+            } else {
+                painterResource(com.android.socialworkreviewer.core.designsystem.R.drawable.ic_placeholder)
+            },
+            contentDescription = null,
+        )
     }
 }
 
