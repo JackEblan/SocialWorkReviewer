@@ -98,18 +98,22 @@ class QuestionViewModel @Inject constructor(
 
     fun getQuestions(questionSettingIndex: Int, questionSetting: QuestionSetting) {
         viewModelScope.launch {
-            _countDownTimeSelected.update { questionSetting.minutes }
-
             _questionUiState.update {
                 QuestionUiState.Loading
             }
 
+            val questions = getQuestionsUseCase(
+                id = id, numberOfQuestions = questionSetting.numberOfQuestions
+            )
+
+            choiceRepository.addQuestions(value = questions)
+
+            _countDownTimeSelected.update { questionSetting.minutes }
+
             _questionUiState.update {
                 QuestionUiState.Questions(
                     questionSettingIndex = questionSettingIndex,
-                    questions = getQuestionsUseCase(
-                        id = id, numberOfQuestions = questionSetting.numberOfQuestions
-                    ),
+                    questions = questions,
                 )
             }
         }
@@ -137,12 +141,6 @@ class QuestionViewModel @Inject constructor(
 
     fun addCurrentQuestion(question: Question) {
         _currentQuestion.update { question }
-    }
-
-    fun addQuestions(value: List<Question>) {
-        viewModelScope.launch {
-            choiceRepository.addQuestions(value = value)
-        }
     }
 
     fun showCorrectChoices(questionSettingIndex: Int) {

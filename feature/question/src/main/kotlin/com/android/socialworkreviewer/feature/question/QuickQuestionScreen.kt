@@ -51,7 +51,6 @@ internal fun QuickQuestionsScreen(
     snackbarHostState: SnackbarHostState,
     questions: List<Question>,
     selectedChoices: List<String>,
-    onAddQuestions: (List<Question>) -> Unit,
     onAddCurrentQuestion: (Question) -> Unit,
     onUpdateChoice: (Choice) -> Unit,
 ) {
@@ -62,14 +61,10 @@ internal fun QuickQuestionsScreen(
     val scrollBehavior = enterAlwaysScrollBehavior()
 
     val animatedProgress by animateFloatAsState(
-        targetValue = pagerState.currentPage + 1f / questions.size,
+        targetValue = (pagerState.currentPage + 1f) / questions.size,
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
         label = "animatedProgress"
     )
-
-    LaunchedEffect(key1 = true) {
-        onAddQuestions(questions)
-    }
 
     LaunchedEffect(key1 = pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { page ->

@@ -12,7 +12,11 @@ data class CategoryDocument(
     val description: String?,
     val imageUrl: String?,
     val questionSettings: List<QuestionSettingDocument>?,
-)
+) {
+    companion object {
+        const val ORDER_NUMBER = "orderNumber"
+    }
+}
 
 fun CategoryDocument.asExternalModel(): Category {
     return Category(

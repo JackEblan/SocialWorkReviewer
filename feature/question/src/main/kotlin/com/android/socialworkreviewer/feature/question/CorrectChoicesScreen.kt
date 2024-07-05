@@ -63,7 +63,7 @@ internal fun CorrectChoicesScreen(
     val scrollBehavior = enterAlwaysScrollBehavior()
 
     val animatedProgress by animateFloatAsState(
-        targetValue = pagerState.currentPage + 1f / questions.size,
+        targetValue = (pagerState.currentPage + 1f) / questions.size,
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
         label = "animatedProgress"
     )

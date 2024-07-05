@@ -90,7 +90,6 @@ internal fun QuestionRoute(
         questionsWithSelectedChoicesSize = questionsWithSelectedChoicesSize,
         countDownTimerFinished = countDownTimerFinished,
         onGetCategory = viewModel::getCategory,
-        onAddQuestions = viewModel::addQuestions,
         onStartCountDownTimer = viewModel::startCountDownTimer,
         onCancelCountDownTimer = viewModel::cancelCountDownTimer,
         onAddCurrentQuestion = viewModel::addCurrentQuestion,
@@ -113,7 +112,6 @@ internal fun QuestionScreen(
     questionsWithSelectedChoicesSize: Int,
     countDownTimerFinished: Boolean,
     onGetCategory: () -> Unit,
-    onAddQuestions: (List<Question>) -> Unit,
     onStartCountDownTimer: () -> Unit,
     onCancelCountDownTimer: () -> Unit,
     onAddCurrentQuestion: (Question) -> Unit,
@@ -134,7 +132,6 @@ internal fun QuestionScreen(
                         questionsWithSelectedChoicesSize = questionsWithSelectedChoicesSize,
                         countDownTimerFinished = countDownTimerFinished,
                         countDownTimeUntilFinished = countDownTimeUntilFinished,
-                        onAddQuestions = onAddQuestions,
                         onStartCountDownTimer = onStartCountDownTimer,
                         onCancelCountDownTimer = onCancelCountDownTimer,
                         onAddCurrentQuestion = onAddCurrentQuestion,
@@ -181,7 +178,6 @@ internal fun QuestionScreen(
                         snackbarHostState = snackbarHostState,
                         questions = state.questions,
                         selectedChoices = selectedChoices,
-                        onAddQuestions = onAddQuestions,
                         onAddCurrentQuestion = onAddCurrentQuestion,
                         onUpdateChoice = onUpdateChoice,
                     )
@@ -202,7 +198,6 @@ private fun Questions(
     questionsWithSelectedChoicesSize: Int,
     countDownTimerFinished: Boolean,
     countDownTimeUntilFinished: String,
-    onAddQuestions: (List<Question>) -> Unit,
     onStartCountDownTimer: () -> Unit,
     onCancelCountDownTimer: () -> Unit,
     onAddCurrentQuestion: (Question) -> Unit,
@@ -218,13 +213,12 @@ private fun Questions(
     val scrollBehavior = enterAlwaysScrollBehavior()
 
     val animatedProgress by animateFloatAsState(
-        targetValue = pagerState.currentPage + 1f / questions.size,
+        targetValue = (pagerState.currentPage + 1f) / questions.size,
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
         label = "animatedProgress"
     )
 
     LaunchedEffect(key1 = true) {
-        onAddQuestions(questions)
         onStartCountDownTimer()
     }
 

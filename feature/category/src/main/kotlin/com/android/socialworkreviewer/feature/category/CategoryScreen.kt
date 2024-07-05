@@ -116,7 +116,7 @@ internal fun CategoryScreen(
                 )
 
                 is CategoryUiState.Success -> {
-                    if (categoryUiState.announcements.isNotEmpty() && categoryUiState.categories.isNotEmpty()) {
+                    if (categoryUiState.categories.isNotEmpty()) {
                         SuccessState(
                             modifier = modifier,
                             categoryUiState = categoryUiState,

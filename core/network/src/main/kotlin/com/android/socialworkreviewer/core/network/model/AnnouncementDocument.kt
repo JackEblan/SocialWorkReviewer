@@ -7,15 +7,18 @@ import com.android.socialworkreviewer.core.model.Announcement
 @Keep
 data class AnnouncementDocument(
     val id: String?,
-    val priority: Int?,
+    val orderNumber: Int?,
     val title: String?,
     val message: String?,
-)
+) {
+    companion object {
+        const val ORDER_NUMBER = "orderNumber"
+    }
+}
 
 fun AnnouncementDocument.asExternalModel(): Announcement {
     return Announcement(
-        id = id.toString(),
-        priority = priority ?: 0,
+        id = id.toString(), orderNumber = orderNumber ?: 0,
         title = title.toString(),
         message = message.toString()
     )
