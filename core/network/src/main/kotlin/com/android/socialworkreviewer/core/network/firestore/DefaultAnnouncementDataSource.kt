@@ -2,7 +2,7 @@ package com.android.socialworkreviewer.core.network.firestore
 
 import com.android.socialworkreviewer.core.network.firestore.AnnouncementDataSource.Companion.ANNOUNCEMENTS_COLLECTION
 import com.android.socialworkreviewer.core.network.model.AnnouncementDocument
-import com.android.socialworkreviewer.core.network.model.AnnouncementDocument.Companion.ORDER_NUMBER
+import com.android.socialworkreviewer.core.network.model.AnnouncementDocument.Companion.DATE
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.snapshots
@@ -16,8 +16,7 @@ internal class DefaultAnnouncementDataSource @Inject constructor(
 ) : AnnouncementDataSource {
     override fun getAnnouncementDocument(): Flow<List<AnnouncementDocument>> {
         return firestore.collection(ANNOUNCEMENTS_COLLECTION)
-            .orderBy(ORDER_NUMBER, Query.Direction.ASCENDING).snapshots()
-            .mapNotNull { querySnapshots ->
+            .orderBy(DATE, Query.Direction.DESCENDING).snapshots().mapNotNull { querySnapshots ->
                 querySnapshots.mapNotNull { queryDocumentSnapshot ->
                     try {
                         queryDocumentSnapshot.toObject()

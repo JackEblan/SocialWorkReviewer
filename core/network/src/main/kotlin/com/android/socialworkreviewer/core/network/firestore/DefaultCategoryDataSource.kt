@@ -4,7 +4,7 @@ import com.android.socialworkreviewer.core.common.Dispatcher
 import com.android.socialworkreviewer.core.common.SocialWorkReviewerDispatchers.IO
 import com.android.socialworkreviewer.core.network.firestore.CategoryDataSource.Companion.CATEGORIES_COLLECTION
 import com.android.socialworkreviewer.core.network.model.CategoryDocument
-import com.android.socialworkreviewer.core.network.model.CategoryDocument.Companion.ORDER_NUMBER
+import com.android.socialworkreviewer.core.network.model.CategoryDocument.Companion.DATE
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.snapshots
@@ -21,8 +21,8 @@ internal class DefaultCategoryDataSource @Inject constructor(
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
 ) : CategoryDataSource {
     override fun getCategoryDocuments(): Flow<List<CategoryDocument>> {
-        return firestore.collection(CATEGORIES_COLLECTION)
-            .orderBy(ORDER_NUMBER, Query.Direction.ASCENDING).snapshots()
+        return firestore.collection(CATEGORIES_COLLECTION).orderBy(DATE, Query.Direction.ASCENDING)
+            .snapshots()
             .mapNotNull { querySnapshots ->
                 querySnapshots.mapNotNull { queryDocumentSnapshot ->
                     try {
