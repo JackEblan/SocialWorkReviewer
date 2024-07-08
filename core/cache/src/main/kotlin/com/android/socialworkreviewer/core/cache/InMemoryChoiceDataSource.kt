@@ -5,9 +5,9 @@ import com.android.socialworkreviewer.core.model.Question
 import kotlinx.coroutines.flow.Flow
 
 interface InMemoryChoiceDataSource {
-    val selectedChoicesFlow: Flow<List<Choice>>
+    val selectedChoices: List<Choice>
 
-    val questionsWithSelectedChoicesFlow: Flow<Map<Question, List<String>>>
+    val questionsWithSelectedChoices: Map<Question, List<String>>
 
     val questions: List<Question>
 
@@ -16,8 +16,4 @@ interface InMemoryChoiceDataSource {
     suspend fun deleteChoice(choice: Choice)
 
     fun addQuestions(value: List<Question>)
-
-    fun getSelectedChoices(): List<Choice>
-
-    fun onClear()
 }

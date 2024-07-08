@@ -14,7 +14,7 @@ class UpdateChoiceUseCase @Inject constructor(private val choiceRepository: Choi
     }
 
     private suspend fun multipleChoices(choice: Choice) {
-        if (choice in choiceRepository.getSelectedChoices()) {
+        if (choice in choiceRepository.selectedChoices) {
             choiceRepository.deleteChoice(choice)
         } else {
             choiceRepository.addChoice(choice)
@@ -22,7 +22,7 @@ class UpdateChoiceUseCase @Inject constructor(private val choiceRepository: Choi
     }
 
     private suspend fun singleChoice(choice: Choice) {
-        choiceRepository.getSelectedChoices().forEach { selectedChoice ->
+        choiceRepository.selectedChoices.forEach { selectedChoice ->
             if (choice.question == selectedChoice.question) {
                 choiceRepository.deleteChoice(selectedChoice)
             }

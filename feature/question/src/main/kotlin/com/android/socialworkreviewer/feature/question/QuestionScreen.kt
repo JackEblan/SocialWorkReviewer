@@ -65,12 +65,11 @@ internal fun QuestionRoute(
 ) {
     val questionUiState = viewModel.questionUiState.collectAsStateWithLifecycle().value
 
-    val selectedChoices = viewModel.selectedChoices.collectAsStateWithLifecycle().value
+    val selectedChoices = viewModel.currentQuestionWithSelectedChoices.collectAsStateWithLifecycle().value
 
     val scoreCount = viewModel.scoreCount.collectAsStateWithLifecycle().value
 
-    val questionsWithSelectedChoicesSize =
-        viewModel.questionsWithSelectedChoicesSize.collectAsStateWithLifecycle().value
+    val questionsWithSelectedChoicesSize = viewModel.questionsWithSelectedChoicesSize
 
     val countDownTimeUntilFinished =
         viewModel.countDownTimeUntilFinished.collectAsStateWithLifecycle().value

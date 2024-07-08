@@ -9,8 +9,11 @@ sealed interface QuestionUiState {
 
     data object Loading : QuestionUiState
 
-    data class ShowCorrectChoices(val questions: List<Question>, val lastCountDownTime: String) :
-        QuestionUiState
+    data class ShowCorrectChoices(
+        val score: Int,
+        val questions: List<Question>,
+        val lastCountDownTime: String
+    ) : QuestionUiState
 
     data class OnBoarding(val category: Category? = null) : QuestionUiState
 

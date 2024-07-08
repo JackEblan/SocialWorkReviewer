@@ -23,7 +23,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -51,34 +50,23 @@ class QuestionViewModel @Inject constructor(
 
     private val _currentQuestion = MutableStateFlow<Question?>(null)
 
-    val scoreCount =
-        choiceRepository.questionsWithSelectedChoicesFlow.map { questionWithSelectedChoicesFlow ->
-            questionWithSelectedChoicesFlow.count {
-                it.value.toSet() == it.key.correctChoices.toSet()
-            }
+    private val _currentChoice = MutableStateFlow<Choice?>(null)
+
+    private val _scoreCount = MutableStateFlow(0)
+    val scoreCount = _scoreCount.asStateFlow()
+
+    val questionsWithSelectedChoicesSize get() = choiceRepository.questionsWithSelectedChoices.size
+
+    val currentQuestionWithSelectedChoices =
+        combine(_currentQuestion, _currentChoice) { question, _ ->
+            choiceRepository.questionsWithSelectedChoices.getOrDefault(
+                key = question, defaultValue = emptyList()
+            )
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = 0
+            initialValue = emptyList()
         )
-
-    val questionsWithSelectedChoicesSize =
-        choiceRepository.questionsWithSelectedChoicesFlow.map { questionWithSelectedChoicesFlow -> questionWithSelectedChoicesFlow.size }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000),
-                initialValue = 0
-            )
-
-    val selectedChoices = combine(
-        _currentQuestion, choiceRepository.selectedChoicesFlow
-    ) { question, choices ->
-        choices.filter { it.question == question }.map { it.choice }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = emptyList()
-    )
 
     val countDownTimeUntilFinished =
         _countDownTimeSelected.filterNotNull().flatMapLatest { millisInFuture ->
@@ -138,6 +126,8 @@ class QuestionViewModel @Inject constructor(
     fun updateChoice(choice: Choice) {
         viewModelScope.launch {
             updateChoiceUseCase(choice = choice)
+
+            _currentChoice.update { choice }
         }
     }
 
@@ -183,10 +173,5 @@ class QuestionViewModel @Inject constructor(
 
     fun cancelCountDownTimer() {
         countDownTimerWrapper.cancel()
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        choiceRepository.onClear()
     }
 }
