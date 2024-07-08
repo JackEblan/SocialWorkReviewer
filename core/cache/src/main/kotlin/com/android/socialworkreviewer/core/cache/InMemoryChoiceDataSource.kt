@@ -2,14 +2,14 @@ package com.android.socialworkreviewer.core.cache
 
 import com.android.socialworkreviewer.core.model.Choice
 import com.android.socialworkreviewer.core.model.Question
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
 
 interface InMemoryChoiceDataSource {
     val selectedChoices: List<Choice>
 
-    val questionsWithSelectedChoices: Map<Question, List<String>>
-
     val questions: List<Question>
+
+    val questionsWithSelectedChoicesFlow: SharedFlow<Map<Question, List<String>>>
 
     suspend fun addChoice(choice: Choice)
 

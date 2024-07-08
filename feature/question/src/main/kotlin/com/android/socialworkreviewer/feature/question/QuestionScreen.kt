@@ -74,6 +74,9 @@ internal fun QuestionRoute(
     val countDownTimerFinished =
         viewModel.countDownTimerFinished.collectAsStateWithLifecycle().value
 
+    val questionsWithSelectedChoicesSize =
+        viewModel.questionsWithSelectedChoicesSize.collectAsStateWithLifecycle().value
+
     val snackbarHostState = remember { SnackbarHostState() }
 
     QuestionScreen(
@@ -82,7 +85,7 @@ internal fun QuestionRoute(
         questionUiState = questionUiState,
         selectedChoices = selectedChoices,
         countDownTimeUntilFinished = countDownTimeUntilFinished,
-        questionsWithSelectedChoicesSize = viewModel.questionsWithSelectedChoicesSize,
+        questionsWithSelectedChoicesSize = questionsWithSelectedChoicesSize,
         countDownTimerFinished = countDownTimerFinished,
         onGetCategory = viewModel::getCategory,
         onStartCountDownTimer = viewModel::startCountDownTimer,

@@ -50,20 +50,24 @@ class QuestionViewModel @Inject constructor(
 
     private val _currentQuestion = MutableStateFlow<Question?>(null)
 
-    private val _currentChoice = MutableStateFlow<Choice?>(null)
+    private val _questionsWithSelectedChoicesSize = MutableStateFlow(0)
 
-    val questionsWithSelectedChoicesSize get() = choiceRepository.questionsWithSelectedChoices.size
+    val questionsWithSelectedChoicesSize get() = _questionsWithSelectedChoicesSize.asStateFlow()
 
-    val currentQuestionWithSelectedChoices =
-        combine(_currentQuestion, _currentChoice) { question, _ ->
-            choiceRepository.questionsWithSelectedChoices.getOrDefault(
-                key = question, defaultValue = emptyList()
-            )
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = emptyList()
+    val currentQuestionWithSelectedChoices = combine(
+        _currentQuestion, choiceRepository.questionsWithSelectedChoicesFlow
+    ) { question, questionsWithSelectedChoices ->
+
+        _questionsWithSelectedChoicesSize.update { questionsWithSelectedChoices.size }
+
+        questionsWithSelectedChoices.getOrDefault(
+            key = question, defaultValue = emptyList()
         )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = emptyList()
+    )
 
     val countDownTimeUntilFinished =
         _countDownTimeSelected.filterNotNull().flatMapLatest { millisInFuture ->
@@ -121,8 +125,6 @@ class QuestionViewModel @Inject constructor(
     fun updateChoice(choice: Choice) {
         viewModelScope.launch {
             updateChoiceUseCase(choice = choice)
-
-            _currentChoice.update { choice }
         }
     }
 
@@ -132,9 +134,10 @@ class QuestionViewModel @Inject constructor(
 
     fun showCorrectChoices(questionSettingIndex: Int) {
         viewModelScope.launch {
-            val score = choiceRepository.questionsWithSelectedChoices.count {
-                it.value.toSet() == it.key.correctChoices.toSet()
-            }
+            val score =
+                choiceRepository.questionsWithSelectedChoicesFlow.replayCache.first().count {
+                    it.value.toSet() == it.key.correctChoices.toSet()
+                }
 
             _questionUiState.update {
                 QuestionUiState.ShowCorrectChoices(
