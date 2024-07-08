@@ -16,4 +16,6 @@ interface InMemoryChoiceDataSource {
     suspend fun deleteChoice(choice: Choice)
 
     fun addQuestions(value: List<Question>)
+
+    fun clearCache()
 }

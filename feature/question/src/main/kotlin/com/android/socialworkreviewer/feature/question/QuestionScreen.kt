@@ -65,11 +65,8 @@ internal fun QuestionRoute(
 ) {
     val questionUiState = viewModel.questionUiState.collectAsStateWithLifecycle().value
 
-    val selectedChoices = viewModel.currentQuestionWithSelectedChoices.collectAsStateWithLifecycle().value
-
-    val scoreCount = viewModel.scoreCount.collectAsStateWithLifecycle().value
-
-    val questionsWithSelectedChoicesSize = viewModel.questionsWithSelectedChoicesSize
+    val selectedChoices =
+        viewModel.currentQuestionWithSelectedChoices.collectAsStateWithLifecycle().value
 
     val countDownTimeUntilFinished =
         viewModel.countDownTimeUntilFinished.collectAsStateWithLifecycle().value
@@ -84,9 +81,8 @@ internal fun QuestionRoute(
         snackbarHostState = snackbarHostState,
         questionUiState = questionUiState,
         selectedChoices = selectedChoices,
-        scoreCount = scoreCount,
         countDownTimeUntilFinished = countDownTimeUntilFinished,
-        questionsWithSelectedChoicesSize = questionsWithSelectedChoicesSize,
+        questionsWithSelectedChoicesSize = viewModel.questionsWithSelectedChoicesSize,
         countDownTimerFinished = countDownTimerFinished,
         onGetCategory = viewModel::getCategory,
         onStartCountDownTimer = viewModel::startCountDownTimer,
@@ -94,7 +90,7 @@ internal fun QuestionRoute(
         onAddCurrentQuestion = viewModel::addCurrentQuestion,
         onUpdateChoice = viewModel::updateChoice,
         onShowCorrectChoices = viewModel::showCorrectChoices,
-        onGetQuestions = viewModel::getQuestions,
+        onGetQuestions = viewModel::startQuestions,
         onGetQuickQuestions = viewModel::getQuickQuestions
     )
 }
@@ -106,7 +102,6 @@ internal fun QuestionScreen(
     snackbarHostState: SnackbarHostState,
     questionUiState: QuestionUiState?,
     selectedChoices: List<String>,
-    scoreCount: Int,
     countDownTimeUntilFinished: String,
     questionsWithSelectedChoicesSize: Int,
     countDownTimerFinished: Boolean,
@@ -149,7 +144,7 @@ internal fun QuestionScreen(
             is QuestionUiState.ShowCorrectChoices -> {
                 CorrectChoicesScreen(
                     questions = state.questions, selectedChoices = selectedChoices,
-                    score = scoreCount,
+                    score = state.score,
                     lastCountDownTime = state.lastCountDownTime,
                     onAddCurrentQuestion = onAddCurrentQuestion,
                 )

@@ -42,4 +42,12 @@ internal class DefaultInMemoryChoiceDataSource @Inject constructor(
             _selectedChoices.groupBy({ it.question }, { it.choice })
         }
     }
+
+    override fun clearCache() {
+        _questionsWithSelectedChoices = emptyMap()
+
+        _questions = emptyList()
+
+        _selectedChoices.clear()
+    }
 }
