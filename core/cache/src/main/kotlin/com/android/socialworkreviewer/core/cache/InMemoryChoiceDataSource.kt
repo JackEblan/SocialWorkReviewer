@@ -1,10 +1,10 @@
-package com.android.socialworkreviewer.core.data.repository
+package com.android.socialworkreviewer.core.cache
 
 import com.android.socialworkreviewer.core.model.Choice
 import com.android.socialworkreviewer.core.model.Question
 import kotlinx.coroutines.flow.Flow
 
-interface ChoiceRepository {
+interface InMemoryChoiceDataSource {
     val selectedChoicesFlow: Flow<List<Choice>>
 
     val questionsWithSelectedChoicesFlow: Flow<Map<Question, List<String>>>
@@ -15,7 +15,7 @@ interface ChoiceRepository {
 
     suspend fun deleteChoice(choice: Choice)
 
-    fun addQuestions(questions: List<Question>)
+    fun addQuestions(value: List<Question>)
 
     fun getSelectedChoices(): List<Choice>
 }

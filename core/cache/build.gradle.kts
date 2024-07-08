@@ -23,18 +23,10 @@ plugins {
 }
 
 android {
-    namespace = "com.android.socialworkreviewer.core.data"
+    namespace = "com.android.socialworkreviewer.core.cache"
 }
 
 dependencies {
-    implementation(projects.core.cache)
     implementation(projects.core.common)
-    implementation(projects.core.database)
-    implementation(projects.core.datastore)
     implementation(projects.core.model)
-    implementation(projects.core.network)
-
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(projects.core.datastoreTest)
-    testImplementation(projects.core.testing)
 }

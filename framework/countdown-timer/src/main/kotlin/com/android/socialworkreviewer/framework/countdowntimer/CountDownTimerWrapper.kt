@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 interface CountDownTimerWrapper {
     val countDownTimerFinished: Flow<Boolean>
 
-    fun getCountDownTime(millisInFuture: Long, countDownInterval: Long): Flow<String>
+    fun setCountDownTimer(millisInFuture: Long, countDownInterval: Long): Flow<String>
 
     fun start()
 

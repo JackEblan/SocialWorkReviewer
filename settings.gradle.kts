@@ -24,6 +24,7 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 rootProject.name = "SocialWorkReviewer"
 include(":app")
 
+include(":core:cache")
 include(":core:common")
 include(":core:design-system")
 include(":core:data")

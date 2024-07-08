@@ -8,6 +8,7 @@ import com.android.socialworkreviewer.core.data.repository.AverageRepository
 import com.android.socialworkreviewer.core.data.repository.CategoryRepository
 import com.android.socialworkreviewer.core.data.repository.ChoiceRepository
 import com.android.socialworkreviewer.core.domain.GetQuestionsUseCase
+import com.android.socialworkreviewer.core.domain.UpdateChoiceUseCase
 import com.android.socialworkreviewer.core.model.Average
 import com.android.socialworkreviewer.core.model.Choice
 import com.android.socialworkreviewer.core.model.Question
@@ -36,6 +37,7 @@ class QuestionViewModel @Inject constructor(
     private val averageRepository: AverageRepository,
     private val countDownTimerWrapper: CountDownTimerWrapper,
     private val getQuestionsUseCase: GetQuestionsUseCase,
+    private val updateChoiceUseCase: UpdateChoiceUseCase,
 ) : ViewModel() {
 
     private val questionRouteData = savedStateHandle.toRoute<QuestionRouteData>()
@@ -52,7 +54,7 @@ class QuestionViewModel @Inject constructor(
     val scoreCount =
         choiceRepository.questionsWithSelectedChoicesFlow.map { questionWithSelectedChoicesFlow ->
             questionWithSelectedChoicesFlow.count {
-                it.value.containsAll(it.key.correctChoices)
+                it.value.toSet() == it.key.correctChoices.toSet()
             }
         }.stateIn(
             scope = viewModelScope,
@@ -80,7 +82,7 @@ class QuestionViewModel @Inject constructor(
 
     val countDownTimeUntilFinished =
         _countDownTimeSelected.filterNotNull().flatMapLatest { millisInFuture ->
-            countDownTimerWrapper.getCountDownTime(
+            countDownTimerWrapper.setCountDownTimer(
                 millisInFuture = millisInFuture * 60000L,
                 countDownInterval = 1000,
             )
@@ -106,7 +108,7 @@ class QuestionViewModel @Inject constructor(
                 id = id, numberOfQuestions = questionSetting.numberOfQuestions
             )
 
-            choiceRepository.addQuestions(value = questions)
+            choiceRepository.addQuestions(questions = questions)
 
             _countDownTimeSelected.update { questionSetting.minutes }
 
@@ -135,7 +137,7 @@ class QuestionViewModel @Inject constructor(
 
     fun updateChoice(choice: Choice) {
         viewModelScope.launch {
-            choiceRepository.updateChoice(choice = choice)
+            updateChoiceUseCase(choice = choice)
         }
     }
 

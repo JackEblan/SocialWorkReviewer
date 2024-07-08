@@ -21,7 +21,7 @@ internal class DefaultCountDownTimerWrapper @Inject constructor() : CountDownTim
 
     override val countDownTimerFinished = _countDownTimerFinished.asSharedFlow()
 
-    override fun getCountDownTime(millisInFuture: Long, countDownInterval: Long) = callbackFlow {
+    override fun setCountDownTimer(millisInFuture: Long, countDownInterval: Long) = callbackFlow {
         _countDownTimer = object : CountDownTimer(millisInFuture, countDownInterval) {
             override fun onTick(millisUntilFinished: Long) {
                 trySendBlocking(remainingTimeFormat(millisUntilFinished = millisUntilFinished)).onFailure {
