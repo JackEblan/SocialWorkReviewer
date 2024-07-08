@@ -31,4 +31,8 @@ internal class DefaultChoiceRepository @Inject constructor(
     override fun getSelectedChoices(): List<Choice> {
         return inMemoryChoiceDataSource.getSelectedChoices()
     }
+
+    override fun onClear() {
+        inMemoryChoiceDataSource.onClear()
+    }
 }

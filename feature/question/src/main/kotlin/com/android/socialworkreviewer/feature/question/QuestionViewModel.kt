@@ -184,4 +184,9 @@ class QuestionViewModel @Inject constructor(
     fun cancelCountDownTimer() {
         countDownTimerWrapper.cancel()
     }
+
+    override fun onCleared() {
+        super.onCleared()
+        choiceRepository.onClear()
+    }
 }

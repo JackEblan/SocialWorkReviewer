@@ -63,4 +63,12 @@ internal class DefaultInMemoryChoiceDataSource @Inject constructor(
     override fun getSelectedChoices(): List<Choice> {
         return _selectedChoices
     }
+
+    override fun onClear() {
+        _selectedChoicesFlow.resetReplayCache()
+
+        _questionsWithSelectedChoicesFlow.resetReplayCache()
+
+        _questions = emptyList()
+    }
 }

@@ -18,4 +18,6 @@ interface InMemoryChoiceDataSource {
     fun addQuestions(value: List<Question>)
 
     fun getSelectedChoices(): List<Choice>
+
+    fun onClear()
 }

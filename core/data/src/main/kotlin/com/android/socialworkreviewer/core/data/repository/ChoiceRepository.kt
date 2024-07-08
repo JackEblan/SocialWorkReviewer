@@ -18,4 +18,6 @@ interface ChoiceRepository {
     fun addQuestions(questions: List<Question>)
 
     fun getSelectedChoices(): List<Choice>
+
+    fun onClear()
 }
