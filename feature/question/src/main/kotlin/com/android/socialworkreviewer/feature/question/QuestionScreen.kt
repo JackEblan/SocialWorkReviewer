@@ -1,9 +1,14 @@
 package com.android.socialworkreviewer.feature.question
 
 import androidx.annotation.VisibleForTesting
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -93,8 +98,8 @@ internal fun QuestionRoute(
         onAddCurrentQuestion = viewModel::addCurrentQuestion,
         onUpdateChoice = viewModel::updateChoice,
         onShowCorrectChoices = viewModel::showCorrectChoices,
-        onGetQuestions = viewModel::startQuestions,
-        onGetQuickQuestions = viewModel::getQuickQuestions
+        onStartQuestions = viewModel::startQuestions,
+        onStartQuickQuestions = viewModel::startQuickQuestions
     )
 }
 
@@ -114,8 +119,8 @@ internal fun QuestionScreen(
     onAddCurrentQuestion: (Question) -> Unit,
     onUpdateChoice: (Choice) -> Unit,
     onShowCorrectChoices: (Int) -> Unit,
-    onGetQuestions: (Int, QuestionSetting) -> Unit,
-    onGetQuickQuestions: () -> Unit,
+    onStartQuestions: (Int, QuestionSetting) -> Unit,
+    onStartQuickQuestions: () -> Unit,
 ) {
     Crossfade(modifier = modifier, targetState = questionUiState, label = "") { state ->
         when (state) {
@@ -157,8 +162,8 @@ internal fun QuestionScreen(
                 if (state.category != null && state.category.questionSettings.isNotEmpty()) {
                     SuccessOnBoardingScreen(
                         category = state.category,
-                        onGetQuestions = onGetQuestions,
-                        onGetQuickQuestions = onGetQuickQuestions
+                        onStartQuestions = onStartQuestions,
+                        onStartQuickQuestions = onStartQuickQuestions
                     )
                 } else {
                     EmptyState(text = "No Question Settings found!")
@@ -241,18 +246,24 @@ private fun Questions(
     }, snackbarHost = {
         SnackbarHost(hostState = snackbarHostState)
     }, floatingActionButton = {
-        FloatingActionButton(onClick = {
-            if (questionsWithSelectedChoicesSize < questions.size) {
-                scope.launch {
-                    snackbarHostState.showSnackbar("Please answer all the questions")
+        AnimatedVisibility(
+            visible = scrollBehavior.state.collapsedFraction == 0.0f,
+            enter = fadeIn() + slideInVertically(),
+            exit = fadeOut() + slideOutVertically()
+        ) {
+            FloatingActionButton(onClick = {
+                if (questionsWithSelectedChoicesSize < questions.size) {
+                    scope.launch {
+                        snackbarHostState.showSnackbar("Please answer all the questions")
+                    }
+                } else {
+                    onShowCorrectChoices(questionSettingIndex)
                 }
-            } else {
-                onShowCorrectChoices(questionSettingIndex)
+            }) {
+                Icon(
+                    imageVector = SocialWorkReviewerIcons.Check, contentDescription = ""
+                )
             }
-        }) {
-            Icon(
-                imageVector = SocialWorkReviewerIcons.Check, contentDescription = ""
-            )
         }
     }) { paddingValues ->
         Column(

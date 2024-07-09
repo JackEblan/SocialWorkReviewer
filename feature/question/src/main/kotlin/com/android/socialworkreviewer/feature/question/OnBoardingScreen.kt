@@ -1,5 +1,10 @@
 package com.android.socialworkreviewer.feature.question
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,20 +17,23 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.socialworkreviewer.core.designsystem.icon.SocialWorkReviewerIcons
@@ -44,29 +52,39 @@ internal fun LoadingOnBoardingScreen(
     LoadingScreen(modifier = modifier)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SuccessOnBoardingScreen(
     modifier: Modifier = Modifier,
     category: Category,
-    onGetQuestions: (Int, QuestionSetting) -> Unit,
-    onGetQuickQuestions: () -> Unit,
+    onStartQuestions: (Int, QuestionSetting) -> Unit,
+    onStartQuickQuestions: () -> Unit,
 ) {
+    val scrollBehavior = enterAlwaysScrollBehavior()
 
     Scaffold(floatingActionButton = {
-        FloatingActionButton(onClick = onGetQuickQuestions) {
-            Icon(imageVector = SocialWorkReviewerIcons.Bolt, contentDescription = "")
+        AnimatedVisibility(
+            visible = scrollBehavior.state.collapsedFraction == 0.0f,
+            enter = fadeIn() + slideInVertically(),
+            exit = fadeOut() + slideOutVertically()
+        ) {
+            FloatingActionButton(onClick = onStartQuickQuestions) {
+                Icon(imageVector = SocialWorkReviewerIcons.Bolt, contentDescription = "")
+            }
         }
     }, topBar = {
-        OnBoardingTopAppBar(title = "Questions")
+        OnBoardingTopAppBar(title = "Question Mode", scrollBehavior = scrollBehavior)
     }) { paddingValues ->
         LazyVerticalGrid(
-            modifier = modifier.fillMaxSize(),
+            modifier = modifier
+                .fillMaxSize()
+                .nestedScroll(scrollBehavior.nestedScrollConnection),
             columns = GridCells.Adaptive(300.dp),
             contentPadding = paddingValues,
         ) {
             itemsIndexed(category.questionSettings) { index, questionSetting ->
                 ElevatedCard(modifier = Modifier.padding(10.dp), onClick = {
-                    onGetQuestions(
+                    onStartQuestions(
                         index, questionSetting
                     )
 
@@ -132,10 +150,11 @@ private fun QuestionSettingItem(modifier: Modifier = Modifier, questionSetting: 
 private fun OnBoardingTopAppBar(
     modifier: Modifier = Modifier,
     title: String,
+    scrollBehavior: TopAppBarScrollBehavior,
 ) {
     val gradientColors = listOf(Color(0xFF00BCD4), Color(0xFF03A9F4), Color(0xFF9C27B0))
 
-    CenterAlignedTopAppBar(
+    LargeTopAppBar(
         title = {
             Text(
                 text = title,
@@ -146,6 +165,7 @@ private fun OnBoardingTopAppBar(
                 ),
             )
         },
-        modifier = modifier.testTag("onBoarding:centerAlignedTopAppBar"),
+        modifier = modifier.testTag("onBoarding:largeTopAppBar"),
+        scrollBehavior = scrollBehavior,
     )
 }

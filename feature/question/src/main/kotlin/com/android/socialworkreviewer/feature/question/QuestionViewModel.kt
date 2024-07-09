@@ -108,7 +108,7 @@ class QuestionViewModel @Inject constructor(
         }
     }
 
-    fun getQuickQuestions() {
+    fun startQuickQuestions() {
         viewModelScope.launch {
             _questionUiState.update {
                 QuestionUiState.Loading
