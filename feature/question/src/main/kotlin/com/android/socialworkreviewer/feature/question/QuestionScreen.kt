@@ -1,14 +1,18 @@
 package com.android.socialworkreviewer.feature.question
 
 import androidx.annotation.VisibleForTesting
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -122,7 +126,25 @@ internal fun QuestionScreen(
     onStartQuestions: (Int, QuestionSetting) -> Unit,
     onStartQuickQuestions: () -> Unit,
 ) {
-    Crossfade(modifier = modifier, targetState = questionUiState, label = "") { state ->
+    AnimatedContent(modifier = modifier,
+                    targetState = questionUiState,
+                    label = "",
+                    transitionSpec = {
+                        when (targetState) {
+                            QuestionUiState.Loading -> (fadeIn(
+                                animationSpec = tween(
+                                    220, delayMillis = 90
+                                )
+                            )).togetherWith(fadeOut(animationSpec = tween(90)))
+
+                            is QuestionUiState.ShowCorrectChoices -> (slideInVertically { height -> height } + fadeIn()).togetherWith(
+                                slideOutVertically { height -> -height } + fadeOut())
+
+                            else -> (fadeIn(animationSpec = tween(220, delayMillis = 90)) + scaleIn(
+                                initialScale = 0.92f, animationSpec = tween(220, delayMillis = 90)
+                            )).togetherWith(fadeOut(animationSpec = tween(90)))
+                        }
+                    }) { state ->
         when (state) {
             is QuestionUiState.Questions -> {
                 if (state.questions.isNotEmpty()) {
@@ -248,8 +270,8 @@ private fun Questions(
     }, floatingActionButton = {
         AnimatedVisibility(
             visible = scrollBehavior.state.collapsedFraction == 0.0f,
-            enter = fadeIn() + slideInVertically(),
-            exit = fadeOut() + slideOutVertically()
+            enter = fadeIn() + scaleIn(),
+            exit = fadeOut() + scaleOut()
         ) {
             FloatingActionButton(onClick = {
                 if (questionsWithSelectedChoicesSize < questions.size) {
