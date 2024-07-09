@@ -53,7 +53,7 @@ internal fun CorrectChoicesScreen(
     questions: List<Question>,
     selectedChoices: List<String>,
     score: Int,
-    lastCountDownTime: String,
+    minutes: String?,
     onAddCurrentQuestion: (Question) -> Unit,
 ) {
     val pagerState = rememberPagerState(pageCount = {
@@ -78,7 +78,7 @@ internal fun CorrectChoicesScreen(
         CorrectChoicesTopAppBar(
             title = "Your score is $score/${questions.size}",
             scrollBehavior = scrollBehavior,
-            lastCountDownTime = lastCountDownTime
+            minutes = minutes
         )
     }) { paddingValues ->
         Column(
@@ -207,7 +207,7 @@ private fun CorrectChoicesTopAppBar(
     modifier: Modifier = Modifier,
     title: String,
     scrollBehavior: TopAppBarScrollBehavior,
-    lastCountDownTime: String,
+    minutes: String?,
 ) {
     val gradientColors = listOf(Color(0xFF00BCD4), Color(0xFF03A9F4), Color(0xFF9C27B0))
 
@@ -225,19 +225,25 @@ private fun CorrectChoicesTopAppBar(
         },
         modifier = modifier.testTag("correctChoices:largeTopAppBar"),
         actions = {
-            ElevatedCard(modifier = Modifier
-                .padding(end = 5.dp)
-                .animateContentSize(),
-                         onClick = {}) {
-                Row(
-                    modifier = Modifier.padding(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
+            if (minutes.isNullOrBlank().not()) {
+                ElevatedCard(
+                    modifier = Modifier
+                        .padding(end = 5.dp)
+                        .animateContentSize()
                 ) {
-                    Icon(imageVector = SocialWorkReviewerIcons.AccessTime, contentDescription = "")
+                    Row(
+                        modifier = Modifier.padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = SocialWorkReviewerIcons.AccessTime,
+                            contentDescription = ""
+                        )
 
-                    Spacer(modifier = Modifier.width(5.dp))
+                        Spacer(modifier = Modifier.width(5.dp))
 
-                    Text(text = lastCountDownTime)
+                        Text(text = minutes!!)
+                    }
                 }
             }
         },

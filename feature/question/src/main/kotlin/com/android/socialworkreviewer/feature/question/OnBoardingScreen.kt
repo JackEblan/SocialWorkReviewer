@@ -3,8 +3,8 @@ package com.android.socialworkreviewer.feature.question
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,12 +17,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
@@ -65,8 +65,8 @@ internal fun SuccessOnBoardingScreen(
     Scaffold(floatingActionButton = {
         AnimatedVisibility(
             visible = scrollBehavior.state.collapsedFraction == 0.0f,
-            enter = fadeIn() + slideInVertically(),
-            exit = fadeOut() + slideOutVertically()
+            enter = fadeIn() + scaleIn(),
+            exit = fadeOut() + scaleOut()
         ) {
             FloatingActionButton(onClick = onStartQuickQuestions) {
                 Icon(imageVector = SocialWorkReviewerIcons.Bolt, contentDescription = "")
@@ -83,7 +83,7 @@ internal fun SuccessOnBoardingScreen(
             contentPadding = paddingValues,
         ) {
             itemsIndexed(category.questionSettings) { index, questionSetting ->
-                ElevatedCard(modifier = Modifier.padding(10.dp), onClick = {
+                OutlinedCard(modifier = Modifier.padding(10.dp), onClick = {
                     onStartQuestions(
                         index, questionSetting
                     )

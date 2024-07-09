@@ -1,12 +1,10 @@
 package com.android.socialworkreviewer.framework.countdowntimer
 
 import android.os.CountDownTimer
-import kotlinx.coroutines.channels.BufferOverflow
+import com.android.socialworkreviewer.core.model.CountDownTime
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.onFailure
 import kotlinx.coroutines.channels.trySendBlocking
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.callbackFlow
 import java.util.Locale
 import javax.inject.Inject
@@ -14,28 +12,31 @@ import javax.inject.Inject
 internal class DefaultCountDownTimerWrapper @Inject constructor() : CountDownTimerWrapper {
     private var _countDownTimer: CountDownTimer? = null
 
-    private val _countDownTimerFinished = MutableSharedFlow<Boolean>(
-        replay = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST,
-    )
-
-    override val countDownTimerFinished = _countDownTimerFinished.asSharedFlow()
-
     override fun setCountDownTimer(millisInFuture: Long, countDownInterval: Long) = callbackFlow {
         _countDownTimer = object : CountDownTimer(millisInFuture, countDownInterval) {
             override fun onTick(millisUntilFinished: Long) {
-                trySendBlocking(remainingTimeFormat(millisUntilFinished = millisUntilFinished)).onFailure {
+                trySendBlocking(
+                    CountDownTime(
+                        minutes = remainingTimeFormat(millisUntilFinished = millisUntilFinished),
+                        isFinished = false
+                    )
+                ).onFailure {
                     _countDownTimer?.cancel()
                 }
             }
 
             override fun onFinish() {
-                _countDownTimerFinished.tryEmit(true)
+                trySendBlocking(
+                    CountDownTime(
+                        minutes = "", isFinished = true
+                    )
+                ).onFailure {
+                    _countDownTimer?.cancel()
+                }
             }
         }
 
         awaitClose {
-            _countDownTimerFinished.tryEmit(false)
             _countDownTimer?.cancel()
         }
     }

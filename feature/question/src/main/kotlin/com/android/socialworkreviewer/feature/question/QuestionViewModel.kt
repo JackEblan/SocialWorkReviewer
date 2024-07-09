@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -69,22 +68,13 @@ class QuestionViewModel @Inject constructor(
         initialValue = emptyList()
     )
 
-    val countDownTimeUntilFinished =
-        _countDownTimeSelected.filterNotNull().flatMapLatest { millisInFuture ->
-            countDownTimerWrapper.setCountDownTimer(
-                millisInFuture = millisInFuture * 60000L,
-                countDownInterval = 1000,
-            )
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = ""
+    val countDownTime = _countDownTimeSelected.filterNotNull().flatMapLatest { millisInFuture ->
+        countDownTimerWrapper.setCountDownTimer(
+            millisInFuture = millisInFuture * 60000L,
+            countDownInterval = 1000,
         )
-
-    val countDownTimerFinished = countDownTimerWrapper.countDownTimerFinished.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = false
+    }.stateIn(
+        scope = viewModelScope, started = SharingStarted.WhileSubscribed(5_000), initialValue = null
     )
 
     fun startQuestions(questionSettingIndex: Int, questionSetting: QuestionSetting) {
@@ -143,7 +133,7 @@ class QuestionViewModel @Inject constructor(
                 QuestionUiState.ShowCorrectChoices(
                     score = score,
                     questions = choiceRepository.questions,
-                    lastCountDownTime = countDownTimeUntilFinished.first()
+                    lastCountDownTime = countDownTime.value?.minutes
                 )
             }
 

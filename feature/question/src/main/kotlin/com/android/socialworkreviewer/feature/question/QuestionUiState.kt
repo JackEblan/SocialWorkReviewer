@@ -12,7 +12,7 @@ sealed interface QuestionUiState {
     data class ShowCorrectChoices(
         val score: Int,
         val questions: List<Question>,
-        val lastCountDownTime: String
+        val lastCountDownTime: String?
     ) : QuestionUiState
 
     data class OnBoarding(val category: Category? = null) : QuestionUiState

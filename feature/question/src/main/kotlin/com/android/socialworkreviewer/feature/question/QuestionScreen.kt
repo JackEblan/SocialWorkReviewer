@@ -5,7 +5,6 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -64,6 +63,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.socialworkreviewer.core.designsystem.icon.SocialWorkReviewerIcons
 import com.android.socialworkreviewer.core.model.Choice
+import com.android.socialworkreviewer.core.model.CountDownTime
 import com.android.socialworkreviewer.core.model.Question
 import com.android.socialworkreviewer.core.model.QuestionSetting
 import kotlinx.coroutines.launch
@@ -77,11 +77,7 @@ internal fun QuestionRoute(
     val selectedChoices =
         viewModel.currentQuestionWithSelectedChoices.collectAsStateWithLifecycle().value
 
-    val countDownTimeUntilFinished =
-        viewModel.countDownTimeUntilFinished.collectAsStateWithLifecycle().value
-
-    val countDownTimerFinished =
-        viewModel.countDownTimerFinished.collectAsStateWithLifecycle().value
+    val countDownTime = viewModel.countDownTime.collectAsStateWithLifecycle().value
 
     val questionsWithSelectedChoicesSize =
         viewModel.questionsWithSelectedChoicesSize.collectAsStateWithLifecycle().value
@@ -93,9 +89,8 @@ internal fun QuestionRoute(
         snackbarHostState = snackbarHostState,
         questionUiState = questionUiState,
         selectedChoices = selectedChoices,
-        countDownTimeUntilFinished = countDownTimeUntilFinished,
         questionsWithSelectedChoicesSize = questionsWithSelectedChoicesSize,
-        countDownTimerFinished = countDownTimerFinished,
+        countDownTime = countDownTime,
         onGetCategory = viewModel::getCategory,
         onStartCountDownTimer = viewModel::startCountDownTimer,
         onCancelCountDownTimer = viewModel::cancelCountDownTimer,
@@ -114,9 +109,8 @@ internal fun QuestionScreen(
     snackbarHostState: SnackbarHostState,
     questionUiState: QuestionUiState?,
     selectedChoices: List<String>,
-    countDownTimeUntilFinished: String,
     questionsWithSelectedChoicesSize: Int,
-    countDownTimerFinished: Boolean,
+    countDownTime: CountDownTime?,
     onGetCategory: () -> Unit,
     onStartCountDownTimer: () -> Unit,
     onCancelCountDownTimer: () -> Unit,
@@ -131,18 +125,11 @@ internal fun QuestionScreen(
                     label = "",
                     transitionSpec = {
                         when (targetState) {
-                            QuestionUiState.Loading -> (fadeIn(
-                                animationSpec = tween(
-                                    220, delayMillis = 90
-                                )
-                            )).togetherWith(fadeOut(animationSpec = tween(90)))
+                            QuestionUiState.Loading -> fadeIn().togetherWith(fadeOut())
 
-                            is QuestionUiState.ShowCorrectChoices -> (slideInVertically { height -> height } + fadeIn()).togetherWith(
-                                slideOutVertically { height -> -height } + fadeOut())
-
-                            else -> (fadeIn(animationSpec = tween(220, delayMillis = 90)) + scaleIn(
-                                initialScale = 0.92f, animationSpec = tween(220, delayMillis = 90)
-                            )).togetherWith(fadeOut(animationSpec = tween(90)))
+                            else -> (slideInVertically() + fadeIn()).togetherWith(
+                                slideOutVertically() + fadeOut()
+                            )
                         }
                     }) { state ->
         when (state) {
@@ -154,8 +141,7 @@ internal fun QuestionScreen(
                         questions = state.questions,
                         selectedChoices = selectedChoices,
                         questionsWithSelectedChoicesSize = questionsWithSelectedChoicesSize,
-                        countDownTimerFinished = countDownTimerFinished,
-                        countDownTimeUntilFinished = countDownTimeUntilFinished,
+                        countDownTime = countDownTime,
                         onStartCountDownTimer = onStartCountDownTimer,
                         onCancelCountDownTimer = onCancelCountDownTimer,
                         onAddCurrentQuestion = onAddCurrentQuestion,
@@ -175,7 +161,7 @@ internal fun QuestionScreen(
                 CorrectChoicesScreen(
                     questions = state.questions, selectedChoices = selectedChoices,
                     score = state.score,
-                    lastCountDownTime = state.lastCountDownTime,
+                    minutes = state.lastCountDownTime,
                     onAddCurrentQuestion = onAddCurrentQuestion,
                 )
             }
@@ -220,8 +206,7 @@ private fun Questions(
     questions: List<Question>,
     selectedChoices: List<String>,
     questionsWithSelectedChoicesSize: Int,
-    countDownTimerFinished: Boolean,
-    countDownTimeUntilFinished: String,
+    countDownTime: CountDownTime?,
     onStartCountDownTimer: () -> Unit,
     onCancelCountDownTimer: () -> Unit,
     onAddCurrentQuestion: (Question) -> Unit,
@@ -246,8 +231,8 @@ private fun Questions(
         onStartCountDownTimer()
     }
 
-    LaunchedEffect(key1 = countDownTimerFinished) {
-        if (countDownTimerFinished) {
+    LaunchedEffect(key1 = countDownTime) {
+        if (countDownTime != null && countDownTime.isFinished) {
             onCancelCountDownTimer()
             onShowCorrectChoices(questionSettingIndex)
         }
@@ -261,9 +246,7 @@ private fun Questions(
 
     Scaffold(topBar = {
         QuestionTopAppBar(
-            title = "Questions",
-            scrollBehavior = scrollBehavior,
-            countDownTimeUntilFinished = countDownTimeUntilFinished
+            title = "Questions", scrollBehavior = scrollBehavior, minutes = countDownTime?.minutes
         )
     }, snackbarHost = {
         SnackbarHost(hostState = snackbarHostState)
@@ -435,7 +418,7 @@ private fun QuestionTopAppBar(
     modifier: Modifier = Modifier,
     title: String,
     scrollBehavior: TopAppBarScrollBehavior,
-    countDownTimeUntilFinished: String,
+    minutes: String?,
 ) {
     val gradientColors = listOf(Color(0xFF00BCD4), Color(0xFF03A9F4), Color(0xFF9C27B0))
 
@@ -452,20 +435,25 @@ private fun QuestionTopAppBar(
         },
         modifier = modifier.testTag("question:largeTopAppBar"),
         actions = {
-            ElevatedCard(
-                modifier = Modifier
-                    .padding(end = 5.dp)
-                    .animateContentSize()
-            ) {
-                Row(
-                    modifier = Modifier.padding(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
+            if (minutes.isNullOrBlank().not()) {
+                ElevatedCard(
+                    modifier = Modifier
+                        .padding(end = 5.dp)
+                        .animateContentSize()
                 ) {
-                    Icon(imageVector = SocialWorkReviewerIcons.AccessTime, contentDescription = "")
+                    Row(
+                        modifier = Modifier.padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = SocialWorkReviewerIcons.AccessTime,
+                            contentDescription = ""
+                        )
 
-                    Spacer(modifier = Modifier.width(5.dp))
+                        Spacer(modifier = Modifier.width(5.dp))
 
-                    Text(text = countDownTimeUntilFinished)
+                        Text(text = minutes!!)
+                    }
                 }
             }
         },
