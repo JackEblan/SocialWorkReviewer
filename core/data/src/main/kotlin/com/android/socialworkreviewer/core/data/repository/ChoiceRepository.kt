@@ -7,15 +7,11 @@ import kotlinx.coroutines.flow.SharedFlow
 interface ChoiceRepository {
     val selectedChoices: List<Choice>
 
-    val questions: List<Question>
-
     val questionsWithSelectedChoicesFlow: SharedFlow<Map<Question, List<String>>>
 
     suspend fun addChoice(choice: Choice)
 
     suspend fun deleteChoice(choice: Choice)
 
-    fun addQuestions(questions: List<Question>)
-
-    fun clearCache()
+    fun clearSelectedChoices()
 }

@@ -5,6 +5,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -116,7 +117,7 @@ internal fun QuestionScreen(
     onCancelCountDownTimer: () -> Unit,
     onAddCurrentQuestion: (Question) -> Unit,
     onUpdateChoice: (Choice) -> Unit,
-    onShowCorrectChoices: (Int) -> Unit,
+    onShowCorrectChoices: (questionSettingIndex: Int, questions: List<Question>) -> Unit,
     onStartQuestions: (Int, QuestionSetting) -> Unit,
     onStartQuickQuestions: () -> Unit,
 ) {
@@ -125,11 +126,17 @@ internal fun QuestionScreen(
                     label = "",
                     transitionSpec = {
                         when (targetState) {
-                            QuestionUiState.Loading -> fadeIn().togetherWith(fadeOut())
+                            is QuestionUiState.ShowCorrectChoices, is QuestionUiState.Questions, is QuestionUiState.QuickQuestions -> {
+                                (slideInVertically() + fadeIn()).togetherWith(
+                                    slideOutVertically() + fadeOut()
+                                )
+                            }
 
-                            else -> (slideInVertically() + fadeIn()).togetherWith(
-                                slideOutVertically() + fadeOut()
-                            )
+                            else -> {
+                                (fadeIn(animationSpec = tween(220, delayMillis = 90))).togetherWith(
+                                    fadeOut()
+                                )
+                            }
                         }
                     }) { state ->
         when (state) {
@@ -211,7 +218,7 @@ private fun Questions(
     onCancelCountDownTimer: () -> Unit,
     onAddCurrentQuestion: (Question) -> Unit,
     onUpdateChoice: (Choice) -> Unit,
-    onShowCorrectChoices: (Int) -> Unit,
+    onShowCorrectChoices: (questionSettingIndex: Int, questions: List<Question>) -> Unit,
 ) {
     val pagerState = rememberPagerState(pageCount = {
         questions.size
@@ -234,7 +241,7 @@ private fun Questions(
     LaunchedEffect(key1 = countDownTime) {
         if (countDownTime != null && countDownTime.isFinished) {
             onCancelCountDownTimer()
-            onShowCorrectChoices(questionSettingIndex)
+            onShowCorrectChoices(questionSettingIndex, questions)
         }
     }
 
@@ -262,7 +269,7 @@ private fun Questions(
                         snackbarHostState.showSnackbar("Please answer all the questions")
                     }
                 } else {
-                    onShowCorrectChoices(questionSettingIndex)
+                    onShowCorrectChoices(questionSettingIndex, questions)
                 }
             }) {
                 Icon(

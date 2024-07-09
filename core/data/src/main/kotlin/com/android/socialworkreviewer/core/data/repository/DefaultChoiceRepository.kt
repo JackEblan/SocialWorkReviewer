@@ -12,14 +12,8 @@ internal class DefaultChoiceRepository @Inject constructor(
 
     override val selectedChoices get() = inMemoryChoiceDataSource.selectedChoices
 
-    override val questions get() = inMemoryChoiceDataSource.questions
-
     override val questionsWithSelectedChoicesFlow: SharedFlow<Map<Question, List<String>>>
         get() = inMemoryChoiceDataSource.questionsWithSelectedChoicesFlow
-
-    override fun addQuestions(questions: List<Question>) {
-        inMemoryChoiceDataSource.addQuestions(questions)
-    }
 
     override suspend fun addChoice(choice: Choice) {
         inMemoryChoiceDataSource.addChoice(choice)
@@ -29,7 +23,7 @@ internal class DefaultChoiceRepository @Inject constructor(
         inMemoryChoiceDataSource.deleteChoice(choice)
     }
 
-    override fun clearCache() {
-        inMemoryChoiceDataSource.clearCache()
+    override fun clearSelectedChoices() {
+        inMemoryChoiceDataSource.clearSelectedChoices()
     }
 }

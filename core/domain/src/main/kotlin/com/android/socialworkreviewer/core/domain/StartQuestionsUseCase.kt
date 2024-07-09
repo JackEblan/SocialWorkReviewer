@@ -12,17 +12,12 @@ class StartQuestionsUseCase @Inject constructor(
     suspend operator fun invoke(
         id: String, numberOfQuestions: Int? = null
     ): List<Question> {
+        choiceRepository.clearSelectedChoices()
 
-        val questions = if (numberOfQuestions != null) {
+        return if (numberOfQuestions != null) {
             questionRepository.getQuestions(id = id).take(numberOfQuestions)
         } else {
             questionRepository.getQuestions(id = id)
         }
-
-        choiceRepository.clearCache()
-
-        choiceRepository.addQuestions(questions = questions)
-
-        return questions
     }
 }

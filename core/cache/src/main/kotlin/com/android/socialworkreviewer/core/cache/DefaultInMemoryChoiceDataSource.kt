@@ -14,24 +14,15 @@ import javax.inject.Inject
 internal class DefaultInMemoryChoiceDataSource @Inject constructor(
     @Dispatcher(Default) private val defaultDispatcher: CoroutineDispatcher
 ) : InMemoryChoiceDataSource {
-    private var _questions = emptyList<Question>()
-
     private val _selectedChoices = mutableListOf<Choice>()
 
     private val _questionsWithSelectedChoicesFlow = MutableSharedFlow<Map<Question, List<String>>>(
-        replay = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
+        replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
 
     override val selectedChoices get() = _selectedChoices.toList()
 
-    override val questions get() = _questions
-
     override val questionsWithSelectedChoicesFlow = _questionsWithSelectedChoicesFlow.asSharedFlow()
-
-    override fun addQuestions(value: List<Question>) {
-        _questions = value
-    }
 
     override suspend fun addChoice(choice: Choice) {
         _selectedChoices.add(choice)
@@ -45,9 +36,7 @@ internal class DefaultInMemoryChoiceDataSource @Inject constructor(
         _questionsWithSelectedChoicesFlow.emit(getQuestionsWithSelectedChoices())
     }
 
-    override fun clearCache() {
-        _questions = emptyList()
-
+    override fun clearSelectedChoices() {
         _selectedChoices.clear()
     }
 
