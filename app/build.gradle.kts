@@ -81,3 +81,7 @@ dependencies {
     androidTestImplementation(libs.hilt.android.testing)
     androidTestImplementation(projects.core.testing)
 }
+
+dependencyGuard {
+    configuration("releaseRuntimeClasspath")
+}
