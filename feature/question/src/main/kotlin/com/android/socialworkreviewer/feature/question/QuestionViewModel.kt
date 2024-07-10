@@ -7,7 +7,7 @@ import androidx.navigation.toRoute
 import com.android.socialworkreviewer.core.data.repository.AverageRepository
 import com.android.socialworkreviewer.core.data.repository.CategoryRepository
 import com.android.socialworkreviewer.core.data.repository.ChoiceRepository
-import com.android.socialworkreviewer.core.domain.StartQuestionsUseCase
+import com.android.socialworkreviewer.core.domain.GetQuestionsUseCase
 import com.android.socialworkreviewer.core.domain.UpdateChoiceUseCase
 import com.android.socialworkreviewer.core.model.Average
 import com.android.socialworkreviewer.core.model.Choice
@@ -20,8 +20,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -34,7 +32,7 @@ class QuestionViewModel @Inject constructor(
     private val categoryRepository: CategoryRepository,
     private val averageRepository: AverageRepository,
     private val countDownTimerWrapper: CountDownTimerWrapper,
-    private val startQuestionsUseCase: StartQuestionsUseCase,
+    private val getQuestionsUseCase: GetQuestionsUseCase,
     private val updateChoiceUseCase: UpdateChoiceUseCase,
 ) : ViewModel() {
 
@@ -44,8 +42,6 @@ class QuestionViewModel @Inject constructor(
 
     private val _questionUiState = MutableStateFlow<QuestionUiState?>(null)
     val questionUiState = _questionUiState.asStateFlow()
-
-    private val _countDownTimeSelected = MutableStateFlow<Int?>(null)
 
     private val _currentQuestion = MutableStateFlow<Question?>(null)
 
@@ -68,26 +64,26 @@ class QuestionViewModel @Inject constructor(
         initialValue = emptyList()
     )
 
-    val countDownTime = _countDownTimeSelected.filterNotNull().flatMapLatest { millisInFuture ->
-        countDownTimerWrapper.setCountDownTimer(
-            millisInFuture = millisInFuture * 60000L,
-            countDownInterval = 1000,
-        )
-    }.stateIn(
+    val countDownTime = countDownTimerWrapper.countDownTimeFlow.stateIn(
         scope = viewModelScope, started = SharingStarted.WhileSubscribed(5_000), initialValue = null
     )
 
     fun startQuestions(questionSettingIndex: Int, questionSetting: QuestionSetting) {
         viewModelScope.launch {
+            choiceRepository.clearSelectedChoices()
+
             _questionUiState.update {
                 QuestionUiState.Loading
             }
 
-            val questions = startQuestionsUseCase(
+            val questions = getQuestionsUseCase(
                 id = id, numberOfQuestions = questionSetting.numberOfQuestions
             )
 
-            _countDownTimeSelected.update { questionSetting.minutes }
+            countDownTimerWrapper.setCountDownTimer(
+                millisInFuture = questionSetting.minutes * 60000L,
+                countDownInterval = 1000,
+            )
 
             _questionUiState.update {
                 QuestionUiState.Questions(
@@ -106,7 +102,7 @@ class QuestionViewModel @Inject constructor(
 
             _questionUiState.update {
                 QuestionUiState.QuickQuestions(
-                    questions = startQuestionsUseCase(id = id),
+                    questions = getQuestionsUseCase(id = id),
                 )
             }
         }

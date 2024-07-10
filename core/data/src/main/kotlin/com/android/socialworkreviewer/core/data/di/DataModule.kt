@@ -48,7 +48,8 @@ abstract class DataModule {
     internal abstract fun questionRepository(impl: DefaultQuestionRepository): QuestionRepository
 
     @Binds
-    internal abstract fun answerRepository(impl: DefaultChoiceRepository): ChoiceRepository
+    @Singleton
+    internal abstract fun choiceRepository(impl: DefaultChoiceRepository): ChoiceRepository
 
     @Binds
     @Singleton
