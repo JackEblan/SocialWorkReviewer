@@ -35,6 +35,8 @@ internal class DefaultCountDownTimerWrapper @Inject constructor() : CountDownTim
                         minutes = "", isFinished = true
                     )
                 )
+
+                _countDownTimeFlow.resetReplayCache()
             }
         }
     }
