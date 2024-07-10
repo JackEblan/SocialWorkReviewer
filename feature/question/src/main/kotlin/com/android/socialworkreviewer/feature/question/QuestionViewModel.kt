@@ -121,13 +121,13 @@ class QuestionViewModel @Inject constructor(
     fun showCorrectChoices(questionSettingIndex: Int, questions: List<Question>) {
         viewModelScope.launch {
             val score =
-                choiceRepository.questionsWithSelectedChoicesFlow.replayCache.first().count {
+                choiceRepository.questionsWithSelectedChoicesFlow.replayCache.firstOrNull()?.count {
                     it.value.toSet() == it.key.correctChoices.toSet()
                 }
 
             _questionUiState.update {
                 QuestionUiState.ShowCorrectChoices(
-                    score = score,
+                    score = score ?: 0,
                     questions = questions,
                     lastCountDownTime = countDownTime.value?.minutes
                 )
@@ -136,7 +136,7 @@ class QuestionViewModel @Inject constructor(
             averageRepository.upsertAverage(
                 Average(
                     questionSettingIndex = questionSettingIndex,
-                    score = score,
+                    score = score ?: 0,
                     numberOfQuestions = questions.size,
                     categoryId = id
                 )
