@@ -13,5 +13,5 @@ interface InMemoryChoiceDataSource {
 
     suspend fun deleteChoice(choice: Choice)
 
-    fun clearSelectedChoices()
+    fun clearCache()
 }

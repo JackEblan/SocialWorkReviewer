@@ -36,8 +36,10 @@ internal class DefaultInMemoryChoiceDataSource @Inject constructor(
         _questionsWithSelectedChoicesFlow.emit(getQuestionsWithSelectedChoices())
     }
 
-    override fun clearSelectedChoices() {
+    override fun clearCache() {
         _selectedChoices.clear()
+
+        _questionsWithSelectedChoicesFlow.resetReplayCache()
     }
 
     private suspend fun getQuestionsWithSelectedChoices(): Map<Question, List<String>> {

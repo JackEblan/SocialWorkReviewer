@@ -70,7 +70,7 @@ class QuestionViewModel @Inject constructor(
 
     fun startQuestions(questionSettingIndex: Int, questionSetting: QuestionSetting) {
         viewModelScope.launch {
-            choiceRepository.clearSelectedChoices()
+            choiceRepository.clearCache()
 
             _questionUiState.update {
                 QuestionUiState.Loading
