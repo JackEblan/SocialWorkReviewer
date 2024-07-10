@@ -13,5 +13,5 @@ interface ChoiceRepository {
 
     suspend fun deleteChoice(choice: Choice)
 
-    fun clearCache()
+    suspend fun clearCache()
 }

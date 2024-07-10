@@ -20,7 +20,7 @@ internal class DefaultChoiceRepository @Inject constructor(
         inMemoryChoiceDataSource.deleteChoice(choice)
     }
 
-    override fun clearCache() {
+    override suspend fun clearCache() {
         inMemoryChoiceDataSource.clearCache()
     }
 }

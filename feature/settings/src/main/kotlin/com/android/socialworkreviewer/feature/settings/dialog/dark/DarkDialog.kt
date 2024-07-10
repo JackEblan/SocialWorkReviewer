@@ -64,8 +64,7 @@ internal fun DarkDialog(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp),
+                .fillMaxWidth(),
         ) {
             DarkDialogTitle()
 
@@ -104,7 +103,7 @@ private fun DarkDialogTitle(modifier: Modifier = Modifier) {
     Spacer(modifier = Modifier.height(10.dp))
 
     Text(
-        modifier = modifier.padding(horizontal = 5.dp),
+        modifier = modifier.padding(start = 10.dp, top = 10.dp),
         text = stringResource(id = R.string.theme),
         style = MaterialTheme.typography.titleLarge,
     )
@@ -122,17 +121,14 @@ private fun DarkDialogRadioButtonGroup(
         stringResource(id = R.string.dark),
     )
 
-    Spacer(modifier = Modifier.height(10.dp))
-
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .selectableGroup(),
+        modifier = modifier.selectableGroup(),
     ) {
         items.forEachIndexed { index, text ->
             Row(
-                Modifier
-                    .padding(vertical = 10.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
                     .selectable(
                         selected = index == selected,
                         role = Role.RadioButton,
@@ -152,7 +148,7 @@ private fun DarkDialogRadioButtonGroup(
                 Text(
                     text = text,
                     style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(start = 10.dp),
+                    modifier = Modifier.padding(start = 16.dp),
                 )
             }
         }
@@ -165,10 +161,9 @@ private fun DarkDialogButtons(
     onCancelClick: () -> Unit,
     onChangeClick: () -> Unit,
 ) {
-    Spacer(modifier = Modifier.height(10.dp))
-
     Row(
-        modifier = modifier,
+        modifier = modifier
+            .padding(10.dp),
         horizontalArrangement = Arrangement.End,
     ) {
         TextButton(
