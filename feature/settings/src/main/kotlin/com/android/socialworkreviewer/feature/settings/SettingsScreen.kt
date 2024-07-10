@@ -208,7 +208,7 @@ private fun SettingsTopAppBAr(onNavigationIconClick: () -> Unit) {
             IconButton(onClick = onNavigationIconClick) {
                 Icon(
                     imageVector = SocialWorkReviewerIcons.ArrowBack,
-                    contentDescription = "Navigation icon"
+                    contentDescription = "Navigation icon",
                 )
             }
         },

@@ -15,7 +15,6 @@
  *   limitations under the License.
  *
  */
-
 package com.android.socialworkreviewer.core.network.di
 
 import com.android.socialworkreviewer.core.network.firestore.AnnouncementDataSource

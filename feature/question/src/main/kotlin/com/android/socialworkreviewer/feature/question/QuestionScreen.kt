@@ -1,3 +1,20 @@
+/*
+ *
+ *   Copyright 2023 Einstein Blanco
+ *
+ *   Licensed under the GNU General Public License v3.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       https://www.gnu.org/licenses/gpl-3.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ */
 package com.android.socialworkreviewer.feature.question
 
 import androidx.annotation.VisibleForTesting
@@ -71,7 +88,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 internal fun QuestionRoute(
-    modifier: Modifier = Modifier, viewModel: QuestionViewModel = hiltViewModel()
+    modifier: Modifier = Modifier,
+    viewModel: QuestionViewModel = hiltViewModel(),
 ) {
     val questionUiState = viewModel.questionUiState.collectAsStateWithLifecycle().value
 
@@ -99,7 +117,7 @@ internal fun QuestionRoute(
         onUpdateChoice = viewModel::updateChoice,
         onShowCorrectChoices = viewModel::showCorrectChoices,
         onStartQuestions = viewModel::startQuestions,
-        onStartQuickQuestions = viewModel::startQuickQuestions
+        onStartQuickQuestions = viewModel::startQuickQuestions,
     )
 }
 
@@ -121,24 +139,26 @@ internal fun QuestionScreen(
     onStartQuestions: (Int, QuestionSetting) -> Unit,
     onStartQuickQuestions: () -> Unit,
 ) {
-    AnimatedContent(modifier = modifier,
-                    targetState = questionUiState,
-                    label = "",
-                    transitionSpec = {
-                        when (targetState) {
-                            is QuestionUiState.ShowCorrectChoices, is QuestionUiState.Questions, is QuestionUiState.QuickQuestions -> {
-                                (slideInVertically() + fadeIn()).togetherWith(
-                                    slideOutVertically() + fadeOut()
-                                )
-                            }
+    AnimatedContent(
+        modifier = modifier,
+        targetState = questionUiState,
+        label = "",
+        transitionSpec = {
+            when (targetState) {
+                is QuestionUiState.ShowCorrectChoices, is QuestionUiState.Questions, is QuestionUiState.QuickQuestions -> {
+                    (slideInVertically() + fadeIn()).togetherWith(
+                        slideOutVertically() + fadeOut(),
+                    )
+                }
 
-                            else -> {
-                                (fadeIn(animationSpec = tween(220, delayMillis = 90))).togetherWith(
-                                    fadeOut()
-                                )
-                            }
-                        }
-                    }) { state ->
+                else -> {
+                    (fadeIn(animationSpec = tween(220, delayMillis = 90))).togetherWith(
+                        fadeOut(),
+                    )
+                }
+            }
+        },
+    ) { state ->
         when (state) {
             is QuestionUiState.Questions -> {
                 if (state.questions.isNotEmpty()) {
@@ -166,7 +186,8 @@ internal fun QuestionScreen(
 
             is QuestionUiState.ShowCorrectChoices -> {
                 CorrectChoicesScreen(
-                    questions = state.questions, selectedChoices = selectedChoices,
+                    questions = state.questions,
+                    selectedChoices = selectedChoices,
                     score = state.score,
                     minutes = state.lastCountDownTime,
                     onAddCurrentQuestion = onAddCurrentQuestion,
@@ -178,7 +199,7 @@ internal fun QuestionScreen(
                     SuccessOnBoardingScreen(
                         category = state.category,
                         onStartQuestions = onStartQuestions,
-                        onStartQuickQuestions = onStartQuickQuestions
+                        onStartQuickQuestions = onStartQuickQuestions,
                     )
                 } else {
                     EmptyState(text = "No Question Settings found!")
@@ -231,7 +252,7 @@ private fun Questions(
     val animatedProgress by animateFloatAsState(
         targetValue = (pagerState.currentPage + 1f) / questions.size,
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
-        label = "animatedProgress"
+        label = "animatedProgress",
     )
 
     LaunchedEffect(key1 = true) {
@@ -253,7 +274,9 @@ private fun Questions(
 
     Scaffold(topBar = {
         QuestionTopAppBar(
-            title = "Questions", scrollBehavior = scrollBehavior, minutes = countDownTime?.minutes
+            title = "Questions",
+            scrollBehavior = scrollBehavior,
+            minutes = countDownTime?.minutes,
         )
     }, snackbarHost = {
         SnackbarHost(hostState = snackbarHostState)
@@ -261,7 +284,7 @@ private fun Questions(
         AnimatedVisibility(
             visible = scrollBehavior.state.collapsedFraction == 0.0f,
             enter = fadeIn() + scaleIn(),
-            exit = fadeOut() + scaleOut()
+            exit = fadeOut() + scaleOut(),
         ) {
             FloatingActionButton(onClick = {
                 if (questionsWithSelectedChoicesSize < questions.size) {
@@ -273,7 +296,8 @@ private fun Questions(
                 }
             }) {
                 Icon(
-                    imageVector = SocialWorkReviewerIcons.Check, contentDescription = ""
+                    imageVector = SocialWorkReviewerIcons.Check,
+                    contentDescription = "",
                 )
             }
         }
@@ -296,7 +320,8 @@ private fun Questions(
             )
 
             HorizontalPager(
-                modifier = Modifier.fillMaxSize(), state = pagerState
+                modifier = Modifier.fillMaxSize(),
+                state = pagerState,
             ) { page ->
                 QuestionPage(
                     modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -329,19 +354,22 @@ private fun QuestionPage(
         QuestionText(question = questions[page].question)
 
         ChoicesType(
-            numberOfChoices = questions[page].correctChoices.size
+            numberOfChoices = questions[page].correctChoices.size,
         )
 
-        QuestionChoicesSelection(isScrollInProgress = isScrollInProgress,
-                                 choices = questions[page].choices,
-                                 selectedChoices = selectedChoices,
-                                 onUpdateChoice = { choice ->
-                                     onUpdateChoice(
-                                         Choice(
-                                             question = questions[page], choice = choice
-                                         )
-                                     )
-                                 })
+        QuestionChoicesSelection(
+            isScrollInProgress = isScrollInProgress,
+            choices = questions[page].choices,
+            selectedChoices = selectedChoices,
+            onUpdateChoice = { choice ->
+                onUpdateChoice(
+                    Choice(
+                        question = questions[page],
+                        choice = choice,
+                    ),
+                )
+            },
+        )
     }
 }
 
@@ -350,10 +378,11 @@ private fun QuestionText(modifier: Modifier = Modifier, question: String) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp)
+            .padding(horizontal = 20.dp),
     ) {
         Text(
-            text = question, style = MaterialTheme.typography.headlineSmall
+            text = question,
+            style = MaterialTheme.typography.headlineSmall,
         )
     }
 
@@ -362,7 +391,8 @@ private fun QuestionText(modifier: Modifier = Modifier, question: String) {
 
 @Composable
 internal fun ChoicesType(
-    modifier: Modifier = Modifier, numberOfChoices: Int
+    modifier: Modifier = Modifier,
+    numberOfChoices: Int,
 ) {
     val choicesType = if (numberOfChoices > 1) "Multiple Choices" else "Single Choice"
 
@@ -371,12 +401,12 @@ internal fun ChoicesType(
     ElevatedCard(
         modifier = modifier
             .padding(horizontal = 10.dp)
-            .animateContentSize()
+            .animateContentSize(),
     ) {
         Text(
             modifier = Modifier.padding(5.dp),
             text = choicesType,
-            style = MaterialTheme.typography.bodySmall
+            style = MaterialTheme.typography.bodySmall,
         )
     }
 
@@ -400,15 +430,18 @@ private fun QuestionChoicesSelection(
                     .fillMaxWidth()
                     .clickable {
                         onUpdateChoice(choice)
-                    }, verticalAlignment = Alignment.CenterVertically
+                    },
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Checkbox(checked = choice in selectedChoices && isScrollInProgress.not(),
-                         onCheckedChange = {
-                             onUpdateChoice(choice)
-                         })
+                Checkbox(
+                    checked = choice in selectedChoices && isScrollInProgress.not(),
+                    onCheckedChange = {
+                        onUpdateChoice(choice)
+                    },
+                )
 
                 Box(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text(text = choice)
                 }
@@ -435,8 +468,8 @@ private fun QuestionTopAppBar(
                 text = title,
                 style = MaterialTheme.typography.headlineSmall.copy(
                     brush = Brush.linearGradient(
-                        colors = gradientColors
-                    )
+                        colors = gradientColors,
+                    ),
                 ),
             )
         },
@@ -446,15 +479,15 @@ private fun QuestionTopAppBar(
                 ElevatedCard(
                     modifier = Modifier
                         .padding(end = 5.dp)
-                        .animateContentSize()
+                        .animateContentSize(),
                 ) {
                     Row(
                         modifier = Modifier.padding(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
                             imageVector = SocialWorkReviewerIcons.AccessTime,
-                            contentDescription = ""
+                            contentDescription = "",
                         )
 
                         Spacer(modifier = Modifier.width(5.dp))

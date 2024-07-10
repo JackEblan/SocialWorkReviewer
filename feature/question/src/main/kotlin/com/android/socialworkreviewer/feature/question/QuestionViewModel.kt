@@ -1,3 +1,20 @@
+/*
+ *
+ *   Copyright 2023 Einstein Blanco
+ *
+ *   Licensed under the GNU General Public License v3.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       https://www.gnu.org/licenses/gpl-3.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ */
 package com.android.socialworkreviewer.feature.question
 
 import androidx.lifecycle.SavedStateHandle
@@ -50,22 +67,26 @@ class QuestionViewModel @Inject constructor(
     val questionsWithSelectedChoicesSize get() = _questionsWithSelectedChoicesSize.asStateFlow()
 
     val currentQuestionWithSelectedChoices = combine(
-        _currentQuestion, choiceRepository.questionsWithSelectedChoicesFlow
+        _currentQuestion,
+        choiceRepository.questionsWithSelectedChoicesFlow,
     ) { question, questionsWithSelectedChoices ->
 
         _questionsWithSelectedChoicesSize.update { questionsWithSelectedChoices.size }
 
         questionsWithSelectedChoices.getOrDefault(
-            key = question, defaultValue = emptyList()
+            key = question,
+            defaultValue = emptyList(),
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = emptyList()
+        initialValue = emptyList(),
     )
 
     val countDownTime = countDownTimerWrapper.countDownTimeFlow.stateIn(
-        scope = viewModelScope, started = SharingStarted.WhileSubscribed(5_000), initialValue = null
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = null,
     )
 
     fun startQuestions(questionSettingIndex: Int, questionSetting: QuestionSetting) {
@@ -77,7 +98,8 @@ class QuestionViewModel @Inject constructor(
             }
 
             val questions = getQuestionsUseCase(
-                id = id, numberOfQuestions = questionSetting.numberOfQuestions
+                id = id,
+                numberOfQuestions = questionSetting.numberOfQuestions,
             )
 
             countDownTimerWrapper.setCountDownTimer(
@@ -129,7 +151,7 @@ class QuestionViewModel @Inject constructor(
                 QuestionUiState.ShowCorrectChoices(
                     score = score ?: 0,
                     questions = questions,
-                    lastCountDownTime = countDownTime.value?.minutes
+                    lastCountDownTime = countDownTime.value?.minutes,
                 )
             }
 
@@ -138,8 +160,8 @@ class QuestionViewModel @Inject constructor(
                     questionSettingIndex = questionSettingIndex,
                     score = score ?: 0,
                     numberOfQuestions = questions.size,
-                    categoryId = id
-                )
+                    categoryId = id,
+                ),
             )
         }
     }

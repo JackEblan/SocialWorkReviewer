@@ -1,3 +1,20 @@
+/*
+ *
+ *   Copyright 2023 Einstein Blanco
+ *
+ *   Licensed under the GNU General Public License v3.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       https://www.gnu.org/licenses/gpl-3.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ */
 package com.android.socialworkreviewer.feature.question
 
 import androidx.compose.animation.core.animateFloatAsState
@@ -63,7 +80,7 @@ internal fun QuickQuestionsScreen(
     val animatedProgress by animateFloatAsState(
         targetValue = (pagerState.currentPage + 1f) / questions.size,
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
-        label = "animatedProgress"
+        label = "animatedProgress",
     )
 
     LaunchedEffect(key1 = pagerState) {
@@ -101,7 +118,8 @@ internal fun QuickQuestionsScreen(
             )
 
             HorizontalPager(
-                modifier = Modifier.fillMaxSize(), state = pagerState
+                modifier = Modifier.fillMaxSize(),
+                state = pagerState,
             ) { page ->
                 QuickQuestionPage(
                     modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -134,20 +152,23 @@ private fun QuickQuestionPage(
         QuickQuestionText(question = questions[page].question)
 
         ChoicesType(
-            numberOfChoices = questions[page].correctChoices.size
+            numberOfChoices = questions[page].correctChoices.size,
         )
 
-        QuickQuestionChoicesSelection(isScrollInProgress = isScrollInProgress,
-                                      choices = questions[page].choices,
-                                      correctChoices = questions[page].correctChoices,
-                                      selectedChoices = selectedChoices,
-                                      onUpdateChoice = { choice ->
-                                          onUpdateChoice(
-                                              Choice(
-                                                  question = questions[page], choice = choice
-                                              )
-                                          )
-                                      })
+        QuickQuestionChoicesSelection(
+            isScrollInProgress = isScrollInProgress,
+            choices = questions[page].choices,
+            correctChoices = questions[page].correctChoices,
+            selectedChoices = selectedChoices,
+            onUpdateChoice = { choice ->
+                onUpdateChoice(
+                    Choice(
+                        question = questions[page],
+                        choice = choice,
+                    ),
+                )
+            },
+        )
     }
 }
 
@@ -156,10 +177,11 @@ private fun QuickQuestionText(modifier: Modifier = Modifier, question: String) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp)
+            .padding(horizontal = 20.dp),
     ) {
         Text(
-            text = question, style = MaterialTheme.typography.headlineSmall
+            text = question,
+            style = MaterialTheme.typography.headlineSmall,
         )
     }
 
@@ -177,7 +199,7 @@ private fun QuickQuestionChoicesSelection(
 ) {
     val wrongChoiceColor = CheckboxDefaults.colors().copy(
         checkedBoxColor = MaterialTheme.colorScheme.error,
-        checkedBorderColor = MaterialTheme.colorScheme.error
+        checkedBorderColor = MaterialTheme.colorScheme.error,
     )
 
     Column(
@@ -199,18 +221,21 @@ private fun QuickQuestionChoicesSelection(
                         if (selectedChoice.not() && selectedChoices.size < correctChoices.size) {
                             onUpdateChoice(choice)
                         }
-                    }, verticalAlignment = Alignment.CenterVertically
+                    },
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Checkbox(
-                    checked = selectedChoice || correctChoice || wrongChoice, onCheckedChange = {
+                    checked = selectedChoice || correctChoice || wrongChoice,
+                    onCheckedChange = {
                         if (selectedChoice.not() && selectedChoices.size < correctChoices.size) {
                             onUpdateChoice(choice)
                         }
-                    }, colors = if (wrongChoice) wrongChoiceColor else CheckboxDefaults.colors()
+                    },
+                    colors = if (wrongChoice) wrongChoiceColor else CheckboxDefaults.colors(),
                 )
 
                 Box(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text(text = choice)
                 }
@@ -236,8 +261,8 @@ private fun QuickQuestionTopAppBar(
                 text = title,
                 style = MaterialTheme.typography.headlineSmall.copy(
                     brush = Brush.linearGradient(
-                        colors = gradientColors
-                    )
+                        colors = gradientColors,
+                    ),
                 ),
             )
         },

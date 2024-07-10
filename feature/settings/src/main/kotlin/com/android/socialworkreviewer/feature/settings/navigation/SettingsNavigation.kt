@@ -33,6 +33,6 @@ fun NavGraphBuilder.settingsScreen(
         SettingsRoute(
             onNavigationIconClick = onNavigationIconClick,
 
-            )
+        )
     }
 }
