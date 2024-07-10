@@ -30,4 +30,6 @@ dependencies {
     implementation(projects.core.common)
     implementation(projects.core.data)
     implementation(projects.core.model)
+
+    testImplementation(projects.core.testing)
 }
