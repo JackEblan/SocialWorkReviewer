@@ -112,6 +112,7 @@ room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", vers
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 android-test = { id = "com.android.test", version.ref = "androidGradlePlugin" }
+baselineprofile = { id = "androidx.baselineprofile", version.ref = "androidxMacroBenchmark" }
 compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 dependencyGuard = { id = "com.dropbox.dependency-guard", version.ref = "dependencyGuard" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }

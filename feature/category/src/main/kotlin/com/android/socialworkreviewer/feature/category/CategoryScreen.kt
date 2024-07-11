@@ -183,7 +183,7 @@ private fun CategoryTopAppBar(
 private fun LoadingState(modifier: Modifier = Modifier) {
     SwrLoadingWheel(
         modifier = modifier,
-        contentDescription = "SocialWorkReviewerLoadingWheel",
+        contentDescription = "SwrLoadingWheel",
     )
 }
 
@@ -201,15 +201,21 @@ private fun SuccessState(
             .testTag("category:lazyVerticalGrid"),
         contentPadding = contentPadding,
     ) {
-        items(categoryUiState.announcements, key = { announcement ->
-            announcement.id
-        }) { announcement ->
+        items(
+            categoryUiState.announcements,
+            key = { announcement ->
+                announcement.id
+            },
+        ) { announcement ->
             AnnouncementItem(modifier = Modifier.animateItem(), announcement = announcement)
         }
 
-        items(categoryUiState.categories, key = { category ->
-            category.id
-        }) { category ->
+        items(
+            categoryUiState.categories,
+            key = { category ->
+                category.id
+            },
+        ) { category ->
             CategoryItem(
                 modifier = Modifier.animateItem(),
                 category = category,
@@ -228,7 +234,8 @@ private fun CategoryItem(
     OutlinedCard(
         modifier = modifier
             .fillMaxWidth()
-            .padding(10.dp),
+            .padding(10.dp)
+            .testTag("category:categoryItem"),
         onClick = {
             onCategoryClick(category.id)
         },
@@ -263,7 +270,7 @@ private fun CategoryItem(
 @Composable
 private fun AnnouncementItem(
     modifier: Modifier = Modifier,
-    announcement: Announcement?,
+    announcement: Announcement,
 ) {
     OutlinedCard(
         modifier = modifier
@@ -276,15 +283,14 @@ private fun AnnouncementItem(
                 .padding(10.dp),
         ) {
             Text(
-                text = announcement?.title ?: "Social Work Reviewer",
+                text = announcement.title,
                 style = MaterialTheme.typography.headlineSmall,
             )
 
             Spacer(modifier = Modifier.height(10.dp))
 
             Text(
-                text = announcement?.message
-                    ?: "High quality questions to challenge your knowledge",
+                text = announcement.message,
                 style = MaterialTheme.typography.bodyLarge,
             )
         }

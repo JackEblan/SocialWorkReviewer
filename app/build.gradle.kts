@@ -22,6 +22,7 @@ plugins {
     alias(libs.plugins.com.android.socialworkreviewer.applicationCompose)
     alias(libs.plugins.com.android.socialworkreviewer.applicationJacoco)
     alias(libs.plugins.com.android.socialworkreviewer.hilt)
+    alias(libs.plugins.baselineprofile)
     alias(libs.plugins.google.services)
     alias(libs.plugins.kotlin.serialization)
 }
@@ -52,6 +53,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+
+            // Ensure Baseline Profile is fresh for release builds.
+            baselineProfile.automaticGenerationDuringBuild = true
         }
     }
 }
@@ -80,6 +84,15 @@ dependencies {
     androidTestImplementation(libs.androidx.navigation.testing)
     androidTestImplementation(libs.hilt.android.testing)
     androidTestImplementation(projects.core.testing)
+
+    baselineProfile(projects.benchmarks)
+}
+
+baselineProfile {
+    // Don't build on every iteration of a full assemble.
+    // Instead enable generation directly for the release build variant.
+    automaticGenerationDuringBuild = false
+    dexLayoutOptimization = true
 }
 
 dependencyGuard {
