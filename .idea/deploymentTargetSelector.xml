@@ -11,6 +11,15 @@
       <SelectionState runConfigName="StartupBenchmark">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
+      <SelectionState runConfigName="ThemeTest">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="darkThemeFalse_dynamicColorFalse_androidThemeFalse()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="themeDialog_isDisplayed_whenThemeSetting_isClicked_thenDismissed()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
     </selectionStates>
   </component>
 </project>

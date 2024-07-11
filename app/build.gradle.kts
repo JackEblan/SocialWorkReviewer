@@ -77,6 +77,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.kotlinx.coroutines.guava)
     implementation(libs.kotlinx.serialization.json)
 
     debugImplementation(libs.androidx.compose.ui.test.manifest)
