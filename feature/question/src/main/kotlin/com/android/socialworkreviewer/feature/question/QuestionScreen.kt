@@ -316,6 +316,7 @@ private fun Questions(
                                 snackbarHostState.showSnackbar("Please answer all the questions")
                             }
                         } else {
+                            onCancelCountDownTimer()
                             onShowCorrectChoices(questionSettingIndex, questions)
                         }
                     },
