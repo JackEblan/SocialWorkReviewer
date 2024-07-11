@@ -18,7 +18,7 @@
 package com.android.socialworkreviewer.core.network.firestore
 
 import com.android.socialworkreviewer.core.common.Dispatcher
-import com.android.socialworkreviewer.core.common.SocialWorkReviewerDispatchers.IO
+import com.android.socialworkreviewer.core.common.SwrDispatchers.IO
 import com.android.socialworkreviewer.core.network.firestore.CategoryDataSource.Companion.CATEGORIES_COLLECTION
 import com.android.socialworkreviewer.core.network.model.CategoryDocument
 import com.android.socialworkreviewer.core.network.model.CategoryDocument.Companion.DATE

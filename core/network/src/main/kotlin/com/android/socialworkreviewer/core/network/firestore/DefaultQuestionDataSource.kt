@@ -18,7 +18,7 @@
 package com.android.socialworkreviewer.core.network.firestore
 
 import com.android.socialworkreviewer.core.common.Dispatcher
-import com.android.socialworkreviewer.core.common.SocialWorkReviewerDispatchers
+import com.android.socialworkreviewer.core.common.SwrDispatchers
 import com.android.socialworkreviewer.core.network.firestore.CategoryDataSource.Companion.CATEGORIES_COLLECTION
 import com.android.socialworkreviewer.core.network.firestore.QuestionDataSource.Companion.QUESTIONS_COLLECTION
 import com.android.socialworkreviewer.core.network.model.QuestionDocument
@@ -31,7 +31,7 @@ import javax.inject.Inject
 
 internal class DefaultQuestionDataSource @Inject constructor(
     private val firestore: FirebaseFirestore,
-    @Dispatcher(SocialWorkReviewerDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
+    @Dispatcher(SwrDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : QuestionDataSource {
     override suspend fun getQuestions(id: String): List<QuestionDocument> {
         return withContext(ioDispatcher) {

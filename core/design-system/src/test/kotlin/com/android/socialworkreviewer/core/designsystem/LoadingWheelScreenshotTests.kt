@@ -21,9 +21,9 @@ import androidx.activity.ComponentActivity
 import androidx.compose.material3.Surface
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
-import com.android.socialworkreviewer.core.designsystem.component.SocialWorkReviewerLoadingWheel
-import com.android.socialworkreviewer.core.designsystem.component.SocialWorkReviewerOverlayLoadingWheel
-import com.android.socialworkreviewer.core.designsystem.theme.SocialWorkReviewerTheme
+import com.android.socialworkreviewer.core.designsystem.component.SwrLoadingWheel
+import com.android.socialworkreviewer.core.designsystem.component.SwrOverlayLoadingWheel
+import com.android.socialworkreviewer.core.designsystem.theme.SwrTheme
 import com.android.socialworkreviewer.core.screenshottesting.util.DefaultRoborazziOptions
 import com.android.socialworkreviewer.core.screenshottesting.util.captureMultiTheme
 import com.github.takahirom.roborazzi.captureRoboImage
@@ -46,29 +46,29 @@ class LoadingWheelScreenshotTests {
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
     @Test
-    fun socialWorkReviewerLoadingWheel_multipleThemes() {
+    fun swrLoadingWheel_multipleThemes() {
         composeTestRule.captureMultiTheme("LoadingWheel") {
             Surface {
-                SocialWorkReviewerLoadingWheel(contentDescription = "test")
+                SwrLoadingWheel(contentDescription = "test")
             }
         }
     }
 
     @Test
-    fun socialWorkReviewerOverlayLoadingWheel_multipleThemes() {
+    fun swrOverlayLoadingWheel_multipleThemes() {
         composeTestRule.captureMultiTheme("LoadingWheel", "OverlayLoadingWheel") {
             Surface {
-                SocialWorkReviewerOverlayLoadingWheel(contentDescription = "test")
+                SwrOverlayLoadingWheel(contentDescription = "test")
             }
         }
     }
 
     @Test
-    fun socialWorkReviewerLoadingWheel_animation() {
+    fun swrLoadingWheel_animation() {
         composeTestRule.mainClock.autoAdvance = false
         composeTestRule.setContent {
-            SocialWorkReviewerTheme {
-                SocialWorkReviewerLoadingWheel(contentDescription = "")
+            SwrTheme {
+                SwrLoadingWheel(contentDescription = "")
             }
         }
         // Try multiple frames of the animation; some arbitrary, some synchronized with duration.

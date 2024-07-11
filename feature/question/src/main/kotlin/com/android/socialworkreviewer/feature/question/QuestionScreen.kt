@@ -17,6 +17,7 @@
  */
 package com.android.socialworkreviewer.feature.question
 
+import androidx.activity.compose.BackHandler
 import androidx.annotation.VisibleForTesting
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -66,8 +67,11 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -79,17 +83,19 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.android.socialworkreviewer.core.designsystem.icon.SocialWorkReviewerIcons
+import com.android.socialworkreviewer.core.designsystem.icon.Swr
 import com.android.socialworkreviewer.core.model.Choice
 import com.android.socialworkreviewer.core.model.CountDownTime
 import com.android.socialworkreviewer.core.model.Question
 import com.android.socialworkreviewer.core.model.QuestionSetting
+import com.android.socialworkreviewer.feature.question.dialog.quit.QuitAlertDialog
 import kotlinx.coroutines.launch
 
 @Composable
 internal fun QuestionRoute(
     modifier: Modifier = Modifier,
     viewModel: QuestionViewModel = hiltViewModel(),
+    onQuit: () -> Unit,
 ) {
     val questionUiState = viewModel.questionUiState.collectAsStateWithLifecycle().value
 
@@ -118,6 +124,7 @@ internal fun QuestionRoute(
         onShowCorrectChoices = viewModel::showCorrectChoices,
         onStartQuestions = viewModel::startQuestions,
         onStartQuickQuestions = viewModel::startQuickQuestions,
+        onQuit = onQuit,
     )
 }
 
@@ -138,6 +145,7 @@ internal fun QuestionScreen(
     onShowCorrectChoices: (questionSettingIndex: Int, questions: List<Question>) -> Unit,
     onStartQuestions: (Int, QuestionSetting) -> Unit,
     onStartQuickQuestions: () -> Unit,
+    onQuit: () -> Unit,
 ) {
     AnimatedContent(
         modifier = modifier,
@@ -174,6 +182,7 @@ internal fun QuestionScreen(
                         onAddCurrentQuestion = onAddCurrentQuestion,
                         onUpdateChoice = onUpdateChoice,
                         onShowCorrectChoices = onShowCorrectChoices,
+                        onQuit = onQuit,
                     )
                 } else {
                     EmptyState(text = "No Question found!")
@@ -240,10 +249,13 @@ private fun Questions(
     onAddCurrentQuestion: (Question) -> Unit,
     onUpdateChoice: (Choice) -> Unit,
     onShowCorrectChoices: (questionSettingIndex: Int, questions: List<Question>) -> Unit,
+    onQuit: () -> Unit,
 ) {
-    val pagerState = rememberPagerState(pageCount = {
-        questions.size
-    })
+    val pagerState = rememberPagerState(
+        pageCount = {
+            questions.size
+        },
+    )
 
     val scope = rememberCoroutineScope()
 
@@ -254,6 +266,14 @@ private fun Questions(
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
         label = "animatedProgress",
     )
+
+    var showQuitAlertDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    BackHandler(enabled = true) {
+        showQuitAlertDialog = true
+    }
 
     LaunchedEffect(key1 = true) {
         onStartCountDownTimer()
@@ -272,36 +292,42 @@ private fun Questions(
         }
     }
 
-    Scaffold(topBar = {
-        QuestionTopAppBar(
-            title = "Questions",
-            scrollBehavior = scrollBehavior,
-            minutes = countDownTime?.minutes,
-        )
-    }, snackbarHost = {
-        SnackbarHost(hostState = snackbarHostState)
-    }, floatingActionButton = {
-        AnimatedVisibility(
-            visible = scrollBehavior.state.collapsedFraction == 0.0f,
-            enter = fadeIn() + scaleIn(),
-            exit = fadeOut() + scaleOut(),
-        ) {
-            FloatingActionButton(onClick = {
-                if (questionsWithSelectedChoicesSize < questions.size) {
-                    scope.launch {
-                        snackbarHostState.showSnackbar("Please answer all the questions")
-                    }
-                } else {
-                    onShowCorrectChoices(questionSettingIndex, questions)
+    Scaffold(
+        topBar = {
+            QuestionTopAppBar(
+                title = "Questions",
+                scrollBehavior = scrollBehavior,
+                minutes = countDownTime?.minutes,
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
+        floatingActionButton = {
+            AnimatedVisibility(
+                visible = scrollBehavior.state.collapsedFraction == 0.0f,
+                enter = fadeIn() + scaleIn(),
+                exit = fadeOut() + scaleOut(),
+            ) {
+                FloatingActionButton(
+                    onClick = {
+                        if (questionsWithSelectedChoicesSize < questions.size) {
+                            scope.launch {
+                                snackbarHostState.showSnackbar("Please answer all the questions")
+                            }
+                        } else {
+                            onShowCorrectChoices(questionSettingIndex, questions)
+                        }
+                    },
+                ) {
+                    Icon(
+                        imageVector = Swr.Check,
+                        contentDescription = "",
+                    )
                 }
-            }) {
-                Icon(
-                    imageVector = SocialWorkReviewerIcons.Check,
-                    contentDescription = "",
-                )
             }
-        }
-    }) { paddingValues ->
+        },
+    ) { paddingValues ->
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -333,6 +359,22 @@ private fun Questions(
                 )
             }
         }
+    }
+
+    if (showQuitAlertDialog) {
+        QuitAlertDialog(
+            onDismissRequest = {
+                showQuitAlertDialog = false
+            },
+            onConfirmation = {
+                showQuitAlertDialog = false
+                onCancelCountDownTimer()
+                onQuit()
+            },
+            dialogTitle = "Quit Questions",
+            dialogText = "You have answered $questionsWithSelectedChoicesSize out of ${questions.size} questions. Are you sure you want to quit?",
+            icon = Swr.Question,
+        )
     }
 }
 
@@ -486,7 +528,7 @@ private fun QuestionTopAppBar(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
-                            imageVector = SocialWorkReviewerIcons.AccessTime,
+                            imageVector = Swr.AccessTime,
                             contentDescription = "",
                         )
 
@@ -514,7 +556,7 @@ private fun EmptyState(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Icon(
-            imageVector = SocialWorkReviewerIcons.Question,
+            imageVector = Swr.Question,
             contentDescription = null,
             modifier = Modifier.size(100.dp),
         )

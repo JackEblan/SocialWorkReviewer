@@ -18,7 +18,7 @@
 package com.android.socialworkreviewer.core.cache
 
 import com.android.socialworkreviewer.core.common.Dispatcher
-import com.android.socialworkreviewer.core.common.SocialWorkReviewerDispatchers.Default
+import com.android.socialworkreviewer.core.common.SwrDispatchers.Default
 import com.android.socialworkreviewer.core.model.Choice
 import com.android.socialworkreviewer.core.model.Question
 import kotlinx.coroutines.CoroutineDispatcher

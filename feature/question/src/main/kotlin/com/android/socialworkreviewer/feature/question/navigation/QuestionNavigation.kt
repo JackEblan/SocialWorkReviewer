@@ -26,8 +26,8 @@ fun NavController.navigateToQuestionScreen(id: String) {
     navigate(QuestionRouteData(id = id))
 }
 
-fun NavGraphBuilder.questionScreen() {
+fun NavGraphBuilder.questionScreen(onQuit: () -> Unit) {
     composable<QuestionRouteData> {
-        QuestionRoute()
+        QuestionRoute(onQuit = onQuit)
     }
 }

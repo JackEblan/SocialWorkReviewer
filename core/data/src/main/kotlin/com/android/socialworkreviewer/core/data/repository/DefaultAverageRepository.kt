@@ -18,7 +18,7 @@
 package com.android.socialworkreviewer.core.data.repository
 
 import com.android.socialworkreviewer.core.common.Dispatcher
-import com.android.socialworkreviewer.core.common.SocialWorkReviewerDispatchers.IO
+import com.android.socialworkreviewer.core.common.SwrDispatchers.IO
 import com.android.socialworkreviewer.core.database.dao.AverageDao
 import com.android.socialworkreviewer.core.database.model.asEntity
 import com.android.socialworkreviewer.core.database.model.asExternalModel

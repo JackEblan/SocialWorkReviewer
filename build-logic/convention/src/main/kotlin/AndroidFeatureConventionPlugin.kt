@@ -35,7 +35,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
 
             extensions.configure<LibraryExtension> {
                 defaultConfig {
-                    testInstrumentationRunner = "com.android.socialworkreviewer.core.testing.SocialWorkReviewerTestRunner"
+                    testInstrumentationRunner = "com.android.socialworkreviewer.core.testing.SwrTestRunner"
                 }
                 configureGradleManagedDevices(this)
             }

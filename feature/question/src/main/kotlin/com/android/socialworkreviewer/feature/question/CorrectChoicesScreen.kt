@@ -60,7 +60,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import com.android.socialworkreviewer.core.designsystem.icon.SocialWorkReviewerIcons
+import com.android.socialworkreviewer.core.designsystem.icon.Swr
 import com.android.socialworkreviewer.core.model.Question
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -253,7 +253,7 @@ private fun CorrectChoicesTopAppBar(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
-                            imageVector = SocialWorkReviewerIcons.AccessTime,
+                            imageVector = Swr.AccessTime,
                             contentDescription = "",
                         )
 

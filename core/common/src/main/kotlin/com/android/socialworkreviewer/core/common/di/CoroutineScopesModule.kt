@@ -18,7 +18,7 @@
 package com.android.socialworkreviewer.core.common.di
 
 import com.android.socialworkreviewer.core.common.Dispatcher
-import com.android.socialworkreviewer.core.common.SocialWorkReviewerDispatchers.Default
+import com.android.socialworkreviewer.core.common.SwrDispatchers.Default
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

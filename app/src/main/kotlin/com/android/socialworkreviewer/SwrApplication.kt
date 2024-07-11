@@ -15,16 +15,10 @@
  *   limitations under the License.
  *
  */
-package com.android.socialworkreviewer.core.common
+package com.android.socialworkreviewer
 
-import javax.inject.Qualifier
-import kotlin.annotation.AnnotationRetention.RUNTIME
+import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 
-@Qualifier
-@Retention(RUNTIME)
-annotation class Dispatcher(val socialWorkReviewerDispatchers: SocialWorkReviewerDispatchers)
-
-enum class SocialWorkReviewerDispatchers {
-    Default,
-    IO,
-}
+@HiltAndroidApp
+class SwrApplication : Application()

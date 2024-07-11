@@ -34,11 +34,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.rememberNavController
-import com.android.socialworkreviewer.core.designsystem.component.SocialWorkReviewerBackground
-import com.android.socialworkreviewer.core.designsystem.theme.SocialWorkReviewerTheme
+import com.android.socialworkreviewer.core.designsystem.component.SwrBackground
+import com.android.socialworkreviewer.core.designsystem.theme.SwrTheme
 import com.android.socialworkreviewer.core.model.DarkThemeConfig
 import com.android.socialworkreviewer.core.model.ThemeBrand
-import com.android.socialworkreviewer.navigation.SocialWorkReviewerNavHost
+import com.android.socialworkreviewer.navigation.SwrNavHost
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
@@ -89,13 +89,13 @@ class MainActivity : ComponentActivity() {
                 onDispose {}
             }
 
-            SocialWorkReviewerTheme(
+            SwrTheme(
                 darkTheme = darkTheme,
                 androidTheme = shouldUseAndroidTheme(mainActivityUiState),
                 disableDynamicTheming = shouldDisableDynamicTheming(mainActivityUiState),
             ) {
-                SocialWorkReviewerBackground {
-                    SocialWorkReviewerNavHost(navController = navController)
+                SwrBackground {
+                    SwrNavHost(navController = navController)
                 }
             }
         }

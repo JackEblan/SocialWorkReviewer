@@ -53,7 +53,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import com.android.socialworkreviewer.core.designsystem.icon.SocialWorkReviewerIcons
+import com.android.socialworkreviewer.core.designsystem.icon.Swr
 import com.android.socialworkreviewer.core.model.Category
 import com.android.socialworkreviewer.core.model.QuestionSetting
 
@@ -86,7 +86,7 @@ internal fun SuccessOnBoardingScreen(
             exit = fadeOut() + scaleOut(),
         ) {
             FloatingActionButton(onClick = onStartQuickQuestions) {
-                Icon(imageVector = SocialWorkReviewerIcons.Bolt, contentDescription = "")
+                Icon(imageVector = Swr.Bolt, contentDescription = "")
             }
         }
     }, topBar = {
@@ -130,7 +130,7 @@ private fun QuestionSettingItem(modifier: Modifier = Modifier, questionSetting: 
             ) {
                 Icon(
                     modifier = Modifier.size(40.dp),
-                    imageVector = SocialWorkReviewerIcons.Question,
+                    imageVector = Swr.Question,
                     contentDescription = "",
                 )
 
@@ -148,7 +148,7 @@ private fun QuestionSettingItem(modifier: Modifier = Modifier, questionSetting: 
             ) {
                 Icon(
                     modifier = Modifier.size(40.dp),
-                    imageVector = SocialWorkReviewerIcons.AccessTime,
+                    imageVector = Swr.AccessTime,
                     contentDescription = "",
                 )
 

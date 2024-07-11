@@ -54,8 +54,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.android.socialworkreviewer.core.designsystem.component.SocialWorkReviewerLoadingWheel
-import com.android.socialworkreviewer.core.designsystem.icon.SocialWorkReviewerIcons
+import com.android.socialworkreviewer.core.designsystem.component.SwrLoadingWheel
+import com.android.socialworkreviewer.core.designsystem.icon.Swr
 import com.android.socialworkreviewer.core.designsystem.theme.supportsDynamicTheming
 import com.android.socialworkreviewer.core.model.DarkThemeConfig
 import com.android.socialworkreviewer.core.model.ThemeBrand
@@ -207,7 +207,7 @@ private fun SettingsTopAppBAr(onNavigationIconClick: () -> Unit) {
         navigationIcon = {
             IconButton(onClick = onNavigationIconClick) {
                 Icon(
-                    imageVector = SocialWorkReviewerIcons.ArrowBack,
+                    imageVector = Swr.ArrowBack,
                     contentDescription = "Navigation icon",
                 )
             }
@@ -217,7 +217,7 @@ private fun SettingsTopAppBAr(onNavigationIconClick: () -> Unit) {
 
 @Composable
 private fun LoadingState(modifier: Modifier = Modifier) {
-    SocialWorkReviewerLoadingWheel(
+    SwrLoadingWheel(
         modifier = modifier,
         contentDescription = "SocialWorkReviewerLoadingWheel",
     )

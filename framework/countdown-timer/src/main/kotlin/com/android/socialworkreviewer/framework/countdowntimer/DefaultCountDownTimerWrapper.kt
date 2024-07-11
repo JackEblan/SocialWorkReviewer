@@ -34,8 +34,6 @@ internal class DefaultCountDownTimerWrapper @Inject constructor() : CountDownTim
     override val countDownTimeFlow = _countDownTimeFlow.asSharedFlow()
 
     override fun setCountDownTimer(millisInFuture: Long, countDownInterval: Long) {
-        _countDownTimer?.cancel()
-
         _countDownTimer = object : CountDownTimer(millisInFuture, countDownInterval) {
             override fun onTick(millisUntilFinished: Long) {
                 _countDownTimeFlow.tryEmit(
@@ -65,6 +63,8 @@ internal class DefaultCountDownTimerWrapper @Inject constructor() : CountDownTim
 
     override fun cancel() {
         _countDownTimer?.cancel()
+
+        _countDownTimeFlow.resetReplayCache()
     }
 
     private fun remainingTimeFormat(millisUntilFinished: Long): String {

@@ -75,8 +75,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
-import com.android.socialworkreviewer.core.designsystem.component.SocialWorkReviewerLoadingWheel
-import com.android.socialworkreviewer.core.designsystem.icon.SocialWorkReviewerIcons
+import com.android.socialworkreviewer.core.designsystem.component.SwrLoadingWheel
+import com.android.socialworkreviewer.core.designsystem.icon.Swr
 import com.android.socialworkreviewer.core.model.Announcement
 import com.android.socialworkreviewer.core.model.Category
 import kotlin.math.roundToInt
@@ -172,7 +172,7 @@ private fun CategoryTopAppBar(
         modifier = modifier.testTag("category:centerAlignedTopAppBar"),
         actions = {
             IconButton(onClick = onSettingsClick) {
-                Icon(imageVector = SocialWorkReviewerIcons.Settings, contentDescription = "")
+                Icon(imageVector = Swr.Settings, contentDescription = "")
             }
         },
         scrollBehavior = topAppBarScrollBehavior,
@@ -181,7 +181,7 @@ private fun CategoryTopAppBar(
 
 @Composable
 private fun LoadingState(modifier: Modifier = Modifier) {
-    SocialWorkReviewerLoadingWheel(
+    SwrLoadingWheel(
         modifier = modifier,
         contentDescription = "SocialWorkReviewerLoadingWheel",
     )
@@ -386,7 +386,7 @@ private fun EmptyState(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Icon(
-            imageVector = SocialWorkReviewerIcons.Question,
+            imageVector = Swr.Question,
             contentDescription = null,
             modifier = Modifier.size(100.dp),
         )

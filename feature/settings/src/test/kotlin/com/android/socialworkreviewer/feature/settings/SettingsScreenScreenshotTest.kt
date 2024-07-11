@@ -19,8 +19,8 @@ package com.android.socialworkreviewer.feature.settings
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import com.android.socialworkreviewer.core.designsystem.component.SocialWorkReviewerBackground
-import com.android.socialworkreviewer.core.designsystem.theme.SocialWorkReviewerTheme
+import com.android.socialworkreviewer.core.designsystem.component.SwrBackground
+import com.android.socialworkreviewer.core.designsystem.theme.SwrTheme
 import com.android.socialworkreviewer.core.model.DarkThemeConfig
 import com.android.socialworkreviewer.core.model.ThemeBrand
 import com.android.socialworkreviewer.core.model.UserData
@@ -51,7 +51,7 @@ class SettingsScreenScreenshotTest {
             deviceName = "foldable",
             deviceSpec = DefaultTestDevices.FOLDABLE.spec,
         ) {
-            SocialWorkReviewerTheme {
+            SwrTheme {
                 SettingsScreen(
                     settingsUiState = SettingsUiState.Success(
                         userData = UserData(
@@ -77,7 +77,7 @@ class SettingsScreenScreenshotTest {
             deviceName = "foldable",
             deviceSpec = DefaultTestDevices.FOLDABLE.spec,
         ) {
-            SocialWorkReviewerTheme {
+            SwrTheme {
                 SettingsScreen(
                     settingsUiState = SettingsUiState.Loading,
                     supportDynamicColor = true,
@@ -98,8 +98,8 @@ class SettingsScreenScreenshotTest {
             deviceSpec = DefaultTestDevices.FOLDABLE.spec,
             darkMode = true,
         ) {
-            SocialWorkReviewerTheme {
-                SocialWorkReviewerBackground {
+            SwrTheme {
+                SwrBackground {
                     SettingsScreen(
                         settingsUiState = SettingsUiState.Success(
                             userData = UserData(
@@ -127,8 +127,8 @@ class SettingsScreenScreenshotTest {
             deviceSpec = DefaultTestDevices.FOLDABLE.spec,
             darkMode = true,
         ) {
-            SocialWorkReviewerTheme {
-                SocialWorkReviewerBackground {
+            SwrTheme {
+                SwrBackground {
                     SettingsScreen(
                         settingsUiState = SettingsUiState.Loading,
                         supportDynamicColor = true,

@@ -21,7 +21,7 @@ import com.android.tools.lint.client.api.IssueRegistry
 import com.android.tools.lint.client.api.Vendor
 import com.android.tools.lint.detector.api.CURRENT_API
 
-class SocialWorkReviewerIssueRegistry : IssueRegistry() {
+class SwrIssueRegistry : IssueRegistry() {
 
     override val issues = listOf(
         TestMethodNameDetector.FORMAT,

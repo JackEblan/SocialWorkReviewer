@@ -15,7 +15,7 @@
  *   limitations under the License.
  *
  */
-import com.android.socialworkreviewer.SocialWorkReviewerBuildType
+import com.android.socialworkreviewer.SwrBuildType
 
 plugins {
     alias(libs.plugins.com.android.socialworkreviewer.application)
@@ -42,12 +42,12 @@ android {
 
     buildTypes {
         debug {
-            applicationIdSuffix = SocialWorkReviewerBuildType.DEBUG.applicationIdSuffix
+            applicationIdSuffix = SwrBuildType.DEBUG.applicationIdSuffix
         }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            applicationIdSuffix = SocialWorkReviewerBuildType.RELEASE.applicationIdSuffix
+            applicationIdSuffix = SwrBuildType.RELEASE.applicationIdSuffix
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
