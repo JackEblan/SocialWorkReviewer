@@ -65,6 +65,13 @@ internal class DefaultCountDownTimerWrapper @Inject constructor() : CountDownTim
         _countDownTimer?.cancel()
 
         _countDownTimeFlow.resetReplayCache()
+
+        _countDownTimeFlow.tryEmit(
+            CountDownTime(
+                minutes = "",
+                isFinished = true,
+            ),
+        )
     }
 
     private fun remainingTimeFormat(millisUntilFinished: Long): String {
