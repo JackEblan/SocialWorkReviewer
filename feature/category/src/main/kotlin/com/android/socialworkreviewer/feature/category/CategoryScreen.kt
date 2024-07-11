@@ -1,3 +1,20 @@
+/*
+ *
+ *   Copyright 2023 Einstein Blanco
+ *
+ *   Licensed under the GNU General Public License v3.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       https://www.gnu.org/licenses/gpl-3.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ */
 package com.android.socialworkreviewer.feature.category
 
 import androidx.annotation.VisibleForTesting
@@ -58,8 +75,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
-import com.android.socialworkreviewer.core.designsystem.component.SocialWorkReviewerLoadingWheel
-import com.android.socialworkreviewer.core.designsystem.icon.SocialWorkReviewerIcons
+import com.android.socialworkreviewer.core.designsystem.component.SwrLoadingWheel
+import com.android.socialworkreviewer.core.designsystem.icon.Swr
 import com.android.socialworkreviewer.core.model.Announcement
 import com.android.socialworkreviewer.core.model.Category
 import kotlin.math.roundToInt
@@ -144,17 +161,18 @@ private fun CategoryTopAppBar(
     LargeTopAppBar(
         title = {
             Text(
-                text = "Categories", style = MaterialTheme.typography.headlineSmall.copy(
+                text = "Categories",
+                style = MaterialTheme.typography.headlineSmall.copy(
                     brush = Brush.linearGradient(
-                        colors = gradientColors
-                    )
-                )
+                        colors = gradientColors,
+                    ),
+                ),
             )
         },
         modifier = modifier.testTag("category:centerAlignedTopAppBar"),
         actions = {
             IconButton(onClick = onSettingsClick) {
-                Icon(imageVector = SocialWorkReviewerIcons.Settings, contentDescription = "")
+                Icon(imageVector = Swr.Settings, contentDescription = "")
             }
         },
         scrollBehavior = topAppBarScrollBehavior,
@@ -163,7 +181,7 @@ private fun CategoryTopAppBar(
 
 @Composable
 private fun LoadingState(modifier: Modifier = Modifier) {
-    SocialWorkReviewerLoadingWheel(
+    SwrLoadingWheel(
         modifier = modifier,
         contentDescription = "SocialWorkReviewerLoadingWheel",
     )
@@ -195,7 +213,7 @@ private fun SuccessState(
             CategoryItem(
                 modifier = Modifier.animateItem(),
                 category = category,
-                onCategoryClick = onCategoryClick
+                onCategoryClick = onCategoryClick,
             )
         }
     }
@@ -207,11 +225,14 @@ private fun CategoryItem(
     category: Category,
     onCategoryClick: (String) -> Unit,
 ) {
-    OutlinedCard(modifier = modifier
-        .fillMaxWidth()
-        .padding(10.dp), onClick = {
-        onCategoryClick(category.id)
-    }) {
+    OutlinedCard(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(10.dp),
+        onClick = {
+            onCategoryClick(category.id)
+        },
+    ) {
         CategoryHeaderImage(
             headerImageUrl = category.imageUrl,
         )
@@ -219,9 +240,8 @@ private fun CategoryItem(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp)
+                .padding(10.dp),
         ) {
-
             Spacer(modifier = Modifier.height(10.dp))
 
             Text(text = category.title, style = MaterialTheme.typography.headlineLarge)
@@ -233,7 +253,8 @@ private fun CategoryItem(
             Spacer(modifier = Modifier.height(10.dp))
 
             AverageCircularProgressIndicator(
-                modifier = Modifier.align(Alignment.End), average = category.average
+                modifier = Modifier.align(Alignment.End),
+                average = category.average,
             )
         }
     }
@@ -241,21 +262,22 @@ private fun CategoryItem(
 
 @Composable
 private fun AnnouncementItem(
-    modifier: Modifier = Modifier, announcement: Announcement?
+    modifier: Modifier = Modifier,
+    announcement: Announcement?,
 ) {
     OutlinedCard(
         modifier = modifier
             .fillMaxWidth()
-            .padding(10.dp)
+            .padding(10.dp),
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp)
+                .padding(10.dp),
         ) {
             Text(
                 text = announcement?.title ?: "Social Work Reviewer",
-                style = MaterialTheme.typography.headlineSmall
+                style = MaterialTheme.typography.headlineSmall,
             )
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -263,7 +285,7 @@ private fun AnnouncementItem(
             Text(
                 text = announcement?.message
                     ?: "High quality questions to challenge your knowledge",
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
             )
         }
     }
@@ -292,9 +314,10 @@ private fun CategoryHeaderImage(
         initialValue = Color.LightGray.copy(alpha = 0.2f),
         targetValue = Color.LightGray,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 800), repeatMode = RepeatMode.Reverse
+            animation = tween(durationMillis = 800),
+            repeatMode = RepeatMode.Reverse,
         ),
-        label = "LightGrayAnimation"
+        label = "LightGrayAnimation",
     )
 
     Box(
@@ -329,7 +352,7 @@ fun AverageCircularProgressIndicator(modifier: Modifier = Modifier, average: Dou
     val animatedProgress by animateFloatAsState(
         targetValue = (average / 100).toFloat(),
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
-        label = "animatedProgress"
+        label = "animatedProgress",
     )
 
     Box(modifier = modifier.size(60.dp)) {
@@ -338,7 +361,7 @@ fun AverageCircularProgressIndicator(modifier: Modifier = Modifier, average: Dou
                 .align(Alignment.Center)
                 .padding(5.dp),
             text = "${average.roundToInt()}%",
-            style = MaterialTheme.typography.bodySmall
+            style = MaterialTheme.typography.bodySmall,
         )
 
         CircularProgressIndicator(
@@ -363,7 +386,7 @@ private fun EmptyState(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Icon(
-            imageVector = SocialWorkReviewerIcons.Question,
+            imageVector = Swr.Question,
             contentDescription = null,
             modifier = Modifier.size(100.dp),
         )

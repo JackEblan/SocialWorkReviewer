@@ -18,8 +18,8 @@
 package com.android.socialworkreviewer.core.testing.di
 
 import com.android.socialworkreviewer.core.common.Dispatcher
-import com.android.socialworkreviewer.core.common.SocialWorkReviewerDispatchers.Default
-import com.android.socialworkreviewer.core.common.SocialWorkReviewerDispatchers.IO
+import com.android.socialworkreviewer.core.common.SwrDispatchers.Default
+import com.android.socialworkreviewer.core.common.SwrDispatchers.IO
 import com.android.socialworkreviewer.core.common.di.DispatchersModule
 import dagger.Module
 import dagger.Provides

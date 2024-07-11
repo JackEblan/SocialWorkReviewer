@@ -30,7 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.android.socialworkreviewer.core.designsystem.theme.LocalBackgroundTheme
-import com.android.socialworkreviewer.core.designsystem.theme.SocialWorkReviewerTheme
+import com.android.socialworkreviewer.core.designsystem.theme.SwrTheme
 
 /**
  * The main background for the app.
@@ -40,7 +40,7 @@ import com.android.socialworkreviewer.core.designsystem.theme.SocialWorkReviewer
  * @param content The background content.
  */
 @Composable
-fun SocialWorkReviewerBackground(
+fun SwrBackground(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
@@ -68,23 +68,23 @@ annotation class ThemePreviews
 @ThemePreviews
 @Composable
 private fun BackgroundDefault() {
-    SocialWorkReviewerTheme(disableDynamicTheming = true) {
-        SocialWorkReviewerBackground(Modifier.size(100.dp), content = {})
+    SwrTheme(disableDynamicTheming = true) {
+        SwrBackground(Modifier.size(100.dp), content = {})
     }
 }
 
 @ThemePreviews
 @Composable
 private fun BackgroundDynamic() {
-    SocialWorkReviewerTheme(disableDynamicTheming = false) {
-        SocialWorkReviewerBackground(Modifier.size(100.dp), content = {})
+    SwrTheme(disableDynamicTheming = false) {
+        SwrBackground(Modifier.size(100.dp), content = {})
     }
 }
 
 @ThemePreviews
 @Composable
 private fun BackgroundAndroid() {
-    SocialWorkReviewerTheme(androidTheme = true) {
-        SocialWorkReviewerBackground(Modifier.size(100.dp), content = {})
+    SwrTheme(androidTheme = true) {
+        SwrBackground(Modifier.size(100.dp), content = {})
     }
 }

@@ -1,3 +1,20 @@
+/*
+ *
+ *   Copyright 2023 Einstein Blanco
+ *
+ *   Licensed under the GNU General Public License v3.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       https://www.gnu.org/licenses/gpl-3.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ */
 package com.android.socialworkreviewer.feature.question
 
 import androidx.compose.animation.animateContentSize
@@ -43,7 +60,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import com.android.socialworkreviewer.core.designsystem.icon.SocialWorkReviewerIcons
+import com.android.socialworkreviewer.core.designsystem.icon.Swr
 import com.android.socialworkreviewer.core.model.Question
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,7 +82,7 @@ internal fun CorrectChoicesScreen(
     val animatedProgress by animateFloatAsState(
         targetValue = (pagerState.currentPage + 1f) / questions.size,
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
-        label = "animatedProgress"
+        label = "animatedProgress",
     )
 
     LaunchedEffect(key1 = pagerState) {
@@ -78,7 +95,7 @@ internal fun CorrectChoicesScreen(
         CorrectChoicesTopAppBar(
             title = "Your score is $score/${questions.size}",
             scrollBehavior = scrollBehavior,
-            minutes = minutes
+            minutes = minutes,
         )
     }) { paddingValues ->
         Column(
@@ -128,7 +145,7 @@ private fun CorrectChoicesPage(
         CorrectChoicesQuestionText(question = questions[page].question)
 
         ChoicesType(
-            numberOfChoices = questions[page].correctChoices.size
+            numberOfChoices = questions[page].correctChoices.size,
         )
 
         CorrectChoicesSelection(
@@ -145,10 +162,11 @@ private fun CorrectChoicesQuestionText(modifier: Modifier = Modifier, question: 
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp)
+            .padding(horizontal = 20.dp),
     ) {
         Text(
-            text = question, style = MaterialTheme.typography.headlineSmall
+            text = question,
+            style = MaterialTheme.typography.headlineSmall,
         )
     }
 
@@ -165,7 +183,7 @@ private fun CorrectChoicesSelection(
 ) {
     val wrongChoiceColor = CheckboxDefaults.colors().copy(
         checkedBoxColor = MaterialTheme.colorScheme.error,
-        checkedBorderColor = MaterialTheme.colorScheme.error
+        checkedBorderColor = MaterialTheme.colorScheme.error,
     )
 
     Column(
@@ -181,16 +199,16 @@ private fun CorrectChoicesSelection(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { },
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Checkbox(
                     checked = correctChoice || wrongChoice,
                     onCheckedChange = {},
-                    colors = if (wrongChoice) wrongChoiceColor else CheckboxDefaults.colors()
+                    colors = if (wrongChoice) wrongChoiceColor else CheckboxDefaults.colors(),
                 )
 
                 Box(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text(text = choice)
                 }
@@ -213,13 +231,12 @@ private fun CorrectChoicesTopAppBar(
 
     LargeTopAppBar(
         title = {
-
             Text(
                 text = title,
                 style = MaterialTheme.typography.headlineSmall.copy(
                     brush = Brush.linearGradient(
-                        colors = gradientColors
-                    )
+                        colors = gradientColors,
+                    ),
                 ),
             )
         },
@@ -229,15 +246,15 @@ private fun CorrectChoicesTopAppBar(
                 ElevatedCard(
                     modifier = Modifier
                         .padding(end = 5.dp)
-                        .animateContentSize()
+                        .animateContentSize(),
                 ) {
                     Row(
                         modifier = Modifier.padding(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
-                            imageVector = SocialWorkReviewerIcons.AccessTime,
-                            contentDescription = ""
+                            imageVector = Swr.AccessTime,
+                            contentDescription = "",
                         )
 
                         Spacer(modifier = Modifier.width(5.dp))

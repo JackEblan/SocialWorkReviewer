@@ -15,10 +15,17 @@
  *   limitations under the License.
  *
  */
-package com.android.socialworkreviewer
+package com.android.socialworkreviewer.core.testing
 
 import android.app.Application
-import dagger.hilt.android.HiltAndroidApp
+import android.content.Context
+import androidx.test.runner.AndroidJUnitRunner
+import dagger.hilt.android.testing.HiltTestApplication
 
-@HiltAndroidApp
-class SocialWorkReviewerApplication : Application()
+/**
+ * A custom runner to set up the instrumented application class for tests.
+ */
+class SwrTestRunner : AndroidJUnitRunner() {
+    override fun newApplication(cl: ClassLoader, name: String, context: Context): Application =
+        super.newApplication(cl, HiltTestApplication::class.java.name, context)
+}

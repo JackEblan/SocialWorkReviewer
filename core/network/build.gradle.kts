@@ -37,4 +37,7 @@ dependencies {
 
     implementation(projects.core.common)
     implementation(projects.core.model)
+
+    testImplementation(projects.core.testing)
+    testImplementation(libs.firebase.firestore)
 }

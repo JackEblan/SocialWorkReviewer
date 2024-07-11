@@ -28,7 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.test.ext.junit.rules.ActivityScenarioRule
-import com.android.socialworkreviewer.core.designsystem.theme.SocialWorkReviewerTheme
+import com.android.socialworkreviewer.core.designsystem.theme.SwrTheme
 import com.github.takahirom.roborazzi.RoborazziOptions
 import com.google.accompanist.testharness.TestHarness
 import org.robolectric.RuntimeEnvironment
@@ -85,7 +85,7 @@ internal fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule
         CompositionLocalProvider(
             LocalInspectionMode provides true,
         ) {
-            SocialWorkReviewerTheme(
+            SwrTheme(
                 androidTheme = androidTheme,
                 darkTheme = darkMode,
                 disableDynamicTheming = !dynamicTheming,

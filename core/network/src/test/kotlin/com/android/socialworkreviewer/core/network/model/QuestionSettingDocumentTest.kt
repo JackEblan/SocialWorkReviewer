@@ -15,17 +15,19 @@
  *   limitations under the License.
  *
  */
-package com.android.socialworkreviewer.core.testing
+package com.android.socialworkreviewer.core.network.model
 
-import android.app.Application
-import android.content.Context
-import androidx.test.runner.AndroidJUnitRunner
-import dagger.hilt.android.testing.HiltTestApplication
+import org.junit.Test
+import kotlin.test.assertEquals
 
-/**
- * A custom runner to set up the instrumented application class for tests.
- */
-class SocialWorkReviewerTestRunner : AndroidJUnitRunner() {
-    override fun newApplication(cl: ClassLoader, name: String, context: Context): Application =
-        super.newApplication(cl, HiltTestApplication::class.java.name, context)
+class QuestionSettingDocumentTest {
+
+    @Test
+    fun asExternalModel() {
+        val questionSetting =
+            QuestionSettingDocument(numberOfQuestions = 10, minutes = 10).asExternalModel()
+
+        assertEquals(expected = 10, actual = questionSetting.numberOfQuestions)
+        assertEquals(expected = 10, actual = questionSetting.minutes)
+    }
 }

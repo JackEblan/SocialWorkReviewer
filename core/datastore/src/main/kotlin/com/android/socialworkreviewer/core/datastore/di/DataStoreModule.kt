@@ -22,7 +22,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
 import com.android.socialworkreviewer.core.common.Dispatcher
-import com.android.socialworkreviewer.core.common.SocialWorkReviewerDispatchers.IO
+import com.android.socialworkreviewer.core.common.SwrDispatchers.IO
 import com.android.socialworkreviewer.core.common.di.ApplicationScope
 import com.android.socialworkreviewer.core.datastore.UserPreferencesSerializer
 import com.android.socialworkreviewer.core.datastore.proto.UserPreferences

@@ -15,12 +15,3 @@
  *   limitations under the License.
  *
  */
-
-package com.android.socialworkreviewer
-
-/**
- * This is shared between :app and :benchmarks module to provide configurations type safety.
- */
-enum class SocialWorkReviewerBuildType(val applicationIdSuffix: String? = null) {
-    DEBUG(".debug"), RELEASE,
-}

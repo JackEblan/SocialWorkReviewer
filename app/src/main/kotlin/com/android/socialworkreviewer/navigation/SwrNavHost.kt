@@ -28,7 +28,7 @@ import com.android.socialworkreviewer.feature.settings.navigation.navigateToSett
 import com.android.socialworkreviewer.feature.settings.navigation.settingsScreen
 
 @Composable
-fun SocialWorkReviewerNavHost(navController: NavHostController) {
+fun SwrNavHost(navController: NavHostController) {
     NavHost(
         navController = navController,
         startDestination = CategoryRouteData::class,
@@ -38,7 +38,7 @@ fun SocialWorkReviewerNavHost(navController: NavHostController) {
             onSettingsClick = navController::navigateToSettings,
         )
 
-        questionScreen()
+        questionScreen(onQuit = navController::navigateUp)
 
         settingsScreen(onNavigationIconClick = navController::navigateUp)
     }

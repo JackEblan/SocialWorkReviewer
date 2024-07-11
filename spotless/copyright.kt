@@ -15,16 +15,3 @@
  *   limitations under the License.
  *
  */
-package com.android.socialworkreviewer.core.common
-
-import javax.inject.Qualifier
-import kotlin.annotation.AnnotationRetention.RUNTIME
-
-@Qualifier
-@Retention(RUNTIME)
-annotation class Dispatcher(val socialWorkReviewerDispatchers: SocialWorkReviewerDispatchers)
-
-enum class SocialWorkReviewerDispatchers {
-    Default,
-    IO,
-}

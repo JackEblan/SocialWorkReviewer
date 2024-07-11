@@ -23,7 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.unit.dp
-import com.android.socialworkreviewer.core.designsystem.component.SocialWorkReviewerBackground
+import com.android.socialworkreviewer.core.designsystem.component.SwrBackground
 import com.android.socialworkreviewer.core.screenshottesting.util.captureMultiTheme
 import dagger.hilt.android.testing.HiltTestApplication
 import org.junit.Rule
@@ -44,9 +44,9 @@ class BackgroundScreenshotTests {
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
     @Test
-    fun socialWorkReviewerBackground_multipleThemes() {
+    fun swrBackground_multipleThemes() {
         composeTestRule.captureMultiTheme("Background") { description ->
-            SocialWorkReviewerBackground(Modifier.size(100.dp)) {
+            SwrBackground(Modifier.size(100.dp)) {
                 Text("$description background")
             }
         }

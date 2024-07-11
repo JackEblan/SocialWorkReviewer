@@ -64,7 +64,7 @@ internal fun ThemeDialog(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(),
         ) {
             ThemeDialogTitle()
 

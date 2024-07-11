@@ -48,11 +48,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import com.android.socialworkreviewer.core.designsystem.theme.SocialWorkReviewerTheme
+import com.android.socialworkreviewer.core.designsystem.theme.SwrTheme
 import kotlinx.coroutines.launch
 
 @Composable
-fun SocialWorkReviewerLoadingWheel(
+fun SwrLoadingWheel(
     contentDescription: String,
     modifier: Modifier = Modifier,
 ) {
@@ -129,7 +129,7 @@ fun SocialWorkReviewerLoadingWheel(
 }
 
 @Composable
-fun SocialWorkReviewerOverlayLoadingWheel(
+fun SwrOverlayLoadingWheel(
     contentDescription: String,
     modifier: Modifier = Modifier,
 ) {
@@ -139,7 +139,7 @@ fun SocialWorkReviewerOverlayLoadingWheel(
         color = MaterialTheme.colorScheme.surface.copy(alpha = 0.83f),
         modifier = modifier.size(60.dp),
     ) {
-        SocialWorkReviewerLoadingWheel(
+        SwrLoadingWheel(
             contentDescription = contentDescription,
         )
     }
@@ -147,20 +147,20 @@ fun SocialWorkReviewerOverlayLoadingWheel(
 
 @ThemePreviews
 @Composable
-private fun SocialWorkReviewerLoadingWheelPreview() {
-    SocialWorkReviewerTheme {
+private fun SwrLoadingWheelPreview() {
+    SwrTheme {
         Surface {
-            SocialWorkReviewerLoadingWheel(contentDescription = "SocialWorkReviewerOverlayLoadingWheel")
+            SwrLoadingWheel(contentDescription = "SocialWorkReviewerOverlayLoadingWheel")
         }
     }
 }
 
 @ThemePreviews
 @Composable
-private fun SocialWorkReviewerOverlayLoadingWheelPreview() {
-    SocialWorkReviewerTheme {
+private fun SwrOverlayLoadingWheelPreview() {
+    SwrTheme {
         Surface {
-            SocialWorkReviewerOverlayLoadingWheel(contentDescription = "SocialWorkReviewerOverlayLoadingWheel")
+            SwrOverlayLoadingWheel(contentDescription = "SocialWorkReviewerOverlayLoadingWheel")
         }
     }
 }

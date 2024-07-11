@@ -153,7 +153,7 @@ val LightAndroidBackgroundTheme = BackgroundTheme(color = DarkGreenGray95)
 val DarkAndroidBackgroundTheme = BackgroundTheme(color = Color.Black)
 
 @Composable
-fun SocialWorkReviewerTheme(
+fun SwrTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     androidTheme: Boolean = false,
     disableDynamicTheming: Boolean = true,
@@ -191,7 +191,7 @@ fun SocialWorkReviewerTheme(
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
-            typography = SocialWorkReviewerTypography,
+            typography = SwrTypography,
             content = content,
         )
     }

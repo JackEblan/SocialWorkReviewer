@@ -19,8 +19,8 @@ package com.android.socialworkreviewer.feature.settings.dialog.dark
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import com.android.socialworkreviewer.core.designsystem.component.SocialWorkReviewerBackground
-import com.android.socialworkreviewer.core.designsystem.theme.SocialWorkReviewerTheme
+import com.android.socialworkreviewer.core.designsystem.component.SwrBackground
+import com.android.socialworkreviewer.core.designsystem.theme.SwrTheme
 import com.android.socialworkreviewer.core.screenshottesting.util.DefaultTestDevices
 import com.android.socialworkreviewer.core.screenshottesting.util.captureDialogForDevice
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -50,7 +50,7 @@ class DarkDialogScreenshotTest {
             deviceName = "foldable",
             deviceSpec = DefaultTestDevices.FOLDABLE.spec,
         ) {
-            SocialWorkReviewerTheme {
+            SwrTheme {
                 DarkDialog(
                     onDismissRequest = {},
                     selected = 0,
@@ -71,8 +71,8 @@ class DarkDialogScreenshotTest {
             deviceSpec = DefaultTestDevices.FOLDABLE.spec,
             darkMode = true,
         ) {
-            SocialWorkReviewerTheme {
-                SocialWorkReviewerBackground {
+            SwrTheme {
+                SwrBackground {
                     DarkDialog(
                         onDismissRequest = {},
                         selected = 0,

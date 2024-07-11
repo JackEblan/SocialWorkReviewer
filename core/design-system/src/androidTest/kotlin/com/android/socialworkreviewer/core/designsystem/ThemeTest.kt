@@ -36,14 +36,14 @@ import com.android.socialworkreviewer.core.designsystem.theme.LightAndroidColorS
 import com.android.socialworkreviewer.core.designsystem.theme.LightDefaultColorScheme
 import com.android.socialworkreviewer.core.designsystem.theme.LocalBackgroundTheme
 import com.android.socialworkreviewer.core.designsystem.theme.LocalTintTheme
-import com.android.socialworkreviewer.core.designsystem.theme.SocialWorkReviewerTheme
+import com.android.socialworkreviewer.core.designsystem.theme.SwrTheme
 import com.android.socialworkreviewer.core.designsystem.theme.TintTheme
 import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 
 /**
- * Tests [SocialWorkReviewerTheme] using different combinations of the theme mode parameters:
+ * Tests [SwrTheme] using different combinations of the theme mode parameters:
  * darkTheme, disableDynamicTheming, and androidTheme.
  *
  * It verifies that the various composition locals — [MaterialTheme] and
@@ -58,7 +58,7 @@ class ThemeTest {
     @Test
     fun darkThemeFalse_dynamicColorFalse_androidThemeFalse() {
         composeTestRule.setContent {
-            SocialWorkReviewerTheme(
+            SwrTheme(
                 darkTheme = false,
                 disableDynamicTheming = true,
                 androidTheme = false,
@@ -76,7 +76,7 @@ class ThemeTest {
     @Test
     fun darkThemeTrue_dynamicColorFalse_androidThemeFalse() {
         composeTestRule.setContent {
-            SocialWorkReviewerTheme(
+            SwrTheme(
                 darkTheme = true,
                 disableDynamicTheming = true,
                 androidTheme = false,
@@ -94,7 +94,7 @@ class ThemeTest {
     @Test
     fun darkThemeFalse_dynamicColorTrue_androidThemeFalse() {
         composeTestRule.setContent {
-            SocialWorkReviewerTheme(
+            SwrTheme(
                 darkTheme = false,
                 disableDynamicTheming = false,
                 androidTheme = false,
@@ -112,7 +112,7 @@ class ThemeTest {
     @Test
     fun darkThemeTrue_dynamicColorTrue_androidThemeFalse() {
         composeTestRule.setContent {
-            SocialWorkReviewerTheme(
+            SwrTheme(
                 darkTheme = true,
                 disableDynamicTheming = false,
                 androidTheme = false,
@@ -130,7 +130,7 @@ class ThemeTest {
     @Test
     fun darkThemeFalse_dynamicColorFalse_androidThemeTrue() {
         composeTestRule.setContent {
-            SocialWorkReviewerTheme(
+            SwrTheme(
                 darkTheme = false,
                 disableDynamicTheming = true,
                 androidTheme = true,
@@ -148,7 +148,7 @@ class ThemeTest {
     @Test
     fun darkThemeTrue_dynamicColorFalse_androidThemeTrue() {
         composeTestRule.setContent {
-            SocialWorkReviewerTheme(
+            SwrTheme(
                 darkTheme = true,
                 disableDynamicTheming = true,
                 androidTheme = true,
@@ -166,7 +166,7 @@ class ThemeTest {
     @Test
     fun darkThemeFalse_dynamicColorTrue_androidThemeTrue() {
         composeTestRule.setContent {
-            SocialWorkReviewerTheme(
+            SwrTheme(
                 darkTheme = false,
                 disableDynamicTheming = false,
                 androidTheme = true,
@@ -184,7 +184,7 @@ class ThemeTest {
     @Test
     fun darkThemeTrue_dynamicColorTrue_androidThemeTrue() {
         composeTestRule.setContent {
-            SocialWorkReviewerTheme(
+            SwrTheme(
                 darkTheme = true,
                 disableDynamicTheming = false,
                 androidTheme = true,

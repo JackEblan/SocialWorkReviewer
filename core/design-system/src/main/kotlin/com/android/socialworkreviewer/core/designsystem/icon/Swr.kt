@@ -25,7 +25,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material.icons.filled.Settings
 
-object SocialWorkReviewerIcons {
+object Swr {
     val Check = Icons.Default.Check
     val Settings = Icons.Default.Settings
     val ArrowBack = Icons.AutoMirrored.Filled.ArrowBack
