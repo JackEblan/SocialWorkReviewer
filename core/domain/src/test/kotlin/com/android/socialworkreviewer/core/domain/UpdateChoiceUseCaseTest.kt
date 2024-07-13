@@ -1,0 +1,3 @@
+package com.android.socialworkreviewer.core.domain
+
+class UpdateChoiceUseCaseTest
