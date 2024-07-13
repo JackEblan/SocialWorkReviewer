@@ -19,7 +19,7 @@ package com.android.socialworkreviewer.feature.settings
 
 import com.android.socialworkreviewer.core.model.DarkThemeConfig
 import com.android.socialworkreviewer.core.model.ThemeBrand
-import com.android.socialworkreviewer.core.testing.repository.TestUserDataRepository
+import com.android.socialworkreviewer.core.testing.repository.FakeUserDataRepository
 import com.android.socialworkreviewer.core.testing.util.MainDispatcherRule
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -35,13 +35,13 @@ class SettingsViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private lateinit var userDataRepository: TestUserDataRepository
+    private lateinit var userDataRepository: FakeUserDataRepository
 
     private lateinit var viewModel: SettingsViewModel
 
     @Before
     fun setUp() {
-        userDataRepository = TestUserDataRepository()
+        userDataRepository = FakeUserDataRepository()
 
         viewModel = SettingsViewModel(
             userDataRepository = userDataRepository,
