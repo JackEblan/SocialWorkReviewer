@@ -91,8 +91,6 @@ class QuestionViewModel @Inject constructor(
 
     fun startQuestions(questionSettingIndex: Int, questionSetting: QuestionSetting) {
         viewModelScope.launch {
-            choiceRepository.clearCache()
-
             _questionUiState.update {
                 QuestionUiState.Loading
             }
@@ -113,6 +111,8 @@ class QuestionViewModel @Inject constructor(
                     questions = questions,
                 )
             }
+
+            countDownTimerWrapper.start()
         }
     }
 
@@ -163,6 +163,8 @@ class QuestionViewModel @Inject constructor(
                     categoryId = id,
                 ),
             )
+
+            quitQuestions()
         }
     }
 
@@ -178,11 +180,9 @@ class QuestionViewModel @Inject constructor(
         }
     }
 
-    fun startCountDownTimer() {
-        countDownTimerWrapper.start()
-    }
-
-    fun cancelCountDownTimer() {
+    fun quitQuestions() {
         countDownTimerWrapper.cancel()
+
+        choiceRepository.clearCache()
     }
 }
