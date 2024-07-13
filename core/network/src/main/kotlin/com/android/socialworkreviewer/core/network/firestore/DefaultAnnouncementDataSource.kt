@@ -17,7 +17,9 @@
  */
 package com.android.socialworkreviewer.core.network.firestore
 
+import com.android.socialworkreviewer.core.model.Announcement
 import com.android.socialworkreviewer.core.network.firestore.AnnouncementDataSource.Companion.ANNOUNCEMENTS_COLLECTION
+import com.android.socialworkreviewer.core.network.mapper.toAnnouncement
 import com.android.socialworkreviewer.core.network.model.AnnouncementDocument
 import com.android.socialworkreviewer.core.network.model.AnnouncementDocument.Companion.DATE
 import com.google.firebase.firestore.FirebaseFirestore
@@ -31,16 +33,17 @@ import javax.inject.Inject
 internal class DefaultAnnouncementDataSource @Inject constructor(
     private val firestore: FirebaseFirestore,
 ) : AnnouncementDataSource {
-    override fun getAnnouncementDocument(): Flow<List<AnnouncementDocument>> {
+    override fun getAnnouncementDocuments(): Flow<List<Announcement>> {
         return firestore.collection(ANNOUNCEMENTS_COLLECTION)
             .orderBy(DATE, Query.Direction.DESCENDING).snapshots().mapNotNull { querySnapshots ->
                 querySnapshots.mapNotNull { queryDocumentSnapshot ->
                     try {
-                        queryDocumentSnapshot.toObject()
+                        toAnnouncement(announcementDocument = queryDocumentSnapshot.toObject<AnnouncementDocument>())
                     } catch (e: RuntimeException) {
                         null
                     }
                 }
             }
     }
+
 }

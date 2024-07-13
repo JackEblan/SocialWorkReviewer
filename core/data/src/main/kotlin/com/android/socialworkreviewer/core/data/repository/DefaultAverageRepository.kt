@@ -20,8 +20,7 @@ package com.android.socialworkreviewer.core.data.repository
 import com.android.socialworkreviewer.core.common.Dispatcher
 import com.android.socialworkreviewer.core.common.SwrDispatchers.IO
 import com.android.socialworkreviewer.core.database.dao.AverageDao
-import com.android.socialworkreviewer.core.database.model.asEntity
-import com.android.socialworkreviewer.core.database.model.asExternalModel
+import com.android.socialworkreviewer.core.database.model.AverageEntity
 import com.android.socialworkreviewer.core.model.Average
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -36,13 +35,31 @@ internal class DefaultAverageRepository @Inject constructor(
     override fun getAverageByCategory(categoryId: String): Flow<List<Average>> {
         return averageDao.getAverageEntitiesByCategory(categoryId = categoryId)
             .map { averageEntities ->
-                averageEntities.map { averageEntity -> averageEntity.asExternalModel() }
+                averageEntities.map { averageEntity -> averageEntity.toAverage() }
             }
     }
 
     override suspend fun upsertAverage(average: Average) {
         withContext(ioDispatcher) {
-            averageDao.upsertAverageEntity(average.asEntity())
+            averageDao.upsertAverageEntity(average.toAverageEntity())
         }
+    }
+
+    private fun AverageEntity.toAverage(): Average {
+        return Average(
+            questionSettingIndex = questionSettingIndex,
+            score = score,
+            numberOfQuestions = numberOfQuestions,
+            categoryId = categoryId,
+        )
+    }
+
+    private fun Average.toAverageEntity(): AverageEntity {
+        return AverageEntity(
+            questionSettingIndex = questionSettingIndex,
+            score = score,
+            numberOfQuestions = numberOfQuestions,
+            categoryId = categoryId,
+        )
     }
 }

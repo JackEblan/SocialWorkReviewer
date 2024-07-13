@@ -17,13 +17,13 @@
  */
 package com.android.socialworkreviewer.core.network.firestore
 
-import com.android.socialworkreviewer.core.network.model.CategoryDocument
+import com.android.socialworkreviewer.core.model.Category
 import kotlinx.coroutines.flow.Flow
 
 interface CategoryDataSource {
-    fun getCategoryDocuments(): Flow<List<CategoryDocument>>
+    fun getCategoryDocuments(): Flow<List<Category>>
 
-    suspend fun getCategoryDocument(categoryDocumentId: String): CategoryDocument?
+    suspend fun getCategoryDocument(categoryDocumentId: String): Category?
 
     companion object {
         const val CATEGORIES_COLLECTION = "categories"

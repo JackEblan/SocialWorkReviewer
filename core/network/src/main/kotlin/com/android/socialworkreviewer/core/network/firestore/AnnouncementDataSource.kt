@@ -17,11 +17,12 @@
  */
 package com.android.socialworkreviewer.core.network.firestore
 
+import com.android.socialworkreviewer.core.model.Announcement
 import com.android.socialworkreviewer.core.network.model.AnnouncementDocument
 import kotlinx.coroutines.flow.Flow
 
 interface AnnouncementDataSource {
-    fun getAnnouncementDocument(): Flow<List<AnnouncementDocument>>
+    fun getAnnouncementDocuments(): Flow<List<Announcement>>
 
     companion object {
         const val ANNOUNCEMENTS_COLLECTION = "announcements"
