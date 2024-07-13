@@ -108,7 +108,7 @@ class InMemoryChoiceDataSourceTest {
         }
 
         assertTrue {
-            inMemoryChoiceDataSource.questionsWithSelectedChoicesFlow.first().isEmpty()
+            inMemoryChoiceDataSource.questionsWithSelectedChoicesFlow.replayCache.isEmpty()
         }
     }
 }

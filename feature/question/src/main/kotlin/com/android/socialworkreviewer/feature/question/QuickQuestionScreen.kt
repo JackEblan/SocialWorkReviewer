@@ -17,6 +17,7 @@
  */
 package com.android.socialworkreviewer.feature.question
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
@@ -49,6 +50,9 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,8 +62,10 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import com.android.socialworkreviewer.core.designsystem.icon.Swr
 import com.android.socialworkreviewer.core.model.Choice
 import com.android.socialworkreviewer.core.model.Question
+import com.android.socialworkreviewer.feature.question.dialog.quit.QuitAlertDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,6 +76,7 @@ internal fun QuickQuestionsScreen(
     selectedChoices: List<String>,
     onAddCurrentQuestion: (Question) -> Unit,
     onUpdateChoice: (Choice) -> Unit,
+    onQuitQuestions: () -> Unit,
 ) {
     val pagerState = rememberPagerState(pageCount = {
         questions.size
@@ -82,6 +89,14 @@ internal fun QuickQuestionsScreen(
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
         label = "animatedProgress",
     )
+
+    var showQuitAlertDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    BackHandler(enabled = true) {
+        showQuitAlertDialog = true
+    }
 
     LaunchedEffect(key1 = pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { page ->
@@ -131,6 +146,21 @@ internal fun QuickQuestionsScreen(
                 )
             }
         }
+    }
+
+    if (showQuitAlertDialog) {
+        QuitAlertDialog(
+            onDismissRequest = {
+                showQuitAlertDialog = false
+            },
+            onConfirmation = {
+                showQuitAlertDialog = false
+                onQuitQuestions()
+            },
+            dialogTitle = "Quit Quick Questions",
+            dialogText = "Are you sure you want to quit?",
+            icon = Swr.Question,
+        )
     }
 }
 

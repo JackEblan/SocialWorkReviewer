@@ -15,19 +15,18 @@
  *   limitations under the License.
  *
  */
-package com.android.socialworkreviewer.core.network.model
+package com.android.socialworkreviewer.core.network.mapper
 
-import org.junit.Test
-import kotlin.test.assertEquals
+import com.android.socialworkreviewer.core.model.QuestionSetting
+import com.android.socialworkreviewer.core.network.model.QuestionSettingDocument
 
-class QuestionSettingDocumentTest {
+internal fun toQuestionSetting(questionSettingDocument: QuestionSettingDocument): QuestionSetting {
+    val numberOfQuestions = questionSettingDocument.numberOfQuestions ?: 0
 
-    @Test
-    fun asExternalModel() {
-        val questionSetting =
-            QuestionSettingDocument(numberOfQuestions = 10, minutes = 10).asExternalModel()
+    val minutes = questionSettingDocument.minutes ?: 0
 
-        assertEquals(expected = 10, actual = questionSetting.numberOfQuestions)
-        assertEquals(expected = 10, actual = questionSetting.minutes)
-    }
+    return QuestionSetting(
+        numberOfQuestions = numberOfQuestions,
+        minutes = minutes,
+    )
 }

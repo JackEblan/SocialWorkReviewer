@@ -36,5 +36,6 @@ dependencies {
 
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(projects.core.datastoreTest)
+    testImplementation(projects.core.network)
     testImplementation(projects.core.testing)
 }

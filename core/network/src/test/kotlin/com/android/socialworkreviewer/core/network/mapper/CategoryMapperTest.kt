@@ -15,31 +15,35 @@
  *   limitations under the License.
  *
  */
-package com.android.socialworkreviewer.core.network.model
+package com.android.socialworkreviewer.core.network.mapper
 
 import com.android.socialworkreviewer.core.model.QuestionSetting
+import com.android.socialworkreviewer.core.network.model.CategoryDocument
+import com.android.socialworkreviewer.core.network.model.QuestionSettingDocument
 import com.google.firebase.Timestamp
 import org.junit.Test
 import java.util.Date
 import kotlin.test.assertEquals
 
-class CategoryDocumentTest {
+class CategoryMapperTest {
 
     @Test
-    fun asExternalModel() {
-        val category = CategoryDocument(
-            id = "id",
-            date = Timestamp(date = Date()),
-            title = "title",
-            description = "description",
-            imageUrl = "imageUrl",
-            questionSettings = listOf(
-                QuestionSettingDocument(
-                    numberOfQuestions = 10,
-                    minutes = 10,
+    fun toCategory() {
+        val category = toCategory(
+            categoryDocument = CategoryDocument(
+                id = "id",
+                date = Timestamp(date = Date()),
+                title = "title",
+                description = "description",
+                imageUrl = "imageUrl",
+                questionSettings = listOf(
+                    QuestionSettingDocument(
+                        numberOfQuestions = 10,
+                        minutes = 10,
+                    ),
                 ),
             ),
-        ).asExternalModel()
+        )
 
         assertEquals(expected = "id", actual = category.id)
         assertEquals(expected = "title", actual = category.title)

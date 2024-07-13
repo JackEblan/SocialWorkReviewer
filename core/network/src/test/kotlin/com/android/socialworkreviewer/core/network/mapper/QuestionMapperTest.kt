@@ -15,21 +15,24 @@
  *   limitations under the License.
  *
  */
-package com.android.socialworkreviewer.core.network.model
+package com.android.socialworkreviewer.core.network.mapper
 
+import com.android.socialworkreviewer.core.network.model.QuestionDocument
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import kotlin.test.assertEquals
 
-class QuestionDocumentTest {
+class QuestionMapperTest {
 
     @Test
-    fun asExternalModel() {
-        val question = QuestionDocument(
-            question = "question",
-            correctChoices = listOf("A"),
-            wrongChoices = listOf("B"),
-        ).asExternalModel()
+    fun toQuestion() {
+        val question = toQuestion(
+            questionDocument = QuestionDocument(
+                question = "question",
+                correctChoices = listOf("A"),
+                wrongChoices = listOf("B"),
+            ),
+        )
 
         assertEquals(expected = "question", actual = question.question)
         assertEquals(expected = listOf("A"), actual = question.correctChoices)

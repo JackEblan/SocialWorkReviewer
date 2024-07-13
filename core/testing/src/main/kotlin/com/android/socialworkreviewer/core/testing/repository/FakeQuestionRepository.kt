@@ -15,15 +15,19 @@
  *   limitations under the License.
  *
  */
-package com.android.socialworkreviewer.core.database.model
+package com.android.socialworkreviewer.core.testing.repository
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import com.android.socialworkreviewer.core.data.repository.QuestionRepository
+import com.android.socialworkreviewer.core.model.Question
 
-@Entity
-data class AverageEntity(
-    @PrimaryKey val questionSettingIndex: Int,
-    val score: Int,
-    val numberOfQuestions: Int,
-    val categoryId: String,
-)
+class FakeQuestionRepository : QuestionRepository {
+    private var _questions = emptyList<Question>()
+
+    override suspend fun getQuestions(id: String): List<Question> {
+        return _questions
+    }
+
+    fun setQuestions(value: List<Question>) {
+        _questions = value
+    }
+}

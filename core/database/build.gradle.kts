@@ -36,8 +36,6 @@ android {
 }
 
 dependencies {
-    implementation(projects.core.model)
-
     androidTestImplementation(libs.room.testing)
     androidTestImplementation(projects.core.testing)
 }

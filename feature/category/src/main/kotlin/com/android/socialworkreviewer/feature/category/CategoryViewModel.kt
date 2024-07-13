@@ -33,7 +33,7 @@ class CategoryViewModel @Inject constructor(
     announcementRepository: AnnouncementRepository,
 ) : ViewModel() {
     val categoryUiState = combine(
-        announcementRepository.getAnnouncement(),
+        announcementRepository.getAnnouncements(),
         getCategoriesAndAverageUseCase(),
     ) { announcements, categories ->
         CategoryUiState.Success(announcements = announcements, categories = categories)

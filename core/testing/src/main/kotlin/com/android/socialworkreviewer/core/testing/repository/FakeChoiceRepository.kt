@@ -15,22 +15,16 @@
  *   limitations under the License.
  *
  */
-package com.android.socialworkreviewer.core.cache
+package com.android.socialworkreviewer.core.testing.repository
 
-import com.android.socialworkreviewer.core.common.Dispatcher
-import com.android.socialworkreviewer.core.common.SwrDispatchers.Default
+import com.android.socialworkreviewer.core.data.repository.ChoiceRepository
 import com.android.socialworkreviewer.core.model.Choice
 import com.android.socialworkreviewer.core.model.Question
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-internal class DefaultInMemoryChoiceDataSource @Inject constructor(
-    @Dispatcher(Default) private val defaultDispatcher: CoroutineDispatcher,
-) : InMemoryChoiceDataSource {
+class FakeChoiceRepository : ChoiceRepository {
     private val _selectedChoices = mutableListOf<Choice>()
 
     private val _questionsWithSelectedChoicesFlow = MutableSharedFlow<Map<Question, List<String>>>(
@@ -60,9 +54,7 @@ internal class DefaultInMemoryChoiceDataSource @Inject constructor(
         _questionsWithSelectedChoicesFlow.resetReplayCache()
     }
 
-    private suspend fun getQuestionsWithSelectedChoices(): Map<Question, List<String>> {
-        return withContext(defaultDispatcher) {
-            _selectedChoices.groupBy({ it.question }, { it.choice })
-        }
+    private fun getQuestionsWithSelectedChoices(): Map<Question, List<String>> {
+        return _selectedChoices.groupBy({ it.question }, { it.choice })
     }
 }

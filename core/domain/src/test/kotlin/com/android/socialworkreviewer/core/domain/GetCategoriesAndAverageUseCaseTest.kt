@@ -17,4 +17,127 @@
  */
 package com.android.socialworkreviewer.core.domain
 
-class GetCategoriesAndAverageUseCaseTest
+import com.android.socialworkreviewer.core.model.Average
+import com.android.socialworkreviewer.core.model.Category
+import com.android.socialworkreviewer.core.testing.repository.FakeAverageRepository
+import com.android.socialworkreviewer.core.testing.repository.FakeCategoryRepository
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.runTest
+import org.junit.Before
+import org.junit.Test
+import kotlin.test.assertTrue
+
+class GetCategoriesAndAverageUseCaseTest {
+    private lateinit var categoryRepository: FakeCategoryRepository
+
+    private lateinit var averageRepository: FakeAverageRepository
+
+    private lateinit var getCategoriesAndAverageUseCase: GetCategoriesAndAverageUseCase
+
+    @Before
+    fun setup() {
+        categoryRepository = FakeCategoryRepository()
+
+        averageRepository = FakeAverageRepository()
+
+        getCategoriesAndAverageUseCase = GetCategoriesAndAverageUseCase(
+            categoryRepository = categoryRepository,
+            averageRepository = averageRepository,
+        )
+    }
+
+    @Test
+    fun allCategoriesWithAverage() = runTest {
+        repeat(10) { index ->
+            averageRepository.upsertAverage(
+                average = Average(
+                    questionSettingIndex = 1,
+                    score = 10,
+                    numberOfQuestions = 10,
+                    categoryId = "$index",
+                ),
+            )
+        }
+
+        categoryRepository.setCategories(
+            List(10) { index ->
+                Category(
+                    id = "$index",
+                    title = "Title $index",
+                    description = "Description $index",
+                    imageUrl = "",
+                    average = 0.0,
+                    questionSettings = emptyList(),
+                )
+            },
+        )
+
+        assertTrue {
+            getCategoriesAndAverageUseCase().first().all { category ->
+                category.average == 100.0
+            }
+        }
+    }
+
+    @Test
+    fun allCategoriesWithoutAverage() = runTest {
+        repeat(10) { index ->
+            averageRepository.upsertAverage(
+                average = Average(
+                    questionSettingIndex = 1,
+                    score = 0,
+                    numberOfQuestions = 0,
+                    categoryId = "$index",
+                ),
+            )
+        }
+
+        categoryRepository.setCategories(
+            List(10) { index ->
+                Category(
+                    id = "$index",
+                    title = "Title $index",
+                    description = "Description $index",
+                    imageUrl = "",
+                    average = 0.0,
+                    questionSettings = emptyList(),
+                )
+            },
+        )
+
+        assertTrue {
+            getCategoriesAndAverageUseCase().first().all { category ->
+                category.average == 0.0
+            }
+        }
+    }
+
+    @Test
+    fun specificCategoryWithAverage() = runTest {
+        averageRepository.upsertAverage(
+            average = Average(
+                questionSettingIndex = 1,
+                score = 10,
+                numberOfQuestions = 10,
+                categoryId = "0",
+            ),
+        )
+
+        categoryRepository.setCategories(
+            List(10) { index ->
+                Category(
+                    id = "$index",
+                    title = "Title $index",
+                    description = "Description $index",
+                    imageUrl = "",
+                    average = 0.0,
+                    questionSettings = emptyList(),
+                )
+            },
+        )
+
+        assertTrue {
+            getCategoriesAndAverageUseCase().first().first().average == 100.0
+        }
+    }
+}

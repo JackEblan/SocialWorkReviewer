@@ -15,20 +15,24 @@
  *   limitations under the License.
  *
  */
-package com.android.socialworkreviewer.core.cache
+package com.android.socialworkreviewer.core.network.mapper
 
-import com.android.socialworkreviewer.core.model.Choice
 import com.android.socialworkreviewer.core.model.Question
-import kotlinx.coroutines.flow.SharedFlow
+import com.android.socialworkreviewer.core.network.model.QuestionDocument
 
-interface InMemoryChoiceDataSource {
-    val selectedChoices: List<Choice>
+internal fun toQuestion(questionDocument: QuestionDocument): Question {
+    val question = questionDocument.question.toString()
 
-    val questionsWithSelectedChoicesFlow: SharedFlow<Map<Question, List<String>>>
+    val correctChoices = questionDocument.correctChoices ?: emptyList()
 
-    suspend fun addChoice(choice: Choice)
+    val wrongChoices = questionDocument.wrongChoices ?: emptyList()
 
-    suspend fun deleteChoice(choice: Choice)
+    val choices = correctChoices.plus(wrongChoices).shuffled()
 
-    fun clearCache()
+    return Question(
+        question = question,
+        correctChoices = correctChoices,
+        wrongChoices = wrongChoices,
+        choices = choices,
+    )
 }

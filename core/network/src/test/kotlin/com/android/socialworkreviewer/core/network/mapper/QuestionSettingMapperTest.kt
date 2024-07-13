@@ -15,26 +15,24 @@
  *   limitations under the License.
  *
  */
-package com.android.socialworkreviewer.core.network.model
+package com.android.socialworkreviewer.core.network.mapper
 
-import com.google.firebase.Timestamp
+import com.android.socialworkreviewer.core.network.model.QuestionSettingDocument
 import org.junit.Test
-import java.util.Date
 import kotlin.test.assertEquals
 
-class AnnouncementDocumentTest {
+class QuestionSettingMapperTest {
 
     @Test
-    fun asExternalModel() {
-        val announcement = AnnouncementDocument(
-            id = "id",
-            date = Timestamp(date = Date()),
-            title = "Title",
-            message = "Message",
-        ).asExternalModel()
+    fun toQuestionSetting() {
+        val questionSetting = toQuestionSetting(
+            questionSettingDocument = QuestionSettingDocument(
+                numberOfQuestions = 10,
+                minutes = 10,
+            ),
+        )
 
-        assertEquals(expected = "id", actual = announcement.id)
-        assertEquals(expected = "Title", actual = announcement.title)
-        assertEquals(expected = "Message", actual = announcement.message)
+        assertEquals(expected = 10, actual = questionSetting.numberOfQuestions)
+        assertEquals(expected = 10, actual = questionSetting.minutes)
     }
 }

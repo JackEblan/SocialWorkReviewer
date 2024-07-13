@@ -32,27 +32,27 @@ val emptyUserData = UserData(
     useDynamicColor = false,
 )
 
-class TestUserDataRepository : UserDataRepository {
+class FakeUserDataRepository : UserDataRepository {
     private val _userData = MutableSharedFlow<UserData>(replay = 1, onBufferOverflow = DROP_OLDEST)
 
-    private val currentUserData get() = _userData.replayCache.firstOrNull() ?: emptyUserData
+    private val _currentUserData get() = _userData.replayCache.firstOrNull() ?: emptyUserData
 
     override val userData: Flow<UserData> = _userData.filterNotNull()
 
     override suspend fun setThemeBrand(themeBrand: ThemeBrand) {
-        currentUserData.let { current ->
+        _currentUserData.let { current ->
             _userData.tryEmit(current.copy(themeBrand = themeBrand))
         }
     }
 
     override suspend fun setDarkThemeConfig(darkThemeConfig: DarkThemeConfig) {
-        currentUserData.let { current ->
+        _currentUserData.let { current ->
             _userData.tryEmit(current.copy(darkThemeConfig = darkThemeConfig))
         }
     }
 
     override suspend fun setDynamicColor(useDynamicColor: Boolean) {
-        currentUserData.let { current ->
+        _currentUserData.let { current ->
             _userData.tryEmit(current.copy(useDynamicColor = useDynamicColor))
         }
     }

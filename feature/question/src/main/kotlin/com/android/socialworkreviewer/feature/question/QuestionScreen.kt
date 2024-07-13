@@ -95,7 +95,7 @@ import kotlinx.coroutines.launch
 internal fun QuestionRoute(
     modifier: Modifier = Modifier,
     viewModel: QuestionViewModel = hiltViewModel(),
-    onQuit: () -> Unit,
+    onQuitQuestions: () -> Unit,
 ) {
     val questionUiState = viewModel.questionUiState.collectAsStateWithLifecycle().value
 
@@ -117,14 +117,15 @@ internal fun QuestionRoute(
         questionsWithSelectedChoicesSize = questionsWithSelectedChoicesSize,
         countDownTime = countDownTime,
         onGetCategory = viewModel::getCategory,
-        onStartCountDownTimer = viewModel::startCountDownTimer,
-        onCancelCountDownTimer = viewModel::cancelCountDownTimer,
         onAddCurrentQuestion = viewModel::addCurrentQuestion,
         onUpdateChoice = viewModel::updateChoice,
         onShowCorrectChoices = viewModel::showCorrectChoices,
         onStartQuestions = viewModel::startQuestions,
         onStartQuickQuestions = viewModel::startQuickQuestions,
-        onQuit = onQuit,
+        onQuitQuestions = {
+            viewModel.quitQuestions()
+            onQuitQuestions()
+        },
     )
 }
 
@@ -138,14 +139,12 @@ internal fun QuestionScreen(
     questionsWithSelectedChoicesSize: Int,
     countDownTime: CountDownTime?,
     onGetCategory: () -> Unit,
-    onStartCountDownTimer: () -> Unit,
-    onCancelCountDownTimer: () -> Unit,
     onAddCurrentQuestion: (Question) -> Unit,
     onUpdateChoice: (Choice) -> Unit,
     onShowCorrectChoices: (questionSettingIndex: Int, questions: List<Question>) -> Unit,
     onStartQuestions: (Int, QuestionSetting) -> Unit,
     onStartQuickQuestions: () -> Unit,
-    onQuit: () -> Unit,
+    onQuitQuestions: () -> Unit,
 ) {
     AnimatedContent(
         modifier = modifier,
@@ -177,12 +176,10 @@ internal fun QuestionScreen(
                         selectedChoices = selectedChoices,
                         questionsWithSelectedChoicesSize = questionsWithSelectedChoicesSize,
                         countDownTime = countDownTime,
-                        onStartCountDownTimer = onStartCountDownTimer,
-                        onCancelCountDownTimer = onCancelCountDownTimer,
                         onAddCurrentQuestion = onAddCurrentQuestion,
                         onUpdateChoice = onUpdateChoice,
                         onShowCorrectChoices = onShowCorrectChoices,
-                        onQuit = onQuit,
+                        onQuitQuestions = onQuitQuestions,
                     )
                 } else {
                     EmptyState(text = "No Question found!")
@@ -227,6 +224,7 @@ internal fun QuestionScreen(
                         selectedChoices = selectedChoices,
                         onAddCurrentQuestion = onAddCurrentQuestion,
                         onUpdateChoice = onUpdateChoice,
+                        onQuitQuestions = onQuitQuestions,
                     )
                 }
             }
@@ -244,12 +242,10 @@ private fun Questions(
     selectedChoices: List<String>,
     questionsWithSelectedChoicesSize: Int,
     countDownTime: CountDownTime?,
-    onStartCountDownTimer: () -> Unit,
-    onCancelCountDownTimer: () -> Unit,
     onAddCurrentQuestion: (Question) -> Unit,
     onUpdateChoice: (Choice) -> Unit,
     onShowCorrectChoices: (questionSettingIndex: Int, questions: List<Question>) -> Unit,
-    onQuit: () -> Unit,
+    onQuitQuestions: () -> Unit,
 ) {
     val pagerState = rememberPagerState(
         pageCount = {
@@ -275,13 +271,8 @@ private fun Questions(
         showQuitAlertDialog = true
     }
 
-    LaunchedEffect(key1 = true) {
-        onStartCountDownTimer()
-    }
-
     LaunchedEffect(key1 = countDownTime) {
         if (countDownTime != null && countDownTime.isFinished) {
-            onCancelCountDownTimer()
             onShowCorrectChoices(questionSettingIndex, questions)
         }
     }
@@ -316,7 +307,6 @@ private fun Questions(
                                 snackbarHostState.showSnackbar("Please answer all the questions")
                             }
                         } else {
-                            onCancelCountDownTimer()
                             onShowCorrectChoices(questionSettingIndex, questions)
                         }
                     },
@@ -369,8 +359,7 @@ private fun Questions(
             },
             onConfirmation = {
                 showQuitAlertDialog = false
-                onCancelCountDownTimer()
-                onQuit()
+                onQuitQuestions()
             },
             dialogTitle = "Quit Questions",
             dialogText = "You have answered $questionsWithSelectedChoicesSize out of ${questions.size} questions. Are you sure you want to quit?",

@@ -15,17 +15,25 @@
  *   limitations under the License.
  *
  */
-package com.android.socialworkreviewer.core.data.repository
+package com.android.socialworkreviewer.core.testing.repository
 
+import com.android.socialworkreviewer.core.data.repository.AnnouncementRepository
 import com.android.socialworkreviewer.core.model.Announcement
-import com.android.socialworkreviewer.core.network.firestore.AnnouncementDataSource
+import kotlinx.coroutines.channels.BufferOverflow.DROP_OLDEST
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import javax.inject.Inject
 
-internal class DefaultAnnouncementRepository @Inject constructor(private val announcementDataSource: AnnouncementDataSource) :
-    AnnouncementRepository {
+class FakeAnnouncementRepository : AnnouncementRepository {
+    private val _announcementsFlow =
+        MutableSharedFlow<List<Announcement>>(replay = 1, onBufferOverflow = DROP_OLDEST)
+
     override fun getAnnouncements(): Flow<List<Announcement>> {
-        return announcementDataSource.getAnnouncementDocuments().distinctUntilChanged()
+        return _announcementsFlow.asSharedFlow().distinctUntilChanged()
+    }
+
+    fun setAnnouncements(value: List<Announcement>) {
+        _announcementsFlow.tryEmit(value)
     }
 }

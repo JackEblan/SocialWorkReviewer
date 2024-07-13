@@ -15,15 +15,21 @@
  *   limitations under the License.
  *
  */
-package com.android.socialworkreviewer.core.database.model
+package com.android.socialworkreviewer.core.network.mapper
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import com.android.socialworkreviewer.core.model.Announcement
+import com.android.socialworkreviewer.core.network.model.AnnouncementDocument
 
-@Entity
-data class AverageEntity(
-    @PrimaryKey val questionSettingIndex: Int,
-    val score: Int,
-    val numberOfQuestions: Int,
-    val categoryId: String,
-)
+internal fun toAnnouncement(announcementDocument: AnnouncementDocument): Announcement {
+    val id = announcementDocument.id.toString()
+
+    val title = announcementDocument.title.toString()
+
+    val message = announcementDocument.message.toString()
+
+    return Announcement(
+        id = id,
+        title = title,
+        message = message,
+    )
+}
