@@ -48,12 +48,10 @@ class FakeChoiceRepository : ChoiceRepository {
         _questionsWithSelectedChoicesFlow.emit(getQuestionsWithSelectedChoices())
     }
 
-    override suspend fun clearCache() {
+    override fun clearCache() {
         _selectedChoices.clear()
 
         _questionsWithSelectedChoicesFlow.resetReplayCache()
-
-        _questionsWithSelectedChoicesFlow.emit(emptyMap())
     }
 
     private fun getQuestionsWithSelectedChoices(): Map<Question, List<String>> {
