@@ -41,7 +41,8 @@ class GetCategoriesAndAverageUseCaseTest {
         averageRepository = FakeAverageRepository()
 
         getCategoriesAndAverageUseCase = GetCategoriesAndAverageUseCase(
-            categoryRepository = categoryRepository, averageRepository = averageRepository,
+            categoryRepository = categoryRepository,
+            averageRepository = averageRepository,
         )
     }
 
@@ -112,13 +113,13 @@ class GetCategoriesAndAverageUseCaseTest {
     }
 
     @Test
-    fun someCategoriesWithAverage() = runTest {
+    fun specificCategoryWithAverage() = runTest {
         averageRepository.upsertAverage(
             average = Average(
                 questionSettingIndex = 1,
                 score = 10,
                 numberOfQuestions = 10,
-                categoryId = "1",
+                categoryId = "0",
             ),
         )
 
@@ -136,9 +137,7 @@ class GetCategoriesAndAverageUseCaseTest {
         )
 
         assertTrue {
-            getCategoriesAndAverageUseCase().first().find { category ->
-                category.id == "1"
-            }?.average == 100.0
+            getCategoriesAndAverageUseCase().first().first().average == 100.0
         }
     }
 }

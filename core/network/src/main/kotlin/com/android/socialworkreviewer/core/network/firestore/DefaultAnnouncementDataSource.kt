@@ -45,5 +45,4 @@ internal class DefaultAnnouncementDataSource @Inject constructor(
                 }
             }
     }
-
 }
