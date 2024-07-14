@@ -20,6 +20,7 @@ package com.android.socialworkreviewer.core.testing.repository
 import com.android.socialworkreviewer.core.data.repository.ChoiceRepository
 import com.android.socialworkreviewer.core.model.Choice
 import com.android.socialworkreviewer.core.model.Question
+import com.android.socialworkreviewer.core.model.QuestionData
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -32,9 +33,14 @@ class FakeChoiceRepository : ChoiceRepository {
         onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
 
+    private val _currentQuestionData = MutableSharedFlow<QuestionData>(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    )
+
     override val selectedChoices get() = _selectedChoices.toList()
 
-    override val questionsWithSelectedChoicesFlow = _questionsWithSelectedChoicesFlow.asSharedFlow()
+    override val currentQuestionData = _currentQuestionData.asSharedFlow()
 
     override suspend fun addChoice(choice: Choice) {
         _selectedChoices.add(choice)
@@ -52,6 +58,24 @@ class FakeChoiceRepository : ChoiceRepository {
         _selectedChoices.clear()
 
         _questionsWithSelectedChoicesFlow.resetReplayCache()
+    }
+
+    override suspend fun addCurrentQuestion(question: Question) {
+        _currentQuestionData.emit(
+            QuestionData(
+                selectedChoices = getQuestionsWithSelectedChoices().getOrDefault(
+                    key = question,
+                    defaultValue = emptyList(),
+                ),
+                questionsWithSelectedChoicesSize = getQuestionsWithSelectedChoices().size,
+            ),
+        )
+    }
+
+    override suspend fun getScore(): Int {
+        return getQuestionsWithSelectedChoices().count {
+            it.value.toSet() == it.key.correctChoices.toSet()
+        }
     }
 
     private fun getQuestionsWithSelectedChoices(): Map<Question, List<String>> {

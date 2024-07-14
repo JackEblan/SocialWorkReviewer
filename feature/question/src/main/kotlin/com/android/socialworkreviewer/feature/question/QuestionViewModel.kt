@@ -29,6 +29,7 @@ import com.android.socialworkreviewer.core.domain.UpdateChoiceUseCase
 import com.android.socialworkreviewer.core.model.Average
 import com.android.socialworkreviewer.core.model.Choice
 import com.android.socialworkreviewer.core.model.Question
+import com.android.socialworkreviewer.core.model.QuestionData
 import com.android.socialworkreviewer.core.model.QuestionSetting
 import com.android.socialworkreviewer.feature.question.navigation.QuestionRouteData
 import com.android.socialworkreviewer.framework.countdowntimer.CountDownTimerWrapper
@@ -36,7 +37,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -60,27 +60,13 @@ class QuestionViewModel @Inject constructor(
     private val _questionUiState = MutableStateFlow<QuestionUiState?>(null)
     val questionUiState = _questionUiState.asStateFlow()
 
-    private val _currentQuestion = MutableStateFlow<Question?>(null)
-
-    private val _questionsWithSelectedChoicesSize = MutableStateFlow(0)
-
-    val questionsWithSelectedChoicesSize get() = _questionsWithSelectedChoicesSize.asStateFlow()
-
-    val currentQuestionWithSelectedChoices = combine(
-        _currentQuestion,
-        choiceRepository.questionsWithSelectedChoicesFlow,
-    ) { question, questionsWithSelectedChoices ->
-
-        _questionsWithSelectedChoicesSize.update { questionsWithSelectedChoices.size }
-
-        questionsWithSelectedChoices.getOrDefault(
-            key = question,
-            defaultValue = emptyList(),
-        )
-    }.stateIn(
+    val currentQuestionData = choiceRepository.currentQuestionData.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = emptyList(),
+        initialValue = QuestionData(
+            selectedChoices = emptyList(),
+            questionsWithSelectedChoicesSize = 0,
+        ),
     )
 
     val countDownTime = countDownTimerWrapper.countDownTimeFlow.stateIn(
@@ -137,19 +123,18 @@ class QuestionViewModel @Inject constructor(
     }
 
     fun addCurrentQuestion(question: Question) {
-        _currentQuestion.update { question }
+        viewModelScope.launch {
+            choiceRepository.addCurrentQuestion(question)
+        }
     }
 
     fun showCorrectChoices(questionSettingIndex: Int, questions: List<Question>) {
         viewModelScope.launch {
-            val score =
-                choiceRepository.questionsWithSelectedChoicesFlow.replayCache.firstOrNull()?.count {
-                    it.value.toSet() == it.key.correctChoices.toSet()
-                }
+            val score = choiceRepository.getScore()
 
             _questionUiState.update {
                 QuestionUiState.ShowCorrectChoices(
-                    score = score ?: 0,
+                    score = score,
                     questions = questions,
                     lastCountDownTime = countDownTime.value?.minutes,
                 )
@@ -158,13 +143,13 @@ class QuestionViewModel @Inject constructor(
             averageRepository.upsertAverage(
                 Average(
                     questionSettingIndex = questionSettingIndex,
-                    score = score ?: 0,
+                    score = score,
                     numberOfQuestions = questions.size,
                     categoryId = id,
                 ),
             )
 
-            quitQuestions()
+            countDownTimerWrapper.cancel()
         }
     }
 
@@ -180,7 +165,7 @@ class QuestionViewModel @Inject constructor(
         }
     }
 
-    fun quitQuestions() {
+    fun clearCache() {
         countDownTimerWrapper.cancel()
 
         choiceRepository.clearCache()

@@ -19,6 +19,9 @@ package com.android.socialworkreviewer.core.data.repository
 
 import com.android.socialworkreviewer.core.cache.InMemoryChoiceDataSource
 import com.android.socialworkreviewer.core.model.Choice
+import com.android.socialworkreviewer.core.model.Question
+import com.android.socialworkreviewer.core.model.QuestionData
+import kotlinx.coroutines.flow.SharedFlow
 import javax.inject.Inject
 
 internal class DefaultChoiceRepository @Inject constructor(
@@ -27,7 +30,8 @@ internal class DefaultChoiceRepository @Inject constructor(
 
     override val selectedChoices get() = inMemoryChoiceDataSource.selectedChoices
 
-    override val questionsWithSelectedChoicesFlow get() = inMemoryChoiceDataSource.questionsWithSelectedChoicesFlow
+    override val currentQuestionData: SharedFlow<QuestionData>
+        get() = inMemoryChoiceDataSource.currentQuestionData
 
     override suspend fun addChoice(choice: Choice) {
         inMemoryChoiceDataSource.addChoice(choice)
@@ -39,5 +43,13 @@ internal class DefaultChoiceRepository @Inject constructor(
 
     override fun clearCache() {
         inMemoryChoiceDataSource.clearCache()
+    }
+
+    override suspend fun addCurrentQuestion(question: Question) {
+        inMemoryChoiceDataSource.addCurrentQuestion(question)
+    }
+
+    override suspend fun getScore(): Int {
+        return inMemoryChoiceDataSource.getScore()
     }
 }

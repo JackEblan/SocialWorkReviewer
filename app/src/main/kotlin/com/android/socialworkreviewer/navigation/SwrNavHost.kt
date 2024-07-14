@@ -38,7 +38,7 @@ fun SwrNavHost(navController: NavHostController) {
             onSettingsClick = navController::navigateToSettings,
         )
 
-        questionScreen(onQuit = navController::navigateUp)
+        questionScreen(onNavigateUp = navController::navigateUp)
 
         settingsScreen(onNavigationIconClick = navController::navigateUp)
     }

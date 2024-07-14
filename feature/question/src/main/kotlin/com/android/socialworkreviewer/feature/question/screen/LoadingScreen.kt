@@ -15,7 +15,7 @@
  *   limitations under the License.
  *
  */
-package com.android.socialworkreviewer.feature.question
+package com.android.socialworkreviewer.feature.question.screen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.consumeWindowInsets

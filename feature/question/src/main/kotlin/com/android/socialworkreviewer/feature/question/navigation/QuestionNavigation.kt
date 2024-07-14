@@ -20,14 +20,14 @@ package com.android.socialworkreviewer.feature.question.navigation
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.android.socialworkreviewer.feature.question.QuestionRoute
+import com.android.socialworkreviewer.feature.question.screen.QuestionRoute
 
 fun NavController.navigateToQuestionScreen(id: String) {
     navigate(QuestionRouteData(id = id))
 }
 
-fun NavGraphBuilder.questionScreen(onQuit: () -> Unit) {
+fun NavGraphBuilder.questionScreen(onNavigateUp: () -> Unit) {
     composable<QuestionRouteData> {
-        QuestionRoute(onQuitQuestions = onQuit)
+        QuestionRoute(onNavigateUp = onNavigateUp)
     }
 }

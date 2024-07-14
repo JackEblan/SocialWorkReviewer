@@ -21,6 +21,7 @@ import com.android.socialworkreviewer.core.common.Dispatcher
 import com.android.socialworkreviewer.core.common.SwrDispatchers.Default
 import com.android.socialworkreviewer.core.model.Choice
 import com.android.socialworkreviewer.core.model.Question
+import com.android.socialworkreviewer.core.model.QuestionData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -33,31 +34,67 @@ internal class DefaultInMemoryChoiceDataSource @Inject constructor(
 ) : InMemoryChoiceDataSource {
     private val _selectedChoices = mutableListOf<Choice>()
 
-    private val _questionsWithSelectedChoicesFlow = MutableSharedFlow<Map<Question, List<String>>>(
+    private val _currentQuestionData = MutableSharedFlow<QuestionData>(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
 
     override val selectedChoices get() = _selectedChoices.toList()
 
-    override val questionsWithSelectedChoicesFlow = _questionsWithSelectedChoicesFlow.asSharedFlow()
+    override val currentQuestionData get() = _currentQuestionData.asSharedFlow()
 
     override suspend fun addChoice(choice: Choice) {
         _selectedChoices.add(choice)
 
-        _questionsWithSelectedChoicesFlow.emit(getQuestionsWithSelectedChoices())
+        _currentQuestionData.emit(
+            QuestionData(
+                selectedChoices = getQuestionsWithSelectedChoices().getOrDefault(
+                    key = choice.question,
+                    defaultValue = emptyList(),
+                ),
+                questionsWithSelectedChoicesSize = getQuestionsWithSelectedChoices().size,
+            ),
+        )
     }
 
     override suspend fun deleteChoice(choice: Choice) {
         _selectedChoices.remove(choice)
 
-        _questionsWithSelectedChoicesFlow.emit(getQuestionsWithSelectedChoices())
+        _currentQuestionData.emit(
+            QuestionData(
+                selectedChoices = getQuestionsWithSelectedChoices().getOrDefault(
+                    key = choice.question,
+                    defaultValue = emptyList(),
+                ),
+                questionsWithSelectedChoicesSize = getQuestionsWithSelectedChoices().size,
+            ),
+        )
     }
 
     override fun clearCache() {
         _selectedChoices.clear()
 
-        _questionsWithSelectedChoicesFlow.resetReplayCache()
+        _currentQuestionData.resetReplayCache()
+    }
+
+    override suspend fun addCurrentQuestion(question: Question) {
+        _currentQuestionData.emit(
+            QuestionData(
+                selectedChoices = getQuestionsWithSelectedChoices().getOrDefault(
+                    key = question,
+                    defaultValue = emptyList(),
+                ),
+                questionsWithSelectedChoicesSize = getQuestionsWithSelectedChoices().size,
+            ),
+        )
+    }
+
+    override suspend fun getScore(): Int {
+        return withContext(defaultDispatcher) {
+            getQuestionsWithSelectedChoices().count {
+                it.value.toSet() == it.key.correctChoices.toSet()
+            }
+        }
     }
 
     private suspend fun getQuestionsWithSelectedChoices(): Map<Question, List<String>> {

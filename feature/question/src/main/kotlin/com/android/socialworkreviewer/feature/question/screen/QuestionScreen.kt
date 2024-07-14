@@ -15,7 +15,7 @@
  *   limitations under the License.
  *
  */
-package com.android.socialworkreviewer.feature.question
+package com.android.socialworkreviewer.feature.question.screen
 
 import androidx.activity.compose.BackHandler
 import androidx.annotation.VisibleForTesting
@@ -87,25 +87,24 @@ import com.android.socialworkreviewer.core.designsystem.icon.Swr
 import com.android.socialworkreviewer.core.model.Choice
 import com.android.socialworkreviewer.core.model.CountDownTime
 import com.android.socialworkreviewer.core.model.Question
+import com.android.socialworkreviewer.core.model.QuestionData
 import com.android.socialworkreviewer.core.model.QuestionSetting
+import com.android.socialworkreviewer.feature.question.QuestionViewModel
 import com.android.socialworkreviewer.feature.question.dialog.quit.QuitAlertDialog
+import com.android.socialworkreviewer.feature.question.QuestionUiState
 import kotlinx.coroutines.launch
 
 @Composable
 internal fun QuestionRoute(
     modifier: Modifier = Modifier,
     viewModel: QuestionViewModel = hiltViewModel(),
-    onQuitQuestions: () -> Unit,
+    onNavigateUp: () -> Unit,
 ) {
     val questionUiState = viewModel.questionUiState.collectAsStateWithLifecycle().value
 
-    val selectedChoices =
-        viewModel.currentQuestionWithSelectedChoices.collectAsStateWithLifecycle().value
+    val currentQuestionData = viewModel.currentQuestionData.collectAsStateWithLifecycle().value
 
     val countDownTime = viewModel.countDownTime.collectAsStateWithLifecycle().value
-
-    val questionsWithSelectedChoicesSize =
-        viewModel.questionsWithSelectedChoicesSize.collectAsStateWithLifecycle().value
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -113,8 +112,7 @@ internal fun QuestionRoute(
         modifier = modifier,
         snackbarHostState = snackbarHostState,
         questionUiState = questionUiState,
-        selectedChoices = selectedChoices,
-        questionsWithSelectedChoicesSize = questionsWithSelectedChoicesSize,
+        currentQuestionData = currentQuestionData,
         countDownTime = countDownTime,
         onGetCategory = viewModel::getCategory,
         onAddCurrentQuestion = viewModel::addCurrentQuestion,
@@ -123,8 +121,8 @@ internal fun QuestionRoute(
         onStartQuestions = viewModel::startQuestions,
         onStartQuickQuestions = viewModel::startQuickQuestions,
         onQuitQuestions = {
-            viewModel.quitQuestions()
-            onQuitQuestions()
+            viewModel.clearCache()
+            onNavigateUp()
         },
     )
 }
@@ -135,8 +133,7 @@ internal fun QuestionScreen(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
     questionUiState: QuestionUiState?,
-    selectedChoices: List<String>,
-    questionsWithSelectedChoicesSize: Int,
+    currentQuestionData: QuestionData,
     countDownTime: CountDownTime?,
     onGetCategory: () -> Unit,
     onAddCurrentQuestion: (Question) -> Unit,
@@ -173,8 +170,8 @@ internal fun QuestionScreen(
                         snackbarHostState = snackbarHostState,
                         questionSettingIndex = state.questionSettingIndex,
                         questions = state.questions,
-                        selectedChoices = selectedChoices,
-                        questionsWithSelectedChoicesSize = questionsWithSelectedChoicesSize,
+                        selectedChoices = currentQuestionData.selectedChoices,
+                        questionsWithSelectedChoicesSize = currentQuestionData.questionsWithSelectedChoicesSize,
                         countDownTime = countDownTime,
                         onAddCurrentQuestion = onAddCurrentQuestion,
                         onUpdateChoice = onUpdateChoice,
@@ -193,10 +190,11 @@ internal fun QuestionScreen(
             is QuestionUiState.ShowCorrectChoices -> {
                 CorrectChoicesScreen(
                     questions = state.questions,
-                    selectedChoices = selectedChoices,
+                    selectedChoices = currentQuestionData.selectedChoices,
                     score = state.score,
                     minutes = state.lastCountDownTime,
                     onAddCurrentQuestion = onAddCurrentQuestion,
+                    onQuitQuestions = onQuitQuestions,
                 )
             }
 
@@ -221,7 +219,7 @@ internal fun QuestionScreen(
                     QuickQuestionsScreen(
                         snackbarHostState = snackbarHostState,
                         questions = state.questions,
-                        selectedChoices = selectedChoices,
+                        selectedChoices = currentQuestionData.selectedChoices,
                         onAddCurrentQuestion = onAddCurrentQuestion,
                         onUpdateChoice = onUpdateChoice,
                         onQuitQuestions = onQuitQuestions,

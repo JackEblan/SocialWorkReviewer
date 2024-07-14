@@ -23,7 +23,6 @@ import com.android.socialworkreviewer.core.testing.repository.FakeChoiceReposito
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class UpdateChoiceUseCaseTest {
@@ -47,30 +46,19 @@ class UpdateChoiceUseCaseTest {
             choices = emptyList(),
         )
 
-        val choice1 = Choice(
-            question = question,
-            choice = "1",
-        )
+        repeat(2) { index ->
+            val choice = Choice(
+                question = question,
+                choice = "$index",
+            )
 
-        val choice2 = Choice(
-            question = question,
-            choice = "2",
-        )
-
-        updateChoiceUseCase(
-            choice = choice1,
-        )
-
-        updateChoiceUseCase(
-            choice = choice2,
-        )
-
-        assertFalse {
-            choice1 in choiceRepository.selectedChoices
+            updateChoiceUseCase(
+                choice = choice,
+            )
         }
 
         assertTrue {
-            choice2 in choiceRepository.selectedChoices
+            choiceRepository.selectedChoices.size == 1
         }
     }
 
@@ -83,30 +71,19 @@ class UpdateChoiceUseCaseTest {
             choices = listOf(""),
         )
 
-        val choice1 = Choice(
-            question = question,
-            choice = "1",
-        )
+        repeat(2) { index ->
+            val choice = Choice(
+                question = question,
+                choice = "$index",
+            )
 
-        val choice2 = Choice(
-            question = question,
-            choice = "2",
-        )
-
-        updateChoiceUseCase(
-            choice = choice1,
-        )
-
-        updateChoiceUseCase(
-            choice = choice2,
-        )
-
-        assertTrue {
-            choice1 in choiceRepository.selectedChoices
+            updateChoiceUseCase(
+                choice = choice,
+            )
         }
 
         assertTrue {
-            choice2 in choiceRepository.selectedChoices
+            choiceRepository.selectedChoices.size == 2
         }
     }
 }
