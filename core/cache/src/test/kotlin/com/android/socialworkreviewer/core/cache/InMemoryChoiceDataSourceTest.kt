@@ -57,7 +57,7 @@ class InMemoryChoiceDataSourceTest {
             inMemoryChoiceDataSource.selectedChoices.contains(choice)
         }
 
-        assertNotNull(inMemoryChoiceDataSource.currentQuestionData.firstOrNull())
+        assertNotNull(inMemoryChoiceDataSource.currentQuestionData.replayCache.firstOrNull())
     }
 
     @Test
@@ -80,7 +80,7 @@ class InMemoryChoiceDataSourceTest {
             inMemoryChoiceDataSource.selectedChoices.contains(choice).not()
         }
 
-        assertNotNull(inMemoryChoiceDataSource.currentQuestionData.firstOrNull())
+        assertNotNull(inMemoryChoiceDataSource.currentQuestionData.replayCache.firstOrNull())
     }
 
     @Test
@@ -106,8 +106,6 @@ class InMemoryChoiceDataSourceTest {
         assertTrue {
             inMemoryChoiceDataSource.currentQuestionData.replayCache.isEmpty()
         }
-
-        assertNotNull(inMemoryChoiceDataSource.currentQuestionData.firstOrNull())
     }
 
     @Test

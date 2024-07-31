@@ -89,9 +89,9 @@ import com.android.socialworkreviewer.core.model.CountDownTime
 import com.android.socialworkreviewer.core.model.Question
 import com.android.socialworkreviewer.core.model.QuestionData
 import com.android.socialworkreviewer.core.model.QuestionSetting
+import com.android.socialworkreviewer.feature.question.QuestionUiState
 import com.android.socialworkreviewer.feature.question.QuestionViewModel
 import com.android.socialworkreviewer.feature.question.dialog.quit.QuitAlertDialog
-import com.android.socialworkreviewer.feature.question.QuestionUiState
 import kotlinx.coroutines.launch
 
 @Composable
