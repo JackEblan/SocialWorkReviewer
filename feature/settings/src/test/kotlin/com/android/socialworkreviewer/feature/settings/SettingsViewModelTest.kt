@@ -19,6 +19,7 @@ package com.android.socialworkreviewer.feature.settings
 
 import com.android.socialworkreviewer.core.model.DarkThemeConfig
 import com.android.socialworkreviewer.core.model.ThemeBrand
+import com.android.socialworkreviewer.core.model.UserData
 import com.android.socialworkreviewer.core.testing.repository.FakeUserDataRepository
 import com.android.socialworkreviewer.core.testing.util.MainDispatcherRule
 import kotlinx.coroutines.flow.collect
@@ -55,11 +56,19 @@ class SettingsViewModelTest {
 
     @Test
     fun settingsUiState_isSuccess() = runTest {
+        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.settingsUiState.collect() }
+
+        userDataRepository.setUserData(
+            userData = UserData(
+                themeBrand = ThemeBrand.DEFAULT,
+                darkThemeConfig = DarkThemeConfig.DARK,
+                useDynamicColor = false,
+            ),
+        )
+
         userDataRepository.setThemeBrand(ThemeBrand.ANDROID)
 
         userDataRepository.setDarkThemeConfig(DarkThemeConfig.DARK)
-
-        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.settingsUiState.collect() }
 
         assertIs<SettingsUiState.Success>(viewModel.settingsUiState.value)
 
