@@ -26,33 +26,27 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.filterNotNull
 
-val emptyUserData = UserData(
-    themeBrand = ThemeBrand.DEFAULT,
-    darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
-    useDynamicColor = false,
-)
-
 class FakeUserDataRepository : UserDataRepository {
     private val _userData = MutableSharedFlow<UserData>(replay = 1, onBufferOverflow = DROP_OLDEST)
 
-    private val _currentUserData get() = _userData.replayCache.firstOrNull() ?: emptyUserData
+    private val _currentUserData get() = _userData.replayCache.firstOrNull()
 
     override val userData: Flow<UserData> = _userData.filterNotNull()
 
     override suspend fun setThemeBrand(themeBrand: ThemeBrand) {
-        _currentUserData.let { current ->
+        _currentUserData?.let { current ->
             _userData.tryEmit(current.copy(themeBrand = themeBrand))
         }
     }
 
     override suspend fun setDarkThemeConfig(darkThemeConfig: DarkThemeConfig) {
-        _currentUserData.let { current ->
+        _currentUserData?.let { current ->
             _userData.tryEmit(current.copy(darkThemeConfig = darkThemeConfig))
         }
     }
 
     override suspend fun setDynamicColor(useDynamicColor: Boolean) {
-        _currentUserData.let { current ->
+        _currentUserData?.let { current ->
             _userData.tryEmit(current.copy(useDynamicColor = useDynamicColor))
         }
     }

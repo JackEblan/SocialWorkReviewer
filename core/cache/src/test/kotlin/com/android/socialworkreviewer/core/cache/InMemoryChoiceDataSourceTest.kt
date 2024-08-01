@@ -19,7 +19,6 @@ package com.android.socialworkreviewer.core.cache
 
 import com.android.socialworkreviewer.core.model.Choice
 import com.android.socialworkreviewer.core.model.Question
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
