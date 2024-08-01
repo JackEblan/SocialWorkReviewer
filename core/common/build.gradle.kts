@@ -25,3 +25,7 @@ plugins {
 android {
     namespace = "com.android.socialworkreviewer.core.common"
 }
+
+dependencies {
+    implementation(libs.kotlinx.coroutines.core)
+}
