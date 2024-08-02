@@ -37,7 +37,7 @@ class SettingsScreenTest {
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
     @Test
-    fun getoLoadingWheel_isDisplayed_whenSettingsUiState_isLoading() {
+    fun swrLoadingWheel_isDisplayed_whenSettingsUiState_isLoading() {
         composeTestRule.setContent {
             SettingsScreen(
                 settingsUiState = SettingsUiState.Loading,
@@ -49,7 +49,7 @@ class SettingsScreenTest {
             )
         }
 
-        composeTestRule.onNodeWithContentDescription("GetoLoadingWheel").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("SwrLoadingWheel").assertIsDisplayed()
     }
 
     @Test

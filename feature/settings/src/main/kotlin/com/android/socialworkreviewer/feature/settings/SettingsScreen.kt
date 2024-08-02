@@ -219,7 +219,7 @@ private fun SettingsTopAppBAr(onNavigationIconClick: () -> Unit) {
 private fun LoadingState(modifier: Modifier = Modifier) {
     SwrLoadingWheel(
         modifier = modifier,
-        contentDescription = "SocialWorkReviewerLoadingWheel",
+        contentDescription = "SwrLoadingWheel",
     )
 }
 
