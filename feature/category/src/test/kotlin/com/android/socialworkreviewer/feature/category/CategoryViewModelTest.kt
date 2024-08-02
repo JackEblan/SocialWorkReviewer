@@ -18,10 +18,8 @@
 package com.android.socialworkreviewer.feature.category
 
 import com.android.socialworkreviewer.core.domain.GetCategoriesAndAverageUseCase
-import com.android.socialworkreviewer.core.model.Announcement
 import com.android.socialworkreviewer.core.model.Average
 import com.android.socialworkreviewer.core.model.Category
-import com.android.socialworkreviewer.core.testing.repository.FakeAnnouncementRepository
 import com.android.socialworkreviewer.core.testing.repository.FakeAverageRepository
 import com.android.socialworkreviewer.core.testing.repository.FakeCategoryRepository
 import com.android.socialworkreviewer.core.testing.util.MainDispatcherRule
@@ -40,8 +38,6 @@ class CategoryViewModelTest {
 
     private lateinit var getCategoriesAndAverageUseCase: GetCategoriesAndAverageUseCase
 
-    private lateinit var announcementRepository: FakeAnnouncementRepository
-
     private lateinit var categoryRepository: FakeCategoryRepository
 
     private lateinit var averageRepository: FakeAverageRepository
@@ -50,8 +46,6 @@ class CategoryViewModelTest {
 
     @Before
     fun setup() {
-        announcementRepository = FakeAnnouncementRepository()
-
         categoryRepository = FakeCategoryRepository()
 
         averageRepository = FakeAverageRepository()
@@ -63,7 +57,6 @@ class CategoryViewModelTest {
 
         viewModel = CategoryViewModel(
             getCategoriesAndAverageUseCase = getCategoriesAndAverageUseCase,
-            announcementRepository = announcementRepository,
         )
     }
 
@@ -74,10 +67,6 @@ class CategoryViewModelTest {
 
     @Test
     fun categoryUiState_isSuccess() = runTest {
-        val announcements = List(10) { index ->
-            Announcement(id = "$index", title = "", message = "")
-        }
-
         val categories = List(10) { index ->
             Category(
                 id = "$index",
@@ -99,8 +88,6 @@ class CategoryViewModelTest {
         }
 
         val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.categoryUiState.collect() }
-
-        announcementRepository.setAnnouncements(announcements)
 
         categoryRepository.setCategories(categories)
 

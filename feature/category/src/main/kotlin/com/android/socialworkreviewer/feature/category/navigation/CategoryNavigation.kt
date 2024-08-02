@@ -17,15 +17,26 @@
  */
 package com.android.socialworkreviewer.feature.category.navigation
 
+import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.android.socialworkreviewer.feature.category.CategoryRoute
 
+fun NavController.navigateToCategoryScreen() {
+    navigate(CategoryRouteData) {
+        popUpTo(graph.findStartDestination().id) {
+            saveState = true
+        }
+        launchSingleTop = true
+        restoreState = true
+    }
+}
+
 fun NavGraphBuilder.categoryScreen(
     onCategoryClick: (String) -> Unit,
-    onSettingsClick: () -> Unit,
 ) {
     composable<CategoryRouteData> {
-        CategoryRoute(onCategoryClick = onCategoryClick, onSettingsClick = onSettingsClick)
+        CategoryRoute(onCategoryClick = onCategoryClick)
     }
 }

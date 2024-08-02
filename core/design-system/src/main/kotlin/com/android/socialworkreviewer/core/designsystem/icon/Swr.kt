@@ -18,9 +18,10 @@
 package com.android.socialworkreviewer.core.designsystem.icon
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Bolt
+import androidx.compose.material.icons.filled.Campaign
+import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material.icons.filled.Settings
@@ -28,8 +29,9 @@ import androidx.compose.material.icons.filled.Settings
 object Swr {
     val Check = Icons.Default.Check
     val Settings = Icons.Default.Settings
-    val ArrowBack = Icons.AutoMirrored.Filled.ArrowBack
+    val Campaign = Icons.Default.Campaign
     val Bolt = Icons.Default.Bolt
     val Question = Icons.Default.QuestionMark
     val AccessTime = Icons.Default.AccessTime
+    val Category = Icons.Default.Category
 }

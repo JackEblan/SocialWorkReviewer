@@ -22,24 +22,17 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -55,7 +48,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.socialworkreviewer.core.designsystem.component.SwrLoadingWheel
-import com.android.socialworkreviewer.core.designsystem.icon.Swr
 import com.android.socialworkreviewer.core.designsystem.theme.supportsDynamicTheming
 import com.android.socialworkreviewer.core.model.DarkThemeConfig
 import com.android.socialworkreviewer.core.model.ThemeBrand
@@ -66,7 +58,6 @@ import com.android.socialworkreviewer.feature.settings.dialog.theme.ThemeDialog
 internal fun SettingsRoute(
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = hiltViewModel(),
-    onNavigationIconClick: () -> Unit,
 ) {
     val settingsUiState = viewModel.settingsUiState.collectAsStateWithLifecycle().value
 
@@ -76,7 +67,6 @@ internal fun SettingsRoute(
         onUpdateThemeBrand = viewModel::updateThemeBrand,
         onUpdateDarkThemeConfig = viewModel::updateDarkThemeConfig,
         onChangeDynamicColorPreference = viewModel::updateDynamicColorPreference,
-        onNavigationIconClick = onNavigationIconClick,
     )
 }
 
@@ -90,53 +80,44 @@ internal fun SettingsScreen(
     onUpdateThemeBrand: (ThemeBrand) -> Unit,
     onUpdateDarkThemeConfig: (DarkThemeConfig) -> Unit,
     onChangeDynamicColorPreference: (useDynamicColor: Boolean) -> Unit,
-    onNavigationIconClick: () -> Unit,
 ) {
     var showThemeDialog by rememberSaveable { mutableStateOf(false) }
 
     var showDarkDialog by rememberSaveable { mutableStateOf(false) }
 
-    Scaffold(
-        topBar = {
-            SettingsTopAppBAr(onNavigationIconClick = onNavigationIconClick)
-        },
-    ) { innerPadding ->
-        Box(
-            modifier = modifier
-                .fillMaxSize()
-                .consumeWindowInsets(innerPadding)
-                .verticalScroll(scrollState)
-                .testTag("settings"),
-        ) {
-            when (settingsUiState) {
-                SettingsUiState.Loading -> LoadingState(
-                    modifier = Modifier.align(Alignment.Center),
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState)
+            .testTag("settings"),
+    ) {
+        when (settingsUiState) {
+            SettingsUiState.Loading -> LoadingState(
+                modifier = Modifier.align(Alignment.Center),
+            )
+
+            is SettingsUiState.Success -> {
+                SettingsScreenDialogs(
+                    settingsUiState = settingsUiState,
+                    showThemeDialog = showThemeDialog,
+                    showDarkDialog = showDarkDialog,
+                    onUpdateThemeBrand = onUpdateThemeBrand,
+                    onUpdateDarkThemeConfig = onUpdateDarkThemeConfig,
+                    onThemeDialogDismissRequest = {
+                        showThemeDialog = false
+                    },
+                    onDarkDialogDismissRequest = {
+                        showDarkDialog = false
+                    },
                 )
 
-                is SettingsUiState.Success -> {
-                    SettingsScreenDialogs(
-                        settingsUiState = settingsUiState,
-                        showThemeDialog = showThemeDialog,
-                        showDarkDialog = showDarkDialog,
-                        onUpdateThemeBrand = onUpdateThemeBrand,
-                        onUpdateDarkThemeConfig = onUpdateDarkThemeConfig,
-                        onThemeDialogDismissRequest = {
-                            showThemeDialog = false
-                        },
-                        onDarkDialogDismissRequest = {
-                            showDarkDialog = false
-                        },
-                    )
-
-                    SuccessState(
-                        contentPadding = innerPadding,
-                        settingsUiState = settingsUiState,
-                        supportDynamicColor = supportDynamicColor,
-                        onShowThemeDialog = { showThemeDialog = true },
-                        onShowDarkDialog = { showDarkDialog = true },
-                        onChangeDynamicColorPreference = onChangeDynamicColorPreference,
-                    )
-                }
+                SuccessState(
+                    settingsUiState = settingsUiState,
+                    supportDynamicColor = supportDynamicColor,
+                    onShowThemeDialog = { showThemeDialog = true },
+                    onShowDarkDialog = { showDarkDialog = true },
+                    onChangeDynamicColorPreference = onChangeDynamicColorPreference,
+                )
             }
         }
     }
@@ -197,24 +178,6 @@ private fun SettingsScreenDialogs(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun SettingsTopAppBAr(onNavigationIconClick: () -> Unit) {
-    TopAppBar(
-        title = {
-            Text(text = stringResource(id = R.string.settings))
-        },
-        navigationIcon = {
-            IconButton(onClick = onNavigationIconClick) {
-                Icon(
-                    imageVector = Swr.ArrowBack,
-                    contentDescription = "Navigation icon",
-                )
-            }
-        },
-    )
-}
-
 @Composable
 private fun LoadingState(modifier: Modifier = Modifier) {
     SwrLoadingWheel(
@@ -226,7 +189,6 @@ private fun LoadingState(modifier: Modifier = Modifier) {
 @Composable
 private fun SuccessState(
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues,
     settingsUiState: SettingsUiState.Success,
     supportDynamicColor: Boolean = supportsDynamicTheming(),
     onShowThemeDialog: () -> Unit,
@@ -234,10 +196,7 @@ private fun SuccessState(
     onChangeDynamicColorPreference: (useDynamicColor: Boolean) -> Unit,
 ) {
     Column(
-        modifier = modifier
-            .consumeWindowInsets(contentPadding)
-            .padding(contentPadding)
-            .testTag("settings:success"),
+        modifier = modifier.testTag("settings:success"),
     ) {
         ThemeSetting(
             settingsUiState = settingsUiState,
