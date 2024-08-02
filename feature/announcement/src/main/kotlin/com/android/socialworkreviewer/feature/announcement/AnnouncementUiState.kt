@@ -15,12 +15,12 @@
  *   limitations under the License.
  *
  */
-package com.android.socialworkreviewer.feature.category
+package com.android.socialworkreviewer.feature.announcement
 
-import com.android.socialworkreviewer.core.model.Category
+import com.android.socialworkreviewer.core.model.Announcement
 
-sealed interface CategoryUiState {
-    data class Success(val categories: List<Category>) : CategoryUiState
+sealed interface AnnouncementUiState {
+    data class Success(val announcements: List<Announcement>) : AnnouncementUiState
 
-    data object Loading : CategoryUiState
+    data object Loading : AnnouncementUiState
 }

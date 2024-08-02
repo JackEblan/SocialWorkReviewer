@@ -61,11 +61,14 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.common)
     implementation(projects.core.data)
     implementation(projects.core.designSystem)
     implementation(projects.core.model)
 
+    implementation(projects.feature.announcement)
     implementation(projects.feature.category)
+    implementation(projects.feature.home)
     implementation(projects.feature.question)
     implementation(projects.feature.settings)
 

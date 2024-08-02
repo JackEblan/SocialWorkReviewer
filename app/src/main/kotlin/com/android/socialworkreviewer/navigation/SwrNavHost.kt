@@ -17,29 +17,66 @@
  */
 package com.android.socialworkreviewer.navigation
 
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavHostController
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.navigation.compose.NavHost
-import com.android.socialworkreviewer.feature.category.navigation.CategoryRouteData
-import com.android.socialworkreviewer.feature.category.navigation.categoryScreen
+import androidx.navigation.compose.rememberNavController
+import com.android.socialworkreviewer.feature.announcement.navigation.navigateToAnnouncementScreen
+import com.android.socialworkreviewer.feature.category.navigation.navigateToCategoryScreen
+import com.android.socialworkreviewer.feature.home.navigation.HomeRouteData
+import com.android.socialworkreviewer.feature.home.navigation.homeScreen
 import com.android.socialworkreviewer.feature.question.navigation.navigateToQuestionScreen
 import com.android.socialworkreviewer.feature.question.navigation.questionScreen
 import com.android.socialworkreviewer.feature.settings.navigation.navigateToSettings
-import com.android.socialworkreviewer.feature.settings.navigation.settingsScreen
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SwrNavHost(navController: NavHostController) {
+fun SwrNavHost(modifier: Modifier = Modifier) {
+    val swrNavHostController = rememberNavController()
+
+    val homeNavHostController = rememberNavController()
+
+    val topAppBarScrollBehavior = enterAlwaysScrollBehavior()
+
+    val homeNavigationItems = listOf(
+        CategoryNavigationItem(),
+        AnnouncementNavigationItem(),
+        SettingsNavigationItem(),
+    )
+
     NavHost(
-        navController = navController,
-        startDestination = CategoryRouteData::class,
+        modifier = modifier,
+        navController = swrNavHostController,
+        startDestination = HomeRouteData::class,
     ) {
-        categoryScreen(
-            onCategoryClick = navController::navigateToQuestionScreen,
-            onSettingsClick = navController::navigateToSettings,
+        homeScreen(
+            navController = homeNavHostController,
+            topAppBarScrollBehavior = topAppBarScrollBehavior,
+            items = homeNavigationItems,
+            onItemClick = { homeNavigationItem ->
+                when (homeNavigationItem) {
+                    is CategoryNavigationItem -> homeNavHostController.navigateToCategoryScreen()
+                    is AnnouncementNavigationItem -> homeNavHostController.navigateToAnnouncementScreen()
+                    is SettingsNavigationItem -> homeNavHostController.navigateToSettings()
+                }
+            },
+            content = { paddingValues ->
+                HomeNavHost(
+                    modifier = Modifier
+                        .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
+                        .padding(paddingValues)
+                        .consumeWindowInsets(paddingValues),
+                    navController = homeNavHostController,
+                    onCategoryClick = swrNavHostController::navigateToQuestionScreen,
+                )
+            },
         )
 
-        questionScreen(onNavigateUp = navController::navigateUp)
-
-        settingsScreen(onNavigationIconClick = navController::navigateUp)
+        questionScreen(onNavigateUp = swrNavHostController::navigateUp)
     }
 }

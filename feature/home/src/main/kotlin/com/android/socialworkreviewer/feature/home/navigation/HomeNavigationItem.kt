@@ -15,12 +15,17 @@
  *   limitations under the License.
  *
  */
-package com.android.socialworkreviewer.feature.category
+package com.android.socialworkreviewer.feature.home.navigation
 
-import com.android.socialworkreviewer.core.model.Category
+import androidx.compose.ui.graphics.vector.ImageVector
+import kotlin.reflect.KClass
 
-sealed interface CategoryUiState {
-    data class Success(val categories: List<Category>) : CategoryUiState
+interface HomeNavigationItem {
+    val title: String
 
-    data object Loading : CategoryUiState
+    val contentDescription: String
+
+    val icon: ImageVector
+
+    val route: KClass<*>
 }

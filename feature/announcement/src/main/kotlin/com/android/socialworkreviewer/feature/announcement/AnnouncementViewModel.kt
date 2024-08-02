@@ -15,11 +15,11 @@
  *   limitations under the License.
  *
  */
-package com.android.socialworkreviewer.feature.category
+package com.android.socialworkreviewer.feature.announcement
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.socialworkreviewer.core.domain.GetCategoriesAndAverageUseCase
+import com.android.socialworkreviewer.core.data.repository.AnnouncementRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -27,12 +27,13 @@ import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
-class CategoryViewModel @Inject constructor(
-    getCategoriesAndAverageUseCase: GetCategoriesAndAverageUseCase,
+class AnnouncementViewModel @Inject constructor(
+    announcementRepository: AnnouncementRepository,
 ) : ViewModel() {
-    val categoryUiState = getCategoriesAndAverageUseCase().map(CategoryUiState::Success).stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = CategoryUiState.Loading,
-    )
+    val announcementUiState =
+        announcementRepository.getAnnouncements().map(AnnouncementUiState::Success).stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = AnnouncementUiState.Loading,
+        )
 }

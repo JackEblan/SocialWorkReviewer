@@ -13,4 +13,5 @@ from [Now in Android](https://github.com/android/nowinandroid). **The developmen
 [<img src="docs/images/3.jpg" width=19% alt="3">](docs/images/3.jpg)
 [<img src="docs/images/4.jpg" width=19% alt="4">](docs/images/4.jpg)
 [<img src="docs/images/5.jpg" width=19% alt="5">](docs/images/5.jpg)
+[<img src="docs/images/5.jpg" width=19% alt="6">](docs/images/6.jpg)
 </div>

@@ -15,16 +15,16 @@
  *   limitations under the License.
  *
  */
-package com.android.socialworkreviewer.feature.category.navigation
+package com.android.socialworkreviewer.feature.announcement.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.android.socialworkreviewer.feature.category.CategoryRoute
+import com.android.socialworkreviewer.feature.announcement.AnnouncementRoute
 
-fun NavController.navigateToCategoryScreen() {
-    navigate(CategoryRouteData) {
+fun NavController.navigateToAnnouncementScreen() {
+    navigate(AnnouncementRouteData) {
         popUpTo(graph.findStartDestination().id) {
             saveState = true
         }
@@ -33,10 +33,8 @@ fun NavController.navigateToCategoryScreen() {
     }
 }
 
-fun NavGraphBuilder.categoryScreen(
-    onCategoryClick: (String) -> Unit,
-) {
-    composable<CategoryRouteData> {
-        CategoryRoute(onCategoryClick = onCategoryClick)
+fun NavGraphBuilder.announcementScreen() {
+    composable<AnnouncementRouteData> {
+        AnnouncementRoute()
     }
 }

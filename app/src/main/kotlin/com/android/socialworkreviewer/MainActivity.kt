@@ -24,6 +24,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -33,7 +34,6 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.compose.rememberNavController
 import com.android.socialworkreviewer.core.designsystem.component.SwrBackground
 import com.android.socialworkreviewer.core.designsystem.theme.SwrTheme
 import com.android.socialworkreviewer.core.model.DarkThemeConfig
@@ -48,6 +48,7 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
     private val viewModel: MainActivityViewModel by viewModels()
 
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
 
@@ -73,8 +74,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             val darkTheme = shouldUseDarkTheme(mainActivityUiState)
 
-            val navController = rememberNavController()
-
             DisposableEffect(darkTheme) {
                 enableEdgeToEdge(
                     statusBarStyle = SystemBarStyle.auto(
@@ -95,7 +94,7 @@ class MainActivity : ComponentActivity() {
                 disableDynamicTheming = shouldDisableDynamicTheming(mainActivityUiState),
             ) {
                 SwrBackground {
-                    SwrNavHost(navController = navController)
+                    SwrNavHost()
                 }
             }
         }

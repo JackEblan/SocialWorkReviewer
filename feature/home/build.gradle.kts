@@ -15,12 +15,24 @@
  *   limitations under the License.
  *
  */
-package com.android.socialworkreviewer.feature.category
 
-import com.android.socialworkreviewer.core.model.Category
+plugins {
+    alias(libs.plugins.com.android.socialworkreviewer.feature)
+    alias(libs.plugins.com.android.socialworkreviewer.libraryCompose)
+    alias(libs.plugins.com.android.socialworkreviewer.libraryJacoco)
+    alias(libs.plugins.roborazzi)
+}
 
-sealed interface CategoryUiState {
-    data class Success(val categories: List<Category>) : CategoryUiState
+android {
+    namespace = "com.android.socialworkreviewer.feature.home"
+}
 
-    data object Loading : CategoryUiState
+dependencies {
+    testImplementation(libs.hilt.android.testing)
+    testImplementation(libs.robolectric)
+    testImplementation(projects.core.testing)
+    testImplementation(projects.core.screenshotTesting)
+    testImplementation(libs.roborazzi)
+
+    androidTestImplementation(projects.core.testing)
 }

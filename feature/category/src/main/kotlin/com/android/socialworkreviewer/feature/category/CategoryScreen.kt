@@ -28,9 +28,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -40,17 +38,11 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.ProgressIndicatorDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -60,10 +52,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.testTag
@@ -77,7 +67,6 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.android.socialworkreviewer.core.designsystem.component.SwrLoadingWheel
 import com.android.socialworkreviewer.core.designsystem.icon.Swr
-import com.android.socialworkreviewer.core.model.Announcement
 import com.android.socialworkreviewer.core.model.Category
 import kotlin.math.roundToInt
 
@@ -86,7 +75,6 @@ internal fun CategoryRoute(
     modifier: Modifier = Modifier,
     viewModel: CategoryViewModel = hiltViewModel(),
     onCategoryClick: (String) -> Unit,
-    onSettingsClick: () -> Unit,
 ) {
     val categoryUiState = viewModel.categoryUiState.collectAsStateWithLifecycle().value
 
@@ -94,89 +82,43 @@ internal fun CategoryRoute(
         modifier = modifier,
         categoryUiState = categoryUiState,
         onCategoryClick = onCategoryClick,
-        onSettingsClick = onSettingsClick,
     )
 }
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @VisibleForTesting
 @Composable
 internal fun CategoryScreen(
     modifier: Modifier = Modifier,
     categoryUiState: CategoryUiState,
     onCategoryClick: (String) -> Unit,
-    onSettingsClick: () -> Unit,
 ) {
-    val topAppBarScrollBehavior = enterAlwaysScrollBehavior()
-
-    Scaffold(
-        topBar = {
-            CategoryTopAppBar(
-                topAppBarScrollBehavior = topAppBarScrollBehavior,
-                onSettingsClick = onSettingsClick,
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .semantics {
+                testTagsAsResourceId = true
+            }
+            .testTag("category"),
+    ) {
+        when (categoryUiState) {
+            CategoryUiState.Loading -> LoadingState(
+                modifier = Modifier.align(Alignment.Center),
             )
-        },
-    ) { paddingValues ->
-        Box(
-            modifier = modifier
-                .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
-                .fillMaxSize()
-                .consumeWindowInsets(paddingValues)
-                .semantics {
-                    testTagsAsResourceId = true
-                }
-                .testTag("category"),
-        ) {
-            when (categoryUiState) {
-                CategoryUiState.Loading -> LoadingState(
-                    modifier = Modifier.align(Alignment.Center),
-                )
 
-                is CategoryUiState.Success -> {
-                    if (categoryUiState.categories.isNotEmpty()) {
-                        SuccessState(
-                            modifier = modifier,
-                            categoryUiState = categoryUiState,
-                            contentPadding = paddingValues,
-                            onCategoryClick = onCategoryClick,
-                        )
-                    } else {
-                        EmptyState(text = "No Categories found!")
-                    }
+            is CategoryUiState.Success -> {
+                if (categoryUiState.categories.isNotEmpty()) {
+                    SuccessState(
+                        modifier = modifier,
+                        categoryUiState = categoryUiState,
+                        onCategoryClick = onCategoryClick,
+                    )
+                } else {
+                    EmptyState(text = "No Categories found!")
                 }
             }
         }
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun CategoryTopAppBar(
-    modifier: Modifier = Modifier,
-    topAppBarScrollBehavior: TopAppBarScrollBehavior,
-    onSettingsClick: () -> Unit,
-) {
-    val gradientColors = listOf(Color(0xFF00BCD4), Color(0xFF03A9F4), Color(0xFF9C27B0))
-
-    LargeTopAppBar(
-        title = {
-            Text(
-                text = "Categories",
-                style = MaterialTheme.typography.headlineSmall.copy(
-                    brush = Brush.linearGradient(
-                        colors = gradientColors,
-                    ),
-                ),
-            )
-        },
-        modifier = modifier.testTag("category:centerAlignedTopAppBar"),
-        actions = {
-            IconButton(onClick = onSettingsClick) {
-                Icon(imageVector = Swr.Settings, contentDescription = "")
-            }
-        },
-        scrollBehavior = topAppBarScrollBehavior,
-    )
 }
 
 @Composable
@@ -191,7 +133,6 @@ private fun LoadingState(modifier: Modifier = Modifier) {
 private fun SuccessState(
     modifier: Modifier = Modifier,
     categoryUiState: CategoryUiState.Success,
-    contentPadding: PaddingValues,
     onCategoryClick: (String) -> Unit,
 ) {
     LazyVerticalStaggeredGrid(
@@ -199,17 +140,7 @@ private fun SuccessState(
         modifier = modifier
             .fillMaxSize()
             .testTag("category:lazyVerticalGrid"),
-        contentPadding = contentPadding,
     ) {
-        items(
-            categoryUiState.announcements,
-            key = { announcement ->
-                announcement.id
-            },
-        ) { announcement ->
-            AnnouncementItem(modifier = Modifier.animateItem(), announcement = announcement)
-        }
-
         items(
             categoryUiState.categories,
             key = { category ->
@@ -262,36 +193,6 @@ private fun CategoryItem(
             AverageCircularProgressIndicator(
                 modifier = Modifier.align(Alignment.End),
                 average = category.average,
-            )
-        }
-    }
-}
-
-@Composable
-private fun AnnouncementItem(
-    modifier: Modifier = Modifier,
-    announcement: Announcement,
-) {
-    OutlinedCard(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(10.dp),
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp),
-        ) {
-            Text(
-                text = announcement.title,
-                style = MaterialTheme.typography.headlineSmall,
-            )
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Text(
-                text = announcement.message,
-                style = MaterialTheme.typography.bodyLarge,
             )
         }
     }
@@ -354,7 +255,7 @@ private fun CategoryHeaderImage(
 }
 
 @Composable
-fun AverageCircularProgressIndicator(modifier: Modifier = Modifier, average: Double) {
+private fun AverageCircularProgressIndicator(modifier: Modifier = Modifier, average: Double) {
     val animatedProgress by animateFloatAsState(
         targetValue = (average / 100).toFloat(),
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
