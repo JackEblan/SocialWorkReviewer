@@ -51,7 +51,6 @@ class SettingsScreenDialogsTest {
                 onUpdateThemeBrand = {},
                 onUpdateDarkThemeConfig = {},
                 onChangeDynamicColorPreference = {},
-                onNavigationIconClick = {},
             )
         }
 
@@ -79,7 +78,6 @@ class SettingsScreenDialogsTest {
                 onUpdateThemeBrand = {},
                 onUpdateDarkThemeConfig = {},
                 onChangeDynamicColorPreference = {},
-                onNavigationIconClick = {},
             )
         }
 
@@ -109,7 +107,6 @@ class SettingsScreenDialogsTest {
                 onUpdateThemeBrand = {},
                 onUpdateDarkThemeConfig = {},
                 onChangeDynamicColorPreference = {},
-                onNavigationIconClick = {},
             )
         }
 
@@ -141,7 +138,6 @@ class SettingsScreenDialogsTest {
                 onUpdateThemeBrand = {},
                 onUpdateDarkThemeConfig = {},
                 onChangeDynamicColorPreference = {},
-                onNavigationIconClick = {},
             )
         }
 

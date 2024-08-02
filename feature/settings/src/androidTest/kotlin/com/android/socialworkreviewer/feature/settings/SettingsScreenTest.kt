@@ -45,7 +45,6 @@ class SettingsScreenTest {
                 onUpdateThemeBrand = {},
                 onUpdateDarkThemeConfig = {},
                 onChangeDynamicColorPreference = {},
-                onNavigationIconClick = {},
             )
         }
 
@@ -67,7 +66,6 @@ class SettingsScreenTest {
                 onUpdateThemeBrand = {},
                 onUpdateDarkThemeConfig = {},
                 onChangeDynamicColorPreference = {},
-                onNavigationIconClick = {},
             )
         }
 
@@ -89,7 +87,6 @@ class SettingsScreenTest {
                 onUpdateThemeBrand = {},
                 onUpdateDarkThemeConfig = {},
                 onChangeDynamicColorPreference = {},
-                onNavigationIconClick = {},
             )
         }
 
@@ -111,7 +108,6 @@ class SettingsScreenTest {
                 onUpdateThemeBrand = {},
                 onUpdateDarkThemeConfig = {},
                 onChangeDynamicColorPreference = {},
-                onNavigationIconClick = {},
             )
         }
 
@@ -133,7 +129,6 @@ class SettingsScreenTest {
                 onUpdateThemeBrand = {},
                 onUpdateDarkThemeConfig = {},
                 onChangeDynamicColorPreference = {},
-                onNavigationIconClick = {},
             )
         }
 
@@ -155,7 +150,6 @@ class SettingsScreenTest {
                 onUpdateThemeBrand = {},
                 onUpdateDarkThemeConfig = {},
                 onChangeDynamicColorPreference = {},
-                onNavigationIconClick = {},
             )
         }
 
@@ -177,7 +171,6 @@ class SettingsScreenTest {
                 onUpdateThemeBrand = {},
                 onUpdateDarkThemeConfig = {},
                 onChangeDynamicColorPreference = {},
-                onNavigationIconClick = {},
             )
         }
 

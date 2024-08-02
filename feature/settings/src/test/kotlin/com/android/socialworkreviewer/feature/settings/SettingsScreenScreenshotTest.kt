@@ -64,7 +64,6 @@ class SettingsScreenScreenshotTest {
                     onUpdateThemeBrand = {},
                     onUpdateDarkThemeConfig = {},
                     onChangeDynamicColorPreference = {},
-                    onNavigationIconClick = {},
                 )
             }
         }
@@ -84,7 +83,6 @@ class SettingsScreenScreenshotTest {
                     onUpdateThemeBrand = {},
                     onUpdateDarkThemeConfig = {},
                     onChangeDynamicColorPreference = {},
-                    onNavigationIconClick = {},
                 )
             }
         }
@@ -112,7 +110,6 @@ class SettingsScreenScreenshotTest {
                         onUpdateThemeBrand = {},
                         onUpdateDarkThemeConfig = {},
                         onChangeDynamicColorPreference = {},
-                        onNavigationIconClick = {},
                     )
                 }
             }
@@ -135,7 +132,6 @@ class SettingsScreenScreenshotTest {
                         onUpdateThemeBrand = {},
                         onUpdateDarkThemeConfig = {},
                         onChangeDynamicColorPreference = {},
-                        onNavigationIconClick = {},
                     )
                 }
             }
