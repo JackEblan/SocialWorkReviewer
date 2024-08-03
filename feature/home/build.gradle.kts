@@ -28,6 +28,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
+
     testImplementation(libs.hilt.android.testing)
     testImplementation(libs.robolectric)
     testImplementation(projects.core.testing)

@@ -22,72 +22,62 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import com.android.socialworkreviewer.feature.home.navigation.HomeNavigationItem
+import androidx.compose.ui.res.stringResource
+import com.android.socialworkreviewer.feature.home.navigation.HomeDestination
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeRoute(
-    navController: NavHostController,
+internal fun HomeRoute(
     topAppBarScrollBehavior: TopAppBarScrollBehavior,
-    items: List<HomeNavigationItem>,
-    onItemClick: (HomeNavigationItem) -> Unit,
+    onItemClick: (HomeDestination) -> Unit,
     content: @Composable (PaddingValues) -> Unit,
 ) {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    var currentDestination by rememberSaveable { mutableStateOf(HomeDestination.CATEGORY) }
 
-    val currentDestination = navBackStackEntry?.destination
+    NavigationSuiteScaffold(
+        navigationSuiteItems = {
+            HomeDestination.entries.forEach { destination ->
+                item(
+                    icon = {
+                        Icon(
+                            imageVector = destination.icon,
+                            contentDescription = stringResource(id = destination.contentDescription),
+                        )
+                    },
+                    label = { Text(stringResource(id = destination.label)) },
+                    selected = destination == currentDestination,
+                    onClick = {
+                        currentDestination = destination
 
-    var topBarTitle by remember {
-        mutableStateOf(items.first().title)
-    }
-
-    Scaffold(
-        topBar = {
-            HomeLargeTopAppBar(
-                title = topBarTitle,
-                topAppBarScrollBehavior = topAppBarScrollBehavior,
-            )
-        },
-        bottomBar = {
-            NavigationBar {
-                items.forEach { item ->
-                    NavigationBarItem(
-                        icon = {
-                            Icon(
-                                imageVector = item.icon,
-                                contentDescription = item.contentDescription,
-                            )
-                        },
-                        label = { Text(text = item.title) },
-                        selected = currentDestination?.hierarchy?.any { it.hasRoute(item.route) } == true,
-                        onClick = {
-                            topBarTitle = item.title
-                            onItemClick(item)
-                        },
-                    )
-                }
+                        onItemClick(destination)
+                    },
+                )
             }
         },
-    ) { paddingValues ->
-        content(paddingValues)
+    ) {
+        Scaffold(
+            topBar = {
+                HomeLargeTopAppBar(
+                    title = stringResource(id = currentDestination.label),
+                    topAppBarScrollBehavior = topAppBarScrollBehavior,
+                )
+            },
+        ) { paddingValues ->
+            content(paddingValues)
+        }
     }
 }
 
