@@ -28,6 +28,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.android.socialworkreviewer.feature.announcement.navigation.navigateToAnnouncementScreen
 import com.android.socialworkreviewer.feature.category.navigation.navigateToCategoryScreen
+import com.android.socialworkreviewer.feature.home.navigation.HomeDestination
 import com.android.socialworkreviewer.feature.home.navigation.HomeRouteData
 import com.android.socialworkreviewer.feature.home.navigation.homeScreen
 import com.android.socialworkreviewer.feature.question.navigation.navigateToQuestionScreen
@@ -43,26 +44,18 @@ fun SwrNavHost(modifier: Modifier = Modifier) {
 
     val topAppBarScrollBehavior = enterAlwaysScrollBehavior()
 
-    val homeNavigationItems = listOf(
-        CategoryNavigationItem(),
-        AnnouncementNavigationItem(),
-        SettingsNavigationItem(),
-    )
-
     NavHost(
         modifier = modifier,
         navController = swrNavHostController,
         startDestination = HomeRouteData::class,
     ) {
         homeScreen(
-            navController = homeNavHostController,
             topAppBarScrollBehavior = topAppBarScrollBehavior,
-            items = homeNavigationItems,
-            onItemClick = { homeNavigationItem ->
-                when (homeNavigationItem) {
-                    is CategoryNavigationItem -> homeNavHostController.navigateToCategoryScreen()
-                    is AnnouncementNavigationItem -> homeNavHostController.navigateToAnnouncementScreen()
-                    is SettingsNavigationItem -> homeNavHostController.navigateToSettings()
+            onItemClick = { homeDestination ->
+                when (homeDestination) {
+                    HomeDestination.CATEGORY -> homeNavHostController.navigateToCategoryScreen()
+                    HomeDestination.ANNOUNCEMENT -> homeNavHostController.navigateToAnnouncementScreen()
+                    HomeDestination.SETTINGS -> homeNavHostController.navigateToSettings()
                 }
             },
             content = { paddingValues ->

@@ -17,15 +17,25 @@
  */
 package com.android.socialworkreviewer.feature.home.navigation
 
+import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
-import kotlin.reflect.KClass
+import com.android.socialworkreviewer.core.designsystem.icon.Swr
+import com.android.socialworkreviewer.feature.home.R
 
-interface HomeNavigationItem {
-    val title: String
-
-    val contentDescription: String
-
-    val icon: ImageVector
-
-    val route: KClass<*>
+enum class HomeDestination(
+    @StringRes val label: Int,
+    val icon: ImageVector,
+    @StringRes val contentDescription: Int,
+) {
+    CATEGORY(
+        R.string.category,
+        Swr.Category,
+        R.string.category,
+    ),
+    ANNOUNCEMENT(
+        R.string.announcement,
+        Swr.Campaign,
+        R.string.announcement,
+    ),
+    SETTINGS(R.string.settings, Swr.Settings, R.string.category),
 }
