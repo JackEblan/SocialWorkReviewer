@@ -21,18 +21,23 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.android.socialworkreviewer.feature.home.HomeRoute
 
 @OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.homeScreen(
+    currentDestination: NavDestination?,
+    topLevelDestinations: List<HomeDestination>,
     topAppBarScrollBehavior: TopAppBarScrollBehavior,
     onItemClick: (HomeDestination) -> Unit,
     content: @Composable (PaddingValues) -> Unit,
 ) {
     composable<HomeRouteData> {
         HomeRoute(
+            currentDestination = currentDestination,
+            topLevelDestinations = topLevelDestinations,
             topAppBarScrollBehavior = topAppBarScrollBehavior,
             onItemClick = onItemClick,
             content = content,

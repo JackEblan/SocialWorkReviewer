@@ -45,13 +45,29 @@ class FakeChoiceRepository : ChoiceRepository {
     override suspend fun addChoice(choice: Choice) {
         _selectedChoices.add(choice)
 
-        _questionsWithSelectedChoicesFlow.emit(getQuestionsWithSelectedChoices())
+        _currentQuestionData.emit(
+            QuestionData(
+                selectedChoices = getQuestionsWithSelectedChoices().getOrDefault(
+                    key = choice.question,
+                    defaultValue = emptyList(),
+                ),
+                questionsWithSelectedChoicesSize = getQuestionsWithSelectedChoices().size,
+            ),
+        )
     }
 
     override suspend fun deleteChoice(choice: Choice) {
         _selectedChoices.remove(choice)
 
-        _questionsWithSelectedChoicesFlow.emit(getQuestionsWithSelectedChoices())
+        _currentQuestionData.emit(
+            QuestionData(
+                selectedChoices = getQuestionsWithSelectedChoices().getOrDefault(
+                    key = choice.question,
+                    defaultValue = emptyList(),
+                ),
+                questionsWithSelectedChoicesSize = getQuestionsWithSelectedChoices().size,
+            ),
+        )
     }
 
     override fun clearCache() {

@@ -32,6 +32,12 @@ class FakeCountDownTimer : CountDownTimerWrapper {
         get() = _countDownTimeFlow.asSharedFlow()
 
     override fun setCountDownTimer(millisInFuture: Long, countDownInterval: Long) {
+        _countDownTimeFlow.tryEmit(
+            CountDownTime(
+                minutes = "",
+                isFinished = false,
+            ),
+        )
     }
 
     override fun start() {

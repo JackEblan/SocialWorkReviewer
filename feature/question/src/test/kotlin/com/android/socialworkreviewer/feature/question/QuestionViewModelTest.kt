@@ -21,6 +21,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.testing.invoke
 import com.android.socialworkreviewer.core.domain.GetQuestionsUseCase
 import com.android.socialworkreviewer.core.domain.UpdateChoiceUseCase
+import com.android.socialworkreviewer.core.model.Choice
 import com.android.socialworkreviewer.core.model.Question
 import com.android.socialworkreviewer.core.model.QuestionData
 import com.android.socialworkreviewer.core.model.QuestionSetting
@@ -40,7 +41,9 @@ import org.robolectric.RobolectricTestRunner
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 @RunWith(RobolectricTestRunner::class)
 class QuestionViewModelTest {
@@ -118,6 +121,8 @@ class QuestionViewModelTest {
     fun startQuestions() = runTest {
         val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.questionUiState.collect() }
 
+        val collectJob2 = launch(UnconfinedTestDispatcher()) { viewModel.countDownTime.collect() }
+
         val questions = List(10) { _ ->
             Question(
                 question = "",
@@ -138,7 +143,11 @@ class QuestionViewModelTest {
 
         assertIs<QuestionUiState.Questions>(viewModel.questionUiState.value)
 
+        assertNotNull(viewModel.countDownTime.value)
+
         collectJob.cancel()
+
+        collectJob2.cancel()
     }
 
     @Test
@@ -158,6 +167,34 @@ class QuestionViewModelTest {
         viewModel.startQuickQuestions()
 
         assertIs<QuestionUiState.QuickQuestions>(viewModel.questionUiState.value)
+
+        collectJob.cancel()
+    }
+
+    @Test
+    fun addCurrentQuestion() = runTest {
+        val collectJob =
+            launch(UnconfinedTestDispatcher()) { viewModel.currentQuestionData.collect() }
+
+        val question = Question(
+            question = "",
+            correctChoices = listOf(""),
+            wrongChoices = listOf(""),
+            choices = listOf(""),
+        )
+
+        val choice = Choice(
+            question = question,
+            choice = "",
+        )
+
+        viewModel.addCurrentQuestion(question = question)
+
+        viewModel.updateChoice(choice = choice)
+
+        assertTrue(viewModel.currentQuestionData.value.selectedChoices.isNotEmpty())
+
+        assertTrue(viewModel.currentQuestionData.value.questionsWithSelectedChoicesSize != 0)
 
         collectJob.cancel()
     }

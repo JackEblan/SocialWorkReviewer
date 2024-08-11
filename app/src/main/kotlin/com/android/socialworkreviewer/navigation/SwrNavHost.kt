@@ -25,10 +25,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.android.socialworkreviewer.feature.announcement.navigation.navigateToAnnouncementScreen
 import com.android.socialworkreviewer.feature.category.navigation.navigateToCategoryScreen
-import com.android.socialworkreviewer.feature.home.navigation.HomeDestination
 import com.android.socialworkreviewer.feature.home.navigation.HomeRouteData
 import com.android.socialworkreviewer.feature.home.navigation.homeScreen
 import com.android.socialworkreviewer.feature.question.navigation.navigateToQuestionScreen
@@ -44,18 +44,29 @@ fun SwrNavHost(modifier: Modifier = Modifier) {
 
     val topAppBarScrollBehavior = enterAlwaysScrollBehavior()
 
+    val currentDestination =
+        homeNavHostController.currentBackStackEntryAsState().value?.destination
+
+    val topLevelDestinations = listOf(
+        CategoryDestination(),
+        AnnouncementDestination(),
+        SettingsDestination(),
+    )
+
     NavHost(
         modifier = modifier,
         navController = swrNavHostController,
         startDestination = HomeRouteData::class,
     ) {
         homeScreen(
+            currentDestination = currentDestination,
+            topLevelDestinations = topLevelDestinations,
             topAppBarScrollBehavior = topAppBarScrollBehavior,
             onItemClick = { homeDestination ->
                 when (homeDestination) {
-                    HomeDestination.CATEGORY -> homeNavHostController.navigateToCategoryScreen()
-                    HomeDestination.ANNOUNCEMENT -> homeNavHostController.navigateToAnnouncementScreen()
-                    HomeDestination.SETTINGS -> homeNavHostController.navigateToSettings()
+                    is CategoryDestination -> homeNavHostController.navigateToCategoryScreen()
+                    is AnnouncementDestination -> homeNavHostController.navigateToAnnouncementScreen()
+                    is SettingsDestination -> homeNavHostController.navigateToSettings()
                 }
             },
             content = { paddingValues ->

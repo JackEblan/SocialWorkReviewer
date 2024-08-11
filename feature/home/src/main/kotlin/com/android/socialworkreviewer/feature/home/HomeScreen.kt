@@ -27,29 +27,32 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavDestination.Companion.hierarchy
 import com.android.socialworkreviewer.feature.home.navigation.HomeDestination
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun HomeRoute(
+    currentDestination: NavDestination?,
+    topLevelDestinations: List<HomeDestination>,
     topAppBarScrollBehavior: TopAppBarScrollBehavior,
     onItemClick: (HomeDestination) -> Unit,
     content: @Composable (PaddingValues) -> Unit,
 ) {
-    var currentDestination by rememberSaveable { mutableStateOf(HomeDestination.CATEGORY) }
+    val topBarTitleStringResource = topLevelDestinations.find { destination ->
+        currentDestination.isTopLevelDestinationInHierarchy(destination)
+    }?.label ?: topLevelDestinations.first().label
 
     NavigationSuiteScaffold(
         navigationSuiteItems = {
-            HomeDestination.entries.forEach { destination ->
+            topLevelDestinations.forEach { destination ->
                 item(
                     icon = {
                         Icon(
@@ -58,10 +61,8 @@ internal fun HomeRoute(
                         )
                     },
                     label = { Text(stringResource(id = destination.label)) },
-                    selected = destination == currentDestination,
+                    selected = currentDestination.isTopLevelDestinationInHierarchy(destination),
                     onClick = {
-                        currentDestination = destination
-
                         onItemClick(destination)
                     },
                 )
@@ -71,7 +72,7 @@ internal fun HomeRoute(
         Scaffold(
             topBar = {
                 HomeLargeTopAppBar(
-                    title = stringResource(id = currentDestination.label),
+                    title = stringResource(id = topBarTitleStringResource),
                     topAppBarScrollBehavior = topAppBarScrollBehavior,
                 )
             },
@@ -105,3 +106,8 @@ private fun HomeLargeTopAppBar(
         scrollBehavior = topAppBarScrollBehavior,
     )
 }
+
+private fun NavDestination?.isTopLevelDestinationInHierarchy(destination: HomeDestination) =
+    this?.hierarchy?.any {
+        it.hasRoute(destination.route)
+    } ?: false
