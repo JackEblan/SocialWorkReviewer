@@ -25,7 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.android.socialworkreviewer.core.designsystem.component.SwrLoadingWheel
+import com.android.socialworkreviewer.core.designsystem.component.SwrIosLoadingWheel
 
 @Composable
 internal fun LoadingScreen(modifier: Modifier = Modifier) {
@@ -36,9 +36,9 @@ internal fun LoadingScreen(modifier: Modifier = Modifier) {
                 .consumeWindowInsets(paddingValues)
                 .padding(paddingValues),
         ) {
-            SwrLoadingWheel(
+            SwrIosLoadingWheel(
                 modifier = Modifier.align(Alignment.Center),
-                contentDescription = "SocialWorkReviewerLoadingWheel",
+                contentDescription = "SwrIosLoadingWheel",
             )
         }
     }
