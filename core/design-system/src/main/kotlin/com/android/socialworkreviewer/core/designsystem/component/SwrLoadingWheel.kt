@@ -17,6 +17,7 @@
  */
 package com.android.socialworkreviewer.core.designsystem.component
 
+import androidx.annotation.IntRange
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -55,14 +56,16 @@ import kotlinx.coroutines.launch
 fun SwrLoadingWheel(
     contentDescription: String,
     modifier: Modifier = Modifier,
+    @IntRange(from = 5, to = 12) numberOfLines: Int = 10,
+    @IntRange(from = 5000, to = 20000) rotationTime: Int = 12000,
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "wheel transition")
 
     // Specifies the float animation for slowly drawing out the lines on entering
     val startValue = if (LocalInspectionMode.current) 0F else 1F
-    val floatAnimValues = (0 until NUM_OF_LINES).map { remember { Animatable(startValue) } }
+    val floatAnimValues = (0 until numberOfLines).map { remember { Animatable(startValue) } }
     LaunchedEffect(floatAnimValues) {
-        (0 until NUM_OF_LINES).map { index ->
+        (0 until numberOfLines).map { index ->
             launch {
                 floatAnimValues[index].animateTo(
                     targetValue = 0F,
@@ -81,7 +84,7 @@ fun SwrLoadingWheel(
         initialValue = 0F,
         targetValue = 360F,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = ROTATION_TIME, easing = LinearEasing),
+            animation = tween(durationMillis = rotationTime, easing = LinearEasing),
         ),
         label = "wheel rotation animation",
     )
@@ -90,18 +93,18 @@ fun SwrLoadingWheel(
     val baseLineColor = MaterialTheme.colorScheme.onBackground
     val progressLineColor = MaterialTheme.colorScheme.inversePrimary
 
-    val colorAnimValues = (0 until NUM_OF_LINES).map { index ->
+    val colorAnimValues = (0 until numberOfLines).map { index ->
         infiniteTransition.animateColor(
             initialValue = baseLineColor,
             targetValue = baseLineColor,
             animationSpec = infiniteRepeatable(
                 animation = keyframes {
-                    durationMillis = ROTATION_TIME / 2
-                    progressLineColor at ROTATION_TIME / NUM_OF_LINES / 2 using LinearEasing
-                    baseLineColor at ROTATION_TIME / NUM_OF_LINES using LinearEasing
+                    durationMillis = rotationTime / 2
+                    progressLineColor at rotationTime / numberOfLines / 2 using LinearEasing
+                    baseLineColor at rotationTime / numberOfLines using LinearEasing
                 },
                 repeatMode = RepeatMode.Restart,
-                initialStartOffset = StartOffset(ROTATION_TIME / NUM_OF_LINES / 2 * index),
+                initialStartOffset = StartOffset(rotationTime / numberOfLines / 2 * index),
             ),
             label = "wheel color animation",
         )
@@ -109,19 +112,71 @@ fun SwrLoadingWheel(
 
     // Draws out the LoadingWheel Canvas composable and sets the animations
     Canvas(
-        modifier = modifier.size(48.dp).padding(8.dp).graphicsLayer { rotationZ = rotationAnim }
-            .semantics { this.contentDescription = contentDescription }.testTag("loadingWheel"),
+        modifier = modifier
+            .size(48.dp)
+            .padding(8.dp)
+            .graphicsLayer { rotationZ = rotationAnim }
+            .semantics { this.contentDescription = contentDescription }
+            .testTag("loadingWheel"),
     ) {
-        repeat(NUM_OF_LINES) { index ->
-            rotate(degrees = index * 30f) {
+        repeat(numberOfLines) { index ->
+            rotate(degrees = 360f / numberOfLines * index) {
                 drawLine(
                     color = colorAnimValues[index].value,
                     // Animates the initially drawn 1 pixel alpha from 0 to 1
                     alpha = if (floatAnimValues[index].value < 1f) 1f else 0f,
-                    strokeWidth = 4F,
+                    strokeWidth = 6F,
                     cap = StrokeCap.Round,
                     start = Offset(size.width / 2, size.height / 4),
                     end = Offset(size.width / 2, floatAnimValues[index].value * size.height / 4),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun SwrIosLoadingWheel(
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+    @IntRange(from = 5, to = 12) numberOfLines: Int = 10,
+    @IntRange(from = 5000, to = 20000) rotationTime: Int = 12000,
+) {
+    val infiniteTransition = rememberInfiniteTransition(label = "wheel transition")
+
+    val progressLineColor = MaterialTheme.colorScheme.inversePrimary
+
+    val colorAnimValues = (0 until numberOfLines).map { index ->
+        infiniteTransition.animateColor(
+            initialValue = progressLineColor.copy(alpha = 0.1f),
+            targetValue = progressLineColor.copy(alpha = 0.1f),
+            animationSpec = infiniteRepeatable(
+                animation = keyframes {
+                    durationMillis = rotationTime / 2
+                    progressLineColor.copy(alpha = 1f) at rotationTime / numberOfLines / 2 using LinearEasing
+                },
+                repeatMode = RepeatMode.Restart,
+                initialStartOffset = StartOffset(rotationTime / numberOfLines / 2 * index),
+            ),
+            label = "wheel color animation",
+        )
+    }
+
+    Canvas(
+        modifier = modifier
+            .size(48.dp)
+            .padding(8.dp)
+            .semantics { this.contentDescription = contentDescription }
+            .testTag("loadingWheel"),
+    ) {
+        repeat(numberOfLines) { index ->
+            rotate(degrees = 360f / numberOfLines * index) {
+                drawLine(
+                    color = colorAnimValues[index].value,
+                    strokeWidth = 6F,
+                    cap = StrokeCap.Round,
+                    start = Offset(size.width / 2, 0f),
+                    end = Offset(size.width / 2, size.height / 4),
                 )
             }
         }
@@ -157,6 +212,16 @@ private fun SwrLoadingWheelPreview() {
 
 @ThemePreviews
 @Composable
+private fun SwrIosLoadingWheelPreview() {
+    SwrTheme {
+        Surface {
+            SwrIosLoadingWheel(contentDescription = "SocialWorkReviewerOverlayLoadingWheel")
+        }
+    }
+}
+
+@ThemePreviews
+@Composable
 private fun SwrOverlayLoadingWheelPreview() {
     SwrTheme {
         Surface {
@@ -164,6 +229,3 @@ private fun SwrOverlayLoadingWheelPreview() {
         }
     }
 }
-
-private const val ROTATION_TIME = 12000
-private const val NUM_OF_LINES = 12
