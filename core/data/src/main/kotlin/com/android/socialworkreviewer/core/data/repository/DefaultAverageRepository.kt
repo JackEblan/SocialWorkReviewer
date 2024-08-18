@@ -24,6 +24,7 @@ import com.android.socialworkreviewer.core.database.model.AverageEntity
 import com.android.socialworkreviewer.core.model.Average
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -36,7 +37,7 @@ internal class DefaultAverageRepository @Inject constructor(
         return averageDao.getAverageEntitiesByCategory(categoryId = categoryId)
             .map { averageEntities ->
                 averageEntities.map { averageEntity -> averageEntity.toAverage() }
-            }
+            }.distinctUntilChanged()
     }
 
     override suspend fun upsertAverage(average: Average) {

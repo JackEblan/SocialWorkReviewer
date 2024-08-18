@@ -29,9 +29,9 @@ class GetQuestionsUseCase @Inject constructor(
         numberOfQuestions: Int? = null,
     ): List<Question> {
         return if (numberOfQuestions != null) {
-            questionRepository.getQuestions(id = id).take(numberOfQuestions)
+            questionRepository.getQuestions(id = id).shuffled().take(numberOfQuestions)
         } else {
-            questionRepository.getQuestions(id = id)
+            questionRepository.getQuestions(id = id).shuffled()
         }
     }
 }

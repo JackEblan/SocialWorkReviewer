@@ -27,6 +27,7 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.snapshots
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapNotNull
 import javax.inject.Inject
 
@@ -43,6 +44,6 @@ internal class DefaultAnnouncementDataSource @Inject constructor(
                         null
                     }
                 }
-            }
+            }.distinctUntilChanged()
     }
 }

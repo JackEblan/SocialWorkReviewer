@@ -30,6 +30,7 @@ import com.google.firebase.firestore.snapshots
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -49,7 +50,7 @@ internal class DefaultCategoryDataSource @Inject constructor(
                         null
                     }
                 }
-            }
+            }.distinctUntilChanged()
     }
 
     override suspend fun getCategoryDocument(categoryDocumentId: String): Category? {

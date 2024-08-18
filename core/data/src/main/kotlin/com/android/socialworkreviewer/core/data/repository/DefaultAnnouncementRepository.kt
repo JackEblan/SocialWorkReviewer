@@ -20,12 +20,11 @@ package com.android.socialworkreviewer.core.data.repository
 import com.android.socialworkreviewer.core.model.Announcement
 import com.android.socialworkreviewer.core.network.firestore.AnnouncementDataSource
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import javax.inject.Inject
 
 internal class DefaultAnnouncementRepository @Inject constructor(private val announcementDataSource: AnnouncementDataSource) :
     AnnouncementRepository {
     override fun getAnnouncements(): Flow<List<Announcement>> {
-        return announcementDataSource.getAnnouncementDocuments().distinctUntilChanged()
+        return announcementDataSource.getAnnouncementDocuments()
     }
 }
