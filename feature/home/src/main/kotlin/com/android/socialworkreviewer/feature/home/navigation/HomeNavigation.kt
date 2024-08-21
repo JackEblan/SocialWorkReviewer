@@ -17,30 +17,24 @@
  */
 package com.android.socialworkreviewer.feature.home.navigation
 
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TopAppBarScrollBehavior
-import androidx.compose.runtime.Composable
-import androidx.navigation.NavDestination
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.android.socialworkreviewer.feature.home.HomeRoute
+import kotlin.reflect.KClass
 
-@OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.homeScreen(
-    currentDestination: NavDestination?,
     topLevelDestinations: List<HomeDestination>,
-    topAppBarScrollBehavior: TopAppBarScrollBehavior,
-    onItemClick: (HomeDestination) -> Unit,
-    content: @Composable (PaddingValues) -> Unit,
+    startDestination: KClass<*>,
+    onItemClick: (NavHostController, HomeDestination) -> Unit,
+    builder: NavGraphBuilder.() -> Unit,
 ) {
     composable<HomeRouteData> {
         HomeRoute(
-            currentDestination = currentDestination,
             topLevelDestinations = topLevelDestinations,
-            topAppBarScrollBehavior = topAppBarScrollBehavior,
+            startDestination = startDestination,
             onItemClick = onItemClick,
-            content = content,
+            builder = builder,
         )
     }
 }

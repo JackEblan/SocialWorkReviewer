@@ -36,5 +36,6 @@ dependencies {
     testImplementation(projects.core.screenshotTesting)
     testImplementation(libs.roborazzi)
 
+    androidTestImplementation(libs.androidx.navigation.testing)
     androidTestImplementation(projects.core.testing)
 }

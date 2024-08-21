@@ -17,35 +17,25 @@
  */
 package com.android.socialworkreviewer.navigation
 
-import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.android.socialworkreviewer.feature.announcement.navigation.announcementScreen
 import com.android.socialworkreviewer.feature.announcement.navigation.navigateToAnnouncementScreen
+import com.android.socialworkreviewer.feature.category.navigation.CategoryRouteData
+import com.android.socialworkreviewer.feature.category.navigation.categoryScreen
 import com.android.socialworkreviewer.feature.category.navigation.navigateToCategoryScreen
 import com.android.socialworkreviewer.feature.home.navigation.HomeRouteData
 import com.android.socialworkreviewer.feature.home.navigation.homeScreen
 import com.android.socialworkreviewer.feature.question.navigation.navigateToQuestionScreen
 import com.android.socialworkreviewer.feature.question.navigation.questionScreen
 import com.android.socialworkreviewer.feature.settings.navigation.navigateToSettings
+import com.android.socialworkreviewer.feature.settings.navigation.settingsScreen
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SwrNavHost(modifier: Modifier = Modifier) {
     val swrNavHostController = rememberNavController()
-
-    val homeNavHostController = rememberNavController()
-
-    val topAppBarScrollBehavior = enterAlwaysScrollBehavior()
-
-    val currentDestination =
-        homeNavHostController.currentBackStackEntryAsState().value?.destination
 
     val topLevelDestinations = listOf(
         CategoryDestination(),
@@ -59,25 +49,21 @@ fun SwrNavHost(modifier: Modifier = Modifier) {
         startDestination = HomeRouteData::class,
     ) {
         homeScreen(
-            currentDestination = currentDestination,
             topLevelDestinations = topLevelDestinations,
-            topAppBarScrollBehavior = topAppBarScrollBehavior,
-            onItemClick = { homeDestination ->
+            startDestination = CategoryRouteData::class,
+            onItemClick = { homeNavHostController, homeDestination ->
                 when (homeDestination) {
                     is CategoryDestination -> homeNavHostController.navigateToCategoryScreen()
                     is AnnouncementDestination -> homeNavHostController.navigateToAnnouncementScreen()
                     is SettingsDestination -> homeNavHostController.navigateToSettings()
                 }
             },
-            content = { paddingValues ->
-                HomeNavHost(
-                    modifier = Modifier
-                        .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
-                        .padding(paddingValues)
-                        .consumeWindowInsets(paddingValues),
-                    navController = homeNavHostController,
-                    onCategoryClick = swrNavHostController::navigateToQuestionScreen,
-                )
+            builder = {
+                categoryScreen(onCategoryClick = swrNavHostController::navigateToQuestionScreen)
+
+                announcementScreen()
+
+                settingsScreen()
             },
         )
 

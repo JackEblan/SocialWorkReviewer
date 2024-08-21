@@ -17,37 +17,50 @@
  */
 package com.android.socialworkreviewer.feature.home
 
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.android.socialworkreviewer.feature.home.navigation.HomeDestination
+import kotlin.reflect.KClass
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun HomeRoute(
-    currentDestination: NavDestination?,
+    navController: NavHostController = rememberNavController(),
     topLevelDestinations: List<HomeDestination>,
-    topAppBarScrollBehavior: TopAppBarScrollBehavior,
-    onItemClick: (HomeDestination) -> Unit,
-    content: @Composable (PaddingValues) -> Unit,
+    startDestination: KClass<*>,
+    onItemClick: (NavHostController, HomeDestination) -> Unit,
+    builder: NavGraphBuilder.() -> Unit,
 ) {
+    val topAppBarScrollBehavior = enterAlwaysScrollBehavior()
+
+    val currentDestination = navController.currentBackStackEntryAsState().value?.destination
+
     val topBarTitleStringResource = topLevelDestinations.find { destination ->
-        currentDestination.isTopLevelDestinationInHierarchy(destination)
+        currentDestination.isTopLevelDestinationInHierarchy(destination.route)
     }?.label ?: topLevelDestinations.first().label
 
     NavigationSuiteScaffold(
@@ -61,9 +74,9 @@ internal fun HomeRoute(
                         )
                     },
                     label = { Text(stringResource(id = destination.label)) },
-                    selected = currentDestination.isTopLevelDestinationInHierarchy(destination),
+                    selected = currentDestination.isTopLevelDestinationInHierarchy(destination.route),
                     onClick = {
-                        onItemClick(destination)
+                        onItemClick(navController, destination)
                     },
                 )
             }
@@ -77,7 +90,15 @@ internal fun HomeRoute(
                 )
             },
         ) { paddingValues ->
-            content(paddingValues)
+            NavHost(
+                modifier = Modifier
+                    .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
+                    .padding(paddingValues)
+                    .consumeWindowInsets(paddingValues),
+                navController = navController,
+                startDestination = startDestination,
+                builder = builder,
+            )
         }
     }
 }
@@ -107,7 +128,7 @@ private fun HomeLargeTopAppBar(
     )
 }
 
-private fun NavDestination?.isTopLevelDestinationInHierarchy(destination: HomeDestination) =
+private fun NavDestination?.isTopLevelDestinationInHierarchy(route: KClass<*>) =
     this?.hierarchy?.any {
-        it.hasRoute(destination.route)
+        it.hasRoute(route)
     } ?: false
