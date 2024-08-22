@@ -19,12 +19,12 @@
 import com.android.build.api.dsl.ManagedVirtualDevice
 
 plugins {
-    alias(libs.plugins.com.android.socialworkreviewer.test)
+    alias(libs.plugins.com.eblan.socialworkreviewer.test)
     alias(libs.plugins.baselineprofile)
 }
 
 android {
-    namespace = "com.android.socialworkreviewer.benchmarks"
+    namespace = "com.eblan.socialworkreviewer.benchmarks"
 
     defaultConfig {
         minSdk = 28

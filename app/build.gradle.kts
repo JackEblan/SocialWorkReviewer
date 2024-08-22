@@ -15,23 +15,23 @@
  *   limitations under the License.
  *
  */
-import com.android.socialworkreviewer.SwrBuildType
+import com.eblan.socialworkreviewer.SwrBuildType
 
 plugins {
-    alias(libs.plugins.com.android.socialworkreviewer.application)
-    alias(libs.plugins.com.android.socialworkreviewer.applicationCompose)
-    alias(libs.plugins.com.android.socialworkreviewer.applicationJacoco)
-    alias(libs.plugins.com.android.socialworkreviewer.hilt)
+    alias(libs.plugins.com.eblan.socialworkreviewer.application)
+    alias(libs.plugins.com.eblan.socialworkreviewer.applicationCompose)
+    alias(libs.plugins.com.eblan.socialworkreviewer.applicationJacoco)
+    alias(libs.plugins.com.eblan.socialworkreviewer.hilt)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.google.services)
     alias(libs.plugins.kotlin.serialization)
 }
 
 android {
-    namespace = "com.android.socialworkreviewer"
+    namespace = "com.eblan.socialworkreviewer"
 
     defaultConfig {
-        applicationId = "com.android.socialworkreviewer"
+        applicationId = "com.eblan.socialworkreviewer"
         versionCode = 1
         versionName = "1.0"
 

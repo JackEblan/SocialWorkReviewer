@@ -17,9 +17,9 @@
  */
 
 plugins {
-    alias(libs.plugins.com.android.socialworkreviewer.library)
-    alias(libs.plugins.com.android.socialworkreviewer.libraryCompose)
-    alias(libs.plugins.com.android.socialworkreviewer.libraryJacoco)
+    alias(libs.plugins.com.eblan.socialworkreviewer.library)
+    alias(libs.plugins.com.eblan.socialworkreviewer.libraryCompose)
+    alias(libs.plugins.com.eblan.socialworkreviewer.libraryJacoco)
     alias(libs.plugins.roborazzi)
 }
 
@@ -28,7 +28,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    namespace = "com.android.socialworkreviewer.core.designsystem"
+    namespace = "com.eblan.socialworkreviewer.core.designsystem"
 }
 
 dependencies {

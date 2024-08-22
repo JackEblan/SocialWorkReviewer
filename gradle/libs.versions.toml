@@ -135,15 +135,15 @@ roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
 room = { id = "androidx.room", version.ref = "room" }
 
 # Plugins defined by this project
-com-android-socialworkreviewer-application = { id = "com.android.socialworkreviewer.application", version = "unspecified" }
-com-android-socialworkreviewer-applicationCompose = { id = "com.android.socialworkreviewer.applicationCompose", version = "unspecified" }
-com-android-socialworkreviewer-applicationJacoco = { id = "com.android.socialworkreviewer.applicationJacoco", version = "unspecified" }
-com-android-socialworkreviewer-jvmLibrary = { id = "com.android.socialworkreviewer.jvmLibrary", version = "unspecified" }
-com-android-socialworkreviewer-library = { id = "com.android.socialworkreviewer.library", version = "unspecified" }
-com-android-socialworkreviewer-libraryCompose = { id = "com.android.socialworkreviewer.libraryCompose", version = "unspecified" }
-com-android-socialworkreviewer-libraryJacoco = { id = "com.android.socialworkreviewer.libraryJacoco", version = "unspecified" }
-com-android-socialworkreviewer-feature = { id = "com.android.socialworkreviewer.feature", version = "unspecified" }
-com-android-socialworkreviewer-hilt = { id = "com.android.socialworkreviewer.hilt", version = "unspecified" }
-com-android-socialworkreviewer-lint = { id = "com.android.socialworkreviewer.lint", version = "unspecified" }
-com-android-socialworkreviewer-room = { id = "com.android.socialworkreviewer.room", version = "unspecified" }
-com-android-socialworkreviewer-test = { id = "com.android.socialworkreviewer.test", version = "unspecified" }
+com-eblan-socialworkreviewer-application = { id = "com.eblan.socialworkreviewer.application", version = "unspecified" }
+com-eblan-socialworkreviewer-applicationCompose = { id = "com.eblan.socialworkreviewer.applicationCompose", version = "unspecified" }
+com-eblan-socialworkreviewer-applicationJacoco = { id = "com.eblan.socialworkreviewer.applicationJacoco", version = "unspecified" }
+com-eblan-socialworkreviewer-jvmLibrary = { id = "com.eblan.socialworkreviewer.jvmLibrary", version = "unspecified" }
+com-eblan-socialworkreviewer-library = { id = "com.eblan.socialworkreviewer.library", version = "unspecified" }
+com-eblan-socialworkreviewer-libraryCompose = { id = "com.eblan.socialworkreviewer.libraryCompose", version = "unspecified" }
+com-eblan-socialworkreviewer-libraryJacoco = { id = "com.eblan.socialworkreviewer.libraryJacoco", version = "unspecified" }
+com-eblan-socialworkreviewer-feature = { id = "com.eblan.socialworkreviewer.feature", version = "unspecified" }
+com-eblan-socialworkreviewer-hilt = { id = "com.eblan.socialworkreviewer.hilt", version = "unspecified" }
+com-eblan-socialworkreviewer-lint = { id = "com.eblan.socialworkreviewer.lint", version = "unspecified" }
+com-eblan-socialworkreviewer-room = { id = "com.eblan.socialworkreviewer.room", version = "unspecified" }
+com-eblan-socialworkreviewer-test = { id = "com.eblan.socialworkreviewer.test", version = "unspecified" }

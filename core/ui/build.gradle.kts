@@ -17,13 +17,13 @@
  */
 
 plugins {
-    alias(libs.plugins.com.android.socialworkreviewer.library)
-    alias(libs.plugins.com.android.socialworkreviewer.libraryCompose)
-    alias(libs.plugins.com.android.socialworkreviewer.libraryJacoco)
+    alias(libs.plugins.com.eblan.socialworkreviewer.library)
+    alias(libs.plugins.com.eblan.socialworkreviewer.libraryCompose)
+    alias(libs.plugins.com.eblan.socialworkreviewer.libraryJacoco)
 }
 
 android {
-    namespace = "com.android.socialworkreviewer.core.ui"
+    namespace = "com.eblan.socialworkreviewer.core.ui"
 
     defaultConfig {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

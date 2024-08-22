@@ -17,14 +17,14 @@
  */
 
 plugins {
-    alias(libs.plugins.com.android.socialworkreviewer.feature)
-    alias(libs.plugins.com.android.socialworkreviewer.libraryCompose)
-    alias(libs.plugins.com.android.socialworkreviewer.libraryJacoco)
+    alias(libs.plugins.com.eblan.socialworkreviewer.feature)
+    alias(libs.plugins.com.eblan.socialworkreviewer.libraryCompose)
+    alias(libs.plugins.com.eblan.socialworkreviewer.libraryJacoco)
     alias(libs.plugins.roborazzi)
 }
 
 android {
-    namespace = "com.android.socialworkreviewer.feature.announcement"
+    namespace = "com.eblan.socialworkreviewer.feature.announcement"
 }
 
 dependencies {
