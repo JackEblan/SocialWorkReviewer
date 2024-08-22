@@ -17,10 +17,10 @@
  */
 
 plugins {
-    alias(libs.plugins.com.android.socialworkreviewer.library)
-    alias(libs.plugins.com.android.socialworkreviewer.libraryJacoco)
-    alias(libs.plugins.com.android.socialworkreviewer.hilt)
-    alias(libs.plugins.com.android.socialworkreviewer.room)
+    alias(libs.plugins.com.eblan.socialworkreviewer.library)
+    alias(libs.plugins.com.eblan.socialworkreviewer.libraryJacoco)
+    alias(libs.plugins.com.eblan.socialworkreviewer.hilt)
+    alias(libs.plugins.com.eblan.socialworkreviewer.room)
 }
 
 android {
@@ -28,7 +28,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    namespace = "com.android.socialworkreviewer.core.database"
+    namespace = "com.eblan.socialworkreviewer.core.database"
 
     sourceSets {
         getByName("androidTest").assets.srcDir("$projectDir/schemas")

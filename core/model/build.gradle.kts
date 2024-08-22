@@ -17,9 +17,9 @@
  */
 
 plugins {
-    alias(libs.plugins.com.android.socialworkreviewer.library)
+    alias(libs.plugins.com.eblan.socialworkreviewer.library)
 }
 
 android {
-    namespace = "com.android.socialworkreviewer.core.model"
+    namespace = "com.eblan.socialworkreviewer.core.model"
 }

@@ -17,12 +17,12 @@
  */
 
 plugins {
-    alias(libs.plugins.com.android.socialworkreviewer.library)
-    alias(libs.plugins.com.android.socialworkreviewer.hilt)
+    alias(libs.plugins.com.eblan.socialworkreviewer.library)
+    alias(libs.plugins.com.eblan.socialworkreviewer.hilt)
 }
 
 android {
-    namespace = "com.android.socialworkreviewer.core.datastore.test"
+    namespace = "com.eblan.socialworkreviewer.core.datastore.test"
 }
 
 dependencies {

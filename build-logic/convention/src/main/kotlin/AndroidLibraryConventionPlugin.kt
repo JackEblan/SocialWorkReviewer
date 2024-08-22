@@ -18,9 +18,9 @@
 
 import com.android.build.api.dsl.LibraryExtension
 import com.android.build.api.variant.LibraryAndroidComponentsExtension
-import com.android.socialworkreviewer.configureGradleManagedDevices
-import com.android.socialworkreviewer.configureKotlinAndroid
-import com.android.socialworkreviewer.disableUnnecessaryAndroidTests
+import com.eblan.socialworkreviewer.configureGradleManagedDevices
+import com.eblan.socialworkreviewer.configureKotlinAndroid
+import com.eblan.socialworkreviewer.disableUnnecessaryAndroidTests
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -32,7 +32,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
         with(target) {
             with(pluginManager) {
                 apply("com.android.library")
-                apply("com.android.socialworkreviewer.lint")
+                apply("com.eblan.socialworkreviewer.lint")
                 apply("org.jetbrains.kotlin.android")
             }
 

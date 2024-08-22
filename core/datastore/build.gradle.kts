@@ -17,9 +17,9 @@
  */
 
 plugins {
-    alias(libs.plugins.com.android.socialworkreviewer.library)
-    alias(libs.plugins.com.android.socialworkreviewer.libraryJacoco)
-    alias(libs.plugins.com.android.socialworkreviewer.hilt)
+    alias(libs.plugins.com.eblan.socialworkreviewer.library)
+    alias(libs.plugins.com.eblan.socialworkreviewer.libraryJacoco)
+    alias(libs.plugins.com.eblan.socialworkreviewer.hilt)
 }
 
 android {
@@ -27,7 +27,7 @@ android {
         consumerProguardFiles("consumer-proguard-rules.pro")
     }
 
-    namespace = "com.android.socialworkreviewer.core.datastore"
+    namespace = "com.eblan.socialworkreviewer.core.datastore"
 
     testOptions {
         unitTests {

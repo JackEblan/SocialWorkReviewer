@@ -17,12 +17,12 @@
  */
 
 plugins {
-    alias(libs.plugins.com.android.socialworkreviewer.library)
+    alias(libs.plugins.com.eblan.socialworkreviewer.library)
     alias(libs.plugins.protobuf)
 }
 
 android {
-    namespace = "com.android.socialworkreviewer.core.datastore.proto"
+    namespace = "com.eblan.socialworkreviewer.core.datastore.proto"
 }
 
 // Setup protobuf configuration, generating lite Java and Kotlin classes

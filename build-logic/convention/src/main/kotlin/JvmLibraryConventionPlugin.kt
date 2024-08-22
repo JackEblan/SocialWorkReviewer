@@ -16,7 +16,7 @@
  *
  */
 
-import com.android.socialworkreviewer.configureKotlinJvm
+import com.eblan.socialworkreviewer.configureKotlinJvm
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 

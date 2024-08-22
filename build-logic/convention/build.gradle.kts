@@ -22,7 +22,7 @@ plugins {
     `kotlin-dsl`
 }
 
-group = "com.android.socialworkreviewer.buildlogic"
+group = "com.eblan.socialworkreviewer.buildlogic"
 
 // Configure the build-logic plugins to target JDK 17
 // This matches the JDK used to build the project, and is not related to what is running on device.
@@ -55,62 +55,62 @@ tasks {
 gradlePlugin {
     plugins {
         register("androidApplication") {
-            id = "com.android.socialworkreviewer.application"
+            id = "com.eblan.socialworkreviewer.application"
             implementationClass = "AndroidApplicationConventionPlugin"
         }
 
         register("androidApplicationCompose") {
-            id = "com.android.socialworkreviewer.applicationCompose"
+            id = "com.eblan.socialworkreviewer.applicationCompose"
             implementationClass = "AndroidApplicationComposeConventionPlugin"
         }
 
         register("androidApplicationJacoco") {
-            id = "com.android.socialworkreviewer.applicationJacoco"
+            id = "com.eblan.socialworkreviewer.applicationJacoco"
             implementationClass = "AndroidApplicationJacocoConventionPlugin"
         }
 
         register("androidLibrary") {
-            id = "com.android.socialworkreviewer.library"
+            id = "com.eblan.socialworkreviewer.library"
             implementationClass = "AndroidLibraryConventionPlugin"
         }
 
         register("androidLibraryJacoco") {
-            id = "com.android.socialworkreviewer.libraryJacoco"
+            id = "com.eblan.socialworkreviewer.libraryJacoco"
             implementationClass = "AndroidLibraryJacocoConventionPlugin"
         }
 
         register("androidLibraryCompose") {
-            id = "com.android.socialworkreviewer.libraryCompose"
+            id = "com.eblan.socialworkreviewer.libraryCompose"
             implementationClass = "AndroidLibraryComposeConventionPlugin"
         }
 
         register("androidFeature") {
-            id = "com.android.socialworkreviewer.feature"
+            id = "com.eblan.socialworkreviewer.feature"
             implementationClass = "AndroidFeatureConventionPlugin"
         }
 
         register("androidHilt") {
-            id = "com.android.socialworkreviewer.hilt"
+            id = "com.eblan.socialworkreviewer.hilt"
             implementationClass = "AndroidHiltConventionPlugin"
         }
 
         register("androidLint") {
-            id = "com.android.socialworkreviewer.lint"
+            id = "com.eblan.socialworkreviewer.lint"
             implementationClass = "AndroidLintConventionPlugin"
         }
 
         register("androidRoom") {
-            id = "com.android.socialworkreviewer.room"
+            id = "com.eblan.socialworkreviewer.room"
             implementationClass = "AndroidRoomConventionPlugin"
         }
 
         register("androidTest") {
-            id = "com.android.socialworkreviewer.test"
+            id = "com.eblan.socialworkreviewer.test"
             implementationClass = "AndroidTestConventionPlugin"
         }
 
         register("jvmLibrary") {
-            id = "com.android.socialworkreviewer.jvmLibrary"
+            id = "com.eblan.socialworkreviewer.jvmLibrary"
             implementationClass = "JvmLibraryConventionPlugin"
         }
     }

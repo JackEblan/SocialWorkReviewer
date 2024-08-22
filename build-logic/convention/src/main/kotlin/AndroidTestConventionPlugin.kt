@@ -17,8 +17,8 @@
  */
 
 import com.android.build.gradle.TestExtension
-import com.android.socialworkreviewer.configureGradleManagedDevices
-import com.android.socialworkreviewer.configureKotlinAndroid
+import com.eblan.socialworkreviewer.configureGradleManagedDevices
+import com.eblan.socialworkreviewer.configureKotlinAndroid
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure

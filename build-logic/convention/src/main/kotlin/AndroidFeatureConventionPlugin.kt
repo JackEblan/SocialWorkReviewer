@@ -17,8 +17,8 @@
  */
 
 import com.android.build.gradle.LibraryExtension
-import com.android.socialworkreviewer.configureGradleManagedDevices
-import com.android.socialworkreviewer.libs
+import com.eblan.socialworkreviewer.configureGradleManagedDevices
+import com.eblan.socialworkreviewer.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -28,14 +28,14 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {
-                apply("com.android.socialworkreviewer.library")
-                apply("com.android.socialworkreviewer.hilt")
+                apply("com.eblan.socialworkreviewer.library")
+                apply("com.eblan.socialworkreviewer.hilt")
                 apply("org.jetbrains.kotlin.plugin.serialization")
             }
 
             extensions.configure<LibraryExtension> {
                 defaultConfig {
-                    testInstrumentationRunner = "com.android.socialworkreviewer.core.testing.SwrTestRunner"
+                    testInstrumentationRunner = "com.eblan.socialworkreviewer.core.testing.SwrTestRunner"
                 }
                 configureGradleManagedDevices(this)
             }
