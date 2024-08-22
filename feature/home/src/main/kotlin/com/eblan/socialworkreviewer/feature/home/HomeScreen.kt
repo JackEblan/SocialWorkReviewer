@@ -48,7 +48,8 @@ import kotlin.reflect.KClass
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun HomeRoute(
+internal fun HomeScreen(
+    modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     topLevelDestinations: List<HomeDestination>,
     startDestination: KClass<*>,
@@ -91,7 +92,7 @@ internal fun HomeRoute(
             },
         ) { paddingValues ->
             NavHost(
-                modifier = Modifier
+                modifier = modifier
                     .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
                     .padding(paddingValues)
                     .consumeWindowInsets(paddingValues),

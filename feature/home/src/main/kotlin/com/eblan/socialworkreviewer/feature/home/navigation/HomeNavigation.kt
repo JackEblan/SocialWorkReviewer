@@ -20,7 +20,7 @@ package com.eblan.socialworkreviewer.feature.home.navigation
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.eblan.socialworkreviewer.feature.home.HomeRoute
+import com.eblan.socialworkreviewer.feature.home.HomeScreen
 import kotlin.reflect.KClass
 
 fun NavGraphBuilder.homeScreen(
@@ -30,7 +30,7 @@ fun NavGraphBuilder.homeScreen(
     builder: NavGraphBuilder.() -> Unit,
 ) {
     composable<HomeRouteData> {
-        HomeRoute(
+        HomeScreen(
             topLevelDestinations = topLevelDestinations,
             startDestination = startDestination,
             onItemClick = onItemClick,
