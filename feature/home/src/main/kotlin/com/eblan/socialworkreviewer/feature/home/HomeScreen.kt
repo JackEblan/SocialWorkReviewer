@@ -31,7 +31,6 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffo
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -43,6 +42,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.eblan.socialworkreviewer.core.designsystem.theme.LocalGradientColors
 import com.eblan.socialworkreviewer.feature.home.navigation.HomeDestination
 import kotlin.reflect.KClass
 
@@ -111,15 +111,13 @@ private fun HomeLargeTopAppBar(
     title: String,
     topAppBarScrollBehavior: TopAppBarScrollBehavior,
 ) {
-    val gradientColors = listOf(Color(0xFF00BCD4), Color(0xFF03A9F4), Color(0xFF9C27B0))
-
     LargeTopAppBar(
         title = {
             Text(
                 text = title,
                 style = MaterialTheme.typography.headlineSmall.copy(
                     brush = Brush.linearGradient(
-                        colors = gradientColors,
+                        colors = LocalGradientColors.current.topBarTitleColorsDefault,
                     ),
                 ),
             )

@@ -152,6 +152,30 @@ val LightAndroidBackgroundTheme = BackgroundTheme(color = DarkGreenGray95)
 
 val DarkAndroidBackgroundTheme = BackgroundTheme(color = Color.Black)
 
+val dynamicTopBarTitleGradientColors = GradientColors(
+    topBarTitleColorsDefault = listOf(
+        Color(0xFF00BCD4),
+        Color(0xFF03A9F4),
+        Color(0xFF9C27B0),
+    ),
+)
+
+val defaultTopBarTitleGradientColors = GradientColors(
+    topBarTitleColorsDefault = listOf(
+        Color(0xFFF7C2E6),
+        Color(0xFFCAA1D9),
+        Color(0xFF9D80CB),
+    ),
+)
+
+val androidTopBarTitleGradientColors = GradientColors(
+    topBarTitleColorsDefault = listOf(
+        Color(0xFFCEE26B),
+        Color(0xFFA8D26D),
+        Color(0xFF5CB270),
+    ),
+)
+
 @Composable
 fun SwrTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -159,7 +183,6 @@ fun SwrTheme(
     disableDynamicTheming: Boolean = true,
     content: @Composable () -> Unit,
 ) {
-    // Color scheme
     val colorScheme = when {
         androidTheme -> if (darkTheme) DarkAndroidColorScheme else LightAndroidColorScheme
         !disableDynamicTheming && supportsDynamicTheming() -> {
@@ -170,7 +193,12 @@ fun SwrTheme(
         else -> if (darkTheme) DarkDefaultColorScheme else LightDefaultColorScheme
     }
 
-    // Background theme
+    val topBarTitleGradientColors = when {
+        androidTheme -> androidTopBarTitleGradientColors
+        !disableDynamicTheming && supportsDynamicTheming() -> dynamicTopBarTitleGradientColors
+        else -> defaultTopBarTitleGradientColors
+    }
+
     val defaultBackgroundTheme = BackgroundTheme(
         color = colorScheme.surface,
         tonalElevation = 2.dp,
@@ -186,6 +214,7 @@ fun SwrTheme(
     }
     // Composition locals
     CompositionLocalProvider(
+        LocalGradientColors provides topBarTitleGradientColors,
         LocalBackgroundTheme provides backgroundTheme,
         LocalTintTheme provides tintTheme,
     ) {

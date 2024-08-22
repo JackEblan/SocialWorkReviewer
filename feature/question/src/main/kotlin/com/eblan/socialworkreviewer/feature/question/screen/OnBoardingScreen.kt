@@ -49,11 +49,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.eblan.socialworkreviewer.core.designsystem.icon.Swr
+import com.eblan.socialworkreviewer.core.designsystem.theme.LocalGradientColors
 import com.eblan.socialworkreviewer.core.model.Category
 import com.eblan.socialworkreviewer.core.model.QuestionSetting
 
@@ -79,19 +79,22 @@ internal fun SuccessOnBoardingScreen(
 ) {
     val scrollBehavior = enterAlwaysScrollBehavior()
 
-    Scaffold(floatingActionButton = {
-        AnimatedVisibility(
-            visible = scrollBehavior.state.collapsedFraction == 0.0f,
-            enter = fadeIn() + scaleIn(),
-            exit = fadeOut() + scaleOut(),
-        ) {
-            FloatingActionButton(onClick = onStartQuickQuestions) {
-                Icon(imageVector = Swr.Bolt, contentDescription = "")
+    Scaffold(
+        floatingActionButton = {
+            AnimatedVisibility(
+                visible = scrollBehavior.state.collapsedFraction == 0.0f,
+                enter = fadeIn() + scaleIn(),
+                exit = fadeOut() + scaleOut(),
+            ) {
+                FloatingActionButton(onClick = onStartQuickQuestions) {
+                    Icon(imageVector = Swr.Bolt, contentDescription = "")
+                }
             }
-        }
-    }, topBar = {
-        OnBoardingTopAppBar(title = "Question Mode", scrollBehavior = scrollBehavior)
-    }) { paddingValues ->
+        },
+        topBar = {
+            OnBoardingTopAppBar(title = "Question Mode", scrollBehavior = scrollBehavior)
+        },
+    ) { paddingValues ->
         LazyVerticalGrid(
             modifier = modifier
                 .fillMaxSize()
@@ -100,12 +103,15 @@ internal fun SuccessOnBoardingScreen(
             contentPadding = paddingValues,
         ) {
             itemsIndexed(category.questionSettings) { index, questionSetting ->
-                OutlinedCard(modifier = Modifier.padding(10.dp), onClick = {
-                    onStartQuestions(
-                        index,
-                        questionSetting,
-                    )
-                }) {
+                OutlinedCard(
+                    modifier = Modifier.padding(10.dp),
+                    onClick = {
+                        onStartQuestions(
+                            index,
+                            questionSetting,
+                        )
+                    },
+                ) {
                     QuestionSettingItem(questionSetting = questionSetting)
                 }
             }
@@ -170,15 +176,13 @@ private fun OnBoardingTopAppBar(
     title: String,
     scrollBehavior: TopAppBarScrollBehavior,
 ) {
-    val gradientColors = listOf(Color(0xFF00BCD4), Color(0xFF03A9F4), Color(0xFF9C27B0))
-
     LargeTopAppBar(
         title = {
             Text(
                 text = title,
                 style = MaterialTheme.typography.headlineSmall.copy(
                     brush = Brush.linearGradient(
-                        colors = gradientColors,
+                        colors = LocalGradientColors.current.topBarTitleColorsDefault,
                     ),
                 ),
             )

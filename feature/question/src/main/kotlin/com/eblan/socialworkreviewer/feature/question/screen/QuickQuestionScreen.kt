@@ -57,12 +57,12 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.eblan.socialworkreviewer.core.designsystem.icon.Swr
+import com.eblan.socialworkreviewer.core.designsystem.theme.LocalGradientColors
 import com.eblan.socialworkreviewer.core.model.Choice
 import com.eblan.socialworkreviewer.core.model.Question
 import com.eblan.socialworkreviewer.feature.question.dialog.quit.QuitAlertDialog
@@ -283,15 +283,13 @@ private fun QuickQuestionTopAppBar(
     title: String,
     scrollBehavior: TopAppBarScrollBehavior,
 ) {
-    val gradientColors = listOf(Color(0xFF00BCD4), Color(0xFF03A9F4), Color(0xFF9C27B0))
-
     LargeTopAppBar(
         title = {
             Text(
                 text = title,
                 style = MaterialTheme.typography.headlineSmall.copy(
                     brush = Brush.linearGradient(
-                        colors = gradientColors,
+                        colors = LocalGradientColors.current.topBarTitleColorsDefault,
                     ),
                 ),
             )
