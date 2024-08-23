@@ -108,7 +108,7 @@ internal fun QuickQuestionsScreen(
 
     Scaffold(
         topBar = {
-            QuickQuestionTopAppBar(
+            QuickQuestionLargeTopAppBar(
                 title = "Quick Questions",
                 scrollBehavior = scrollBehavior,
             )
@@ -280,7 +280,7 @@ private fun QuickQuestionChoicesSelection(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun QuickQuestionTopAppBar(
+private fun QuickQuestionLargeTopAppBar(
     modifier: Modifier = Modifier,
     title: String,
     scrollBehavior: TopAppBarScrollBehavior,

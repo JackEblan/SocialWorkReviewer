@@ -92,7 +92,7 @@ internal fun SuccessOnBoardingScreen(
             }
         },
         topBar = {
-            OnBoardingTopAppBar(title = "Question Mode", scrollBehavior = scrollBehavior)
+            OnBoardingLargeTopAppBar(title = "Question Mode", scrollBehavior = scrollBehavior)
         },
     ) { paddingValues ->
         LazyVerticalGrid(
@@ -171,7 +171,7 @@ private fun QuestionSettingItem(modifier: Modifier = Modifier, questionSetting: 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun OnBoardingTopAppBar(
+private fun OnBoardingLargeTopAppBar(
     modifier: Modifier = Modifier,
     title: String,
     scrollBehavior: TopAppBarScrollBehavior,

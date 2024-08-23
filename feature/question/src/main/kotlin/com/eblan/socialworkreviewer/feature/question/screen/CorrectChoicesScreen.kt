@@ -105,7 +105,7 @@ internal fun CorrectChoicesScreen(
 
     Scaffold(
         topBar = {
-            CorrectChoicesTopAppBar(
+            CorrectChoicesLargeTopAppBar(
                 title = "Correct Choices",
                 scrollBehavior = scrollBehavior,
             )
@@ -249,7 +249,7 @@ private fun CorrectChoicesSelection(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CorrectChoicesTopAppBar(
+private fun CorrectChoicesLargeTopAppBar(
     modifier: Modifier = Modifier,
     title: String,
     scrollBehavior: TopAppBarScrollBehavior,

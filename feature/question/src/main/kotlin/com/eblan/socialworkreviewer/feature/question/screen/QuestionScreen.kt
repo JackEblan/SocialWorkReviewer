@@ -277,7 +277,7 @@ private fun Questions(
         mutableStateOf(false)
     }
 
-    var showQuestionsDataDialog by rememberSaveable {
+    var showQuestionsDialog by rememberSaveable {
         mutableStateOf(false)
     }
 
@@ -299,7 +299,7 @@ private fun Questions(
 
     Scaffold(
         topBar = {
-            QuestionTopAppBar(
+            QuestionLargeTopAppBar(
                 title = "Questions",
                 scrollBehavior = scrollBehavior,
             )
@@ -316,7 +316,7 @@ private fun Questions(
                 FloatingActionButton(
                     onClick = {
                         if (questionsWithSelectedChoices.size < questions.size) {
-                            showQuestionsDataDialog = true
+                            showQuestionsDialog = true
                         } else {
                             onShowScore(questionSettingIndex, questions)
                         }
@@ -378,7 +378,7 @@ private fun Questions(
         )
     }
 
-    if (showQuestionsDataDialog) {
+    if (showQuestionsDialog) {
         QuestionsDialog(
             modifier = modifier,
             minutes = countDownTime?.minutes,
@@ -386,13 +386,12 @@ private fun Questions(
             questionsWithSelectedChoices = questionsWithSelectedChoices,
             onQuestionClick = { index ->
                 scope.launch {
-                    showQuestionsDataDialog = false
-
+                    showQuestionsDialog = false
                     pagerState.scrollToPage(index)
                 }
             },
             onOkayClick = {
-                showQuestionsDataDialog = false
+                showQuestionsDialog = false
             },
             contentDescription = "",
         )
@@ -517,7 +516,7 @@ private fun QuestionChoicesSelection(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun QuestionTopAppBar(
+private fun QuestionLargeTopAppBar(
     modifier: Modifier = Modifier,
     title: String,
     scrollBehavior: TopAppBarScrollBehavior,
