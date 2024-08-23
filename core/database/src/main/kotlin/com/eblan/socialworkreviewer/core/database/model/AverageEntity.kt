@@ -22,7 +22,8 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class AverageEntity(
-    @PrimaryKey val questionSettingIndex: Int,
+    @PrimaryKey val id: Int? = null,
+    val questionSettingIndex: Int,
     val score: Int,
     val numberOfQuestions: Int,
     val categoryId: String,

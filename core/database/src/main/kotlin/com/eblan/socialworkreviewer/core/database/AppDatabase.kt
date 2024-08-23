@@ -17,6 +17,7 @@
  */
 package com.eblan.socialworkreviewer.core.database
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.eblan.socialworkreviewer.core.database.dao.AverageDao
@@ -24,8 +25,11 @@ import com.eblan.socialworkreviewer.core.database.model.AverageEntity
 
 @Database(
     entities = [AverageEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = true,
+    autoMigrations = [
+        AutoMigration(from = 1, to = 2),
+    ],
 )
 internal abstract class AppDatabase : RoomDatabase() {
 
