@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material.icons.filled.Settings
 
@@ -34,4 +35,5 @@ object Swr {
     val Question = Icons.Default.QuestionMark
     val AccessTime = Icons.Default.AccessTime
     val Category = Icons.Default.Category
+    val Close = Icons.Default.Close
 }

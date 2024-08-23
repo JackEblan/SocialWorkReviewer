@@ -17,6 +17,7 @@
  */
 package com.eblan.socialworkreviewer.feature.question.screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +32,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -38,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import com.eblan.socialworkreviewer.core.designsystem.icon.Swr
 import com.eblan.socialworkreviewer.core.designsystem.theme.LocalGradientColors
 import com.eblan.socialworkreviewer.core.model.Question
+import com.eblan.socialworkreviewer.feature.question.dialog.quit.QuitAlertDialog
 
 @Composable
 internal fun ScoreScreen(
@@ -46,7 +52,16 @@ internal fun ScoreScreen(
     questions: List<Question>,
     minutes: String?,
     onShowCorrectChoices: (questions: List<Question>) -> Unit,
+    onQuitQuestions: () -> Unit,
 ) {
+    var showQuitAlertDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    BackHandler(enabled = true) {
+        showQuitAlertDialog = true
+    }
+
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
@@ -100,7 +115,7 @@ internal fun ScoreScreen(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
-                    text = minutes ?: "Time's up!",
+                    text = if (minutes.isNullOrBlank()) "Time's up!" else minutes,
                     style = MaterialTheme.typography.headlineLarge.copy(
                         brush = Brush.linearGradient(
                             colors = LocalGradientColors.current.topBarTitleColorsDefault,
@@ -109,5 +124,20 @@ internal fun ScoreScreen(
                 )
             }
         }
+    }
+
+    if (showQuitAlertDialog) {
+        QuitAlertDialog(
+            onDismissRequest = {
+                showQuitAlertDialog = false
+            },
+            onConfirmation = {
+                showQuitAlertDialog = false
+                onQuitQuestions()
+            },
+            dialogTitle = "Quit Questions",
+            dialogText = "Are you sure you want to quit?",
+            icon = Swr.Question,
+        )
     }
 }

@@ -51,7 +51,7 @@ class FakeChoiceRepository : ChoiceRepository {
                     key = choice.question,
                     defaultValue = emptyList(),
                 ),
-                questionsWithSelectedChoicesSize = getQuestionsWithSelectedChoices().size,
+                questionsWithSelectedChoices = getQuestionsWithSelectedChoices(),
             ),
         )
     }
@@ -65,7 +65,7 @@ class FakeChoiceRepository : ChoiceRepository {
                     key = choice.question,
                     defaultValue = emptyList(),
                 ),
-                questionsWithSelectedChoicesSize = getQuestionsWithSelectedChoices().size,
+                questionsWithSelectedChoices = getQuestionsWithSelectedChoices(),
             ),
         )
     }
@@ -83,7 +83,7 @@ class FakeChoiceRepository : ChoiceRepository {
                     key = question,
                     defaultValue = emptyList(),
                 ),
-                questionsWithSelectedChoicesSize = getQuestionsWithSelectedChoices().size,
+                questionsWithSelectedChoices = getQuestionsWithSelectedChoices(),
             ),
         )
     }

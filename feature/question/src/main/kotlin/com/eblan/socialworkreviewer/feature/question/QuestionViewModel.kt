@@ -65,7 +65,7 @@ class QuestionViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = QuestionData(
             selectedChoices = emptyList(),
-            questionsWithSelectedChoicesSize = 0,
+            questionsWithSelectedChoices = emptyMap(),
         ),
     )
 

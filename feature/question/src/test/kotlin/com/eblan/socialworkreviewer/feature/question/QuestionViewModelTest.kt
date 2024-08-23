@@ -106,7 +106,7 @@ class QuestionViewModelTest {
         assertEquals(
             expected = QuestionData(
                 selectedChoices = emptyList(),
-                questionsWithSelectedChoicesSize = 0,
+                questionsWithSelectedChoices = emptyMap(),
             ),
             actual = viewModel.currentQuestionData.value,
         )
@@ -194,7 +194,7 @@ class QuestionViewModelTest {
 
         assertTrue(viewModel.currentQuestionData.value.selectedChoices.isNotEmpty())
 
-        assertTrue(viewModel.currentQuestionData.value.questionsWithSelectedChoicesSize != 0)
+        assertTrue(viewModel.currentQuestionData.value.questionsWithSelectedChoices.isNotEmpty())
 
         collectJob.cancel()
     }
