@@ -44,7 +44,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -69,7 +68,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
@@ -94,7 +92,6 @@ import com.eblan.socialworkreviewer.core.model.QuestionSetting
 import com.eblan.socialworkreviewer.feature.question.QuestionUiState
 import com.eblan.socialworkreviewer.feature.question.QuestionViewModel
 import com.eblan.socialworkreviewer.feature.question.dialog.quit.QuitAlertDialog
-import kotlinx.coroutines.launch
 
 @Composable
 internal fun QuestionRoute(
@@ -233,7 +230,8 @@ internal fun QuestionScreen(
                 ScoreScreen(
                     questions = state.questions,
                     score = state.score,
-                    minutes = state.lastCountDownTime, onShowCorrectChoices = onShowCorrectChoices,
+                    minutes = state.lastCountDownTime,
+                    onShowCorrectChoices = onShowCorrectChoices,
                 )
             }
         }
@@ -261,8 +259,6 @@ private fun Questions(
         },
     )
 
-    val scope = rememberCoroutineScope()
-
     val scrollBehavior = enterAlwaysScrollBehavior()
 
     val animatedProgress by animateFloatAsState(
@@ -272,6 +268,10 @@ private fun Questions(
     )
 
     var showQuitAlertDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    var showQuestionsDataDialog by rememberSaveable {
         mutableStateOf(false)
     }
 
@@ -296,7 +296,6 @@ private fun Questions(
             QuestionTopAppBar(
                 title = "Questions",
                 scrollBehavior = scrollBehavior,
-                minutes = countDownTime?.minutes,
             )
         },
         snackbarHost = {
@@ -311,9 +310,7 @@ private fun Questions(
                 FloatingActionButton(
                     onClick = {
                         if (questionsWithSelectedChoicesSize < questions.size) {
-                            scope.launch {
-                                snackbarHostState.showSnackbar("Please answer all the questions")
-                            }
+                            showQuestionsDataDialog = true
                         } else {
                             onShowScore(questionSettingIndex, questions)
                         }
@@ -372,6 +369,20 @@ private fun Questions(
             dialogTitle = "Quit Questions",
             dialogText = "You have answered $questionsWithSelectedChoicesSize out of ${questions.size} questions. Are you sure you want to quit?",
             icon = Swr.Question,
+        )
+    }
+
+    if (showQuestionsDataDialog) {
+        QuitAlertDialog(
+            onDismissRequest = {
+                showQuestionsDataDialog = false
+            },
+            onConfirmation = {
+                showQuestionsDataDialog = false
+            },
+            dialogTitle = countDownTime?.minutes ?: "Time's up",
+            dialogText = "You have answered $questionsWithSelectedChoicesSize out of ${questions.size} questions.",
+            icon = Swr.AccessTime,
         )
     }
 }
@@ -498,7 +509,6 @@ private fun QuestionTopAppBar(
     modifier: Modifier = Modifier,
     title: String,
     scrollBehavior: TopAppBarScrollBehavior,
-    minutes: String?,
 ) {
     LargeTopAppBar(
         title = {
@@ -512,29 +522,6 @@ private fun QuestionTopAppBar(
             )
         },
         modifier = modifier.testTag("question:largeTopAppBar"),
-        actions = {
-            if (minutes.isNullOrBlank().not()) {
-                ElevatedCard(
-                    modifier = Modifier
-                        .padding(end = 5.dp)
-                        .animateContentSize(),
-                ) {
-                    Row(
-                        modifier = Modifier.padding(8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Icon(
-                            imageVector = Swr.AccessTime,
-                            contentDescription = "",
-                        )
-
-                        Spacer(modifier = Modifier.width(5.dp))
-
-                        Text(text = minutes!!)
-                    }
-                }
-            }
-        },
         scrollBehavior = scrollBehavior,
     )
 }

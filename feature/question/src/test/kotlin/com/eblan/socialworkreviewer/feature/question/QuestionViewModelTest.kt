@@ -241,7 +241,6 @@ class QuestionViewModelTest {
         collectJob.cancel()
     }
 
-
     @Test
     fun getCategory() = runTest {
         val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.questionUiState.collect() }
