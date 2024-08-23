@@ -52,7 +52,7 @@ internal class DefaultInMemoryChoiceDataSource @Inject constructor(
                     key = choice.question,
                     defaultValue = emptyList(),
                 ),
-                questionsWithSelectedChoicesSize = getQuestionsWithSelectedChoices().size,
+                questionsWithSelectedChoices = getQuestionsWithSelectedChoices(),
             ),
         )
     }
@@ -66,7 +66,7 @@ internal class DefaultInMemoryChoiceDataSource @Inject constructor(
                     key = choice.question,
                     defaultValue = emptyList(),
                 ),
-                questionsWithSelectedChoicesSize = getQuestionsWithSelectedChoices().size,
+                questionsWithSelectedChoices = getQuestionsWithSelectedChoices(),
             ),
         )
     }
@@ -84,7 +84,7 @@ internal class DefaultInMemoryChoiceDataSource @Inject constructor(
                     key = question,
                     defaultValue = emptyList(),
                 ),
-                questionsWithSelectedChoicesSize = getQuestionsWithSelectedChoices().size,
+                questionsWithSelectedChoices = getQuestionsWithSelectedChoices(),
             ),
         )
     }

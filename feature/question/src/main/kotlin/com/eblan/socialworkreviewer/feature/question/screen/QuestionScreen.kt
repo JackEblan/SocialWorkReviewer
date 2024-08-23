@@ -68,6 +68,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
@@ -91,7 +92,9 @@ import com.eblan.socialworkreviewer.core.model.QuestionData
 import com.eblan.socialworkreviewer.core.model.QuestionSetting
 import com.eblan.socialworkreviewer.feature.question.QuestionUiState
 import com.eblan.socialworkreviewer.feature.question.QuestionViewModel
+import com.eblan.socialworkreviewer.feature.question.dialog.question.QuestionsDialog
 import com.eblan.socialworkreviewer.feature.question.dialog.quit.QuitAlertDialog
+import kotlinx.coroutines.launch
 
 @Composable
 internal fun QuestionRoute(
@@ -172,7 +175,7 @@ internal fun QuestionScreen(
                         questionSettingIndex = state.questionSettingIndex,
                         questions = state.questions,
                         selectedChoices = currentQuestionData.selectedChoices,
-                        questionsWithSelectedChoicesSize = currentQuestionData.questionsWithSelectedChoicesSize,
+                        questionsWithSelectedChoices = currentQuestionData.questionsWithSelectedChoices,
                         countDownTime = countDownTime,
                         onAddCurrentQuestion = onAddCurrentQuestion,
                         onUpdateChoice = onUpdateChoice,
@@ -246,7 +249,7 @@ private fun Questions(
     questionSettingIndex: Int,
     questions: List<Question>,
     selectedChoices: List<String>,
-    questionsWithSelectedChoicesSize: Int,
+    questionsWithSelectedChoices: Map<Question, List<String>>,
     countDownTime: CountDownTime?,
     onAddCurrentQuestion: (Question) -> Unit,
     onUpdateChoice: (Choice) -> Unit,
@@ -258,6 +261,8 @@ private fun Questions(
             questions.size
         },
     )
+
+    val scope = rememberCoroutineScope()
 
     val scrollBehavior = enterAlwaysScrollBehavior()
 
@@ -309,7 +314,7 @@ private fun Questions(
             ) {
                 FloatingActionButton(
                     onClick = {
-                        if (questionsWithSelectedChoicesSize < questions.size) {
+                        if (questionsWithSelectedChoices.size < questions.size) {
                             showQuestionsDataDialog = true
                         } else {
                             onShowScore(questionSettingIndex, questions)
@@ -367,22 +372,28 @@ private fun Questions(
                 onQuitQuestions()
             },
             dialogTitle = "Quit Questions",
-            dialogText = "You have answered $questionsWithSelectedChoicesSize out of ${questions.size} questions. Are you sure you want to quit?",
+            dialogText = "You have answered ${questionsWithSelectedChoices.size} out of ${questions.size} questions. Are you sure you want to quit?",
             icon = Swr.Question,
         )
     }
 
     if (showQuestionsDataDialog) {
-        QuitAlertDialog(
-            onDismissRequest = {
+        QuestionsDialog(
+            modifier = modifier,
+            minutes = countDownTime?.minutes,
+            questions = questions,
+            questionsWithSelectedChoices = questionsWithSelectedChoices,
+            onQuestionClick = { index ->
+                scope.launch {
+                    showQuestionsDataDialog = false
+
+                    pagerState.scrollToPage(index)
+                }
+            },
+            onOkayClick = {
                 showQuestionsDataDialog = false
             },
-            onConfirmation = {
-                showQuestionsDataDialog = false
-            },
-            dialogTitle = countDownTime?.minutes ?: "Time's up",
-            dialogText = "You have answered $questionsWithSelectedChoicesSize out of ${questions.size} questions.",
-            icon = Swr.AccessTime,
+            contentDescription = "",
         )
     }
 }

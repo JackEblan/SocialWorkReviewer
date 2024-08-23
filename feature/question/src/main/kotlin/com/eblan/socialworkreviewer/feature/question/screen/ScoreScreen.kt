@@ -100,7 +100,7 @@ internal fun ScoreScreen(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
-                    text = minutes ?: "Time's up!",
+                    text = if (minutes.isNullOrBlank()) "Time's up!" else minutes,
                     style = MaterialTheme.typography.headlineLarge.copy(
                         brush = Brush.linearGradient(
                             colors = LocalGradientColors.current.topBarTitleColorsDefault,
