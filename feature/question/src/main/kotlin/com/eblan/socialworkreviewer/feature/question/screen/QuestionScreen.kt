@@ -235,6 +235,7 @@ internal fun QuestionScreen(
                     score = state.score,
                     minutes = state.lastCountDownTime,
                     onShowCorrectChoices = onShowCorrectChoices,
+                    onQuitQuestions = onQuitQuestions,
                 )
             }
         }
