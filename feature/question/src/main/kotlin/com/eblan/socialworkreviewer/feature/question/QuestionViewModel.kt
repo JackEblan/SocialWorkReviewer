@@ -128,12 +128,22 @@ class QuestionViewModel @Inject constructor(
         }
     }
 
-    fun showCorrectChoices(questionSettingIndex: Int, questions: List<Question>) {
+    fun showCorrectChoices(questions: List<Question>) {
+        viewModelScope.launch {
+            _questionUiState.update {
+                QuestionUiState.CorrectChoices(
+                    questions = questions,
+                )
+            }
+        }
+    }
+
+    fun showScore(questionSettingIndex: Int, questions: List<Question>) {
         viewModelScope.launch {
             val score = choiceRepository.getScore()
 
             _questionUiState.update {
-                QuestionUiState.ShowCorrectChoices(
+                QuestionUiState.Score(
                     score = score,
                     questions = questions,
                     lastCountDownTime = countDownTime.value?.minutes,

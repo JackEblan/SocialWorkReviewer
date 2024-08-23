@@ -79,6 +79,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -118,6 +120,7 @@ internal fun QuestionRoute(
         onAddCurrentQuestion = viewModel::addCurrentQuestion,
         onUpdateChoice = viewModel::updateChoice,
         onShowCorrectChoices = viewModel::showCorrectChoices,
+        onShowScore = viewModel::showScore,
         onStartQuestions = viewModel::startQuestions,
         onStartQuickQuestions = viewModel::startQuickQuestions,
         onQuitQuestions = {
@@ -138,7 +141,8 @@ internal fun QuestionScreen(
     onGetCategory: () -> Unit,
     onAddCurrentQuestion: (Question) -> Unit,
     onUpdateChoice: (Choice) -> Unit,
-    onShowCorrectChoices: (questionSettingIndex: Int, questions: List<Question>) -> Unit,
+    onShowCorrectChoices: (questions: List<Question>) -> Unit,
+    onShowScore: (questionSettingIndex: Int, questions: List<Question>) -> Unit,
     onStartQuestions: (Int, QuestionSetting) -> Unit,
     onStartQuickQuestions: () -> Unit,
     onQuitQuestions: () -> Unit,
@@ -149,7 +153,7 @@ internal fun QuestionScreen(
         label = "",
         transitionSpec = {
             when (targetState) {
-                is QuestionUiState.ShowCorrectChoices, is QuestionUiState.Questions, is QuestionUiState.QuickQuestions -> {
+                is QuestionUiState.Score, is QuestionUiState.CorrectChoices, is QuestionUiState.Questions, is QuestionUiState.QuickQuestions -> {
                     (slideInVertically() + fadeIn()).togetherWith(
                         slideOutVertically() + fadeOut(),
                     )
@@ -175,7 +179,7 @@ internal fun QuestionScreen(
                         countDownTime = countDownTime,
                         onAddCurrentQuestion = onAddCurrentQuestion,
                         onUpdateChoice = onUpdateChoice,
-                        onShowCorrectChoices = onShowCorrectChoices,
+                        onShowScore = onShowScore,
                         onQuitQuestions = onQuitQuestions,
                     )
                 } else {
@@ -187,12 +191,10 @@ internal fun QuestionScreen(
                 LoadingScreen()
             }
 
-            is QuestionUiState.ShowCorrectChoices -> {
+            is QuestionUiState.CorrectChoices -> {
                 CorrectChoicesScreen(
                     questions = state.questions,
                     selectedChoices = currentQuestionData.selectedChoices,
-                    score = state.score,
-                    minutes = state.lastCountDownTime,
                     onAddCurrentQuestion = onAddCurrentQuestion,
                     onQuitQuestions = onQuitQuestions,
                 )
@@ -226,6 +228,14 @@ internal fun QuestionScreen(
                     )
                 }
             }
+
+            is QuestionUiState.Score -> {
+                ScoreScreen(
+                    questions = state.questions,
+                    score = state.score,
+                    minutes = state.lastCountDownTime, onShowCorrectChoices = onShowCorrectChoices,
+                )
+            }
         }
     }
 }
@@ -242,7 +252,7 @@ private fun Questions(
     countDownTime: CountDownTime?,
     onAddCurrentQuestion: (Question) -> Unit,
     onUpdateChoice: (Choice) -> Unit,
-    onShowCorrectChoices: (questionSettingIndex: Int, questions: List<Question>) -> Unit,
+    onShowScore: (questionSettingIndex: Int, questions: List<Question>) -> Unit,
     onQuitQuestions: () -> Unit,
 ) {
     val pagerState = rememberPagerState(
@@ -271,7 +281,7 @@ private fun Questions(
 
     LaunchedEffect(key1 = countDownTime) {
         if (countDownTime != null && countDownTime.isFinished) {
-            onShowCorrectChoices(questionSettingIndex, questions)
+            onShowScore(questionSettingIndex, questions)
         }
     }
 
@@ -305,7 +315,7 @@ private fun Questions(
                                 snackbarHostState.showSnackbar("Please answer all the questions")
                             }
                         } else {
-                            onShowCorrectChoices(questionSettingIndex, questions)
+                            onShowScore(questionSettingIndex, questions)
                         }
                     },
                 ) {
@@ -411,7 +421,7 @@ private fun QuestionText(modifier: Modifier = Modifier, question: String) {
             .padding(horizontal = 20.dp),
     ) {
         Text(
-            text = question,
+            text = AnnotatedString.fromHtml(question),
             style = MaterialTheme.typography.headlineSmall,
         )
     }

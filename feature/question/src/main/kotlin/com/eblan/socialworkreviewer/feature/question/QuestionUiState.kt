@@ -26,13 +26,17 @@ sealed interface QuestionUiState {
 
     data object Loading : QuestionUiState
 
-    data class ShowCorrectChoices(
-        val score: Int,
+    data class CorrectChoices(
         val questions: List<Question>,
-        val lastCountDownTime: String?,
     ) : QuestionUiState
 
     data class OnBoarding(val category: Category? = null) : QuestionUiState
 
     data class QuickQuestions(val questions: List<Question>) : QuestionUiState
+
+    data class Score(
+        val score: Int,
+        val questions: List<Question>,
+        val lastCountDownTime: String?,
+    ) : QuestionUiState
 }

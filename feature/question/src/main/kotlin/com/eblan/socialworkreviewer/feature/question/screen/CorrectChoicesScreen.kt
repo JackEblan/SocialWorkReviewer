@@ -18,7 +18,6 @@
 package com.eblan.socialworkreviewer.feature.question.screen
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
@@ -31,16 +30,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -62,6 +58,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.unit.dp
 import com.eblan.socialworkreviewer.core.designsystem.icon.Swr
 import com.eblan.socialworkreviewer.core.designsystem.theme.LocalGradientColors
@@ -74,8 +72,6 @@ internal fun CorrectChoicesScreen(
     modifier: Modifier = Modifier,
     questions: List<Question>,
     selectedChoices: List<String>,
-    score: Int,
-    minutes: String?,
     onAddCurrentQuestion: (Question) -> Unit,
     onQuitQuestions: () -> Unit,
 ) {
@@ -110,9 +106,8 @@ internal fun CorrectChoicesScreen(
     Scaffold(
         topBar = {
             CorrectChoicesTopAppBar(
-                title = "Your score is $score/${questions.size}",
+                title = "Correct Choices",
                 scrollBehavior = scrollBehavior,
-                minutes = minutes,
             )
         },
     ) { paddingValues ->
@@ -198,7 +193,7 @@ private fun CorrectChoicesQuestionText(modifier: Modifier = Modifier, question: 
             .padding(horizontal = 20.dp),
     ) {
         Text(
-            text = question,
+            text = AnnotatedString.fromHtml(question),
             style = MaterialTheme.typography.headlineSmall,
         )
     }
@@ -258,7 +253,6 @@ private fun CorrectChoicesTopAppBar(
     modifier: Modifier = Modifier,
     title: String,
     scrollBehavior: TopAppBarScrollBehavior,
-    minutes: String?,
 ) {
     LargeTopAppBar(
         title = {
@@ -272,29 +266,6 @@ private fun CorrectChoicesTopAppBar(
             )
         },
         modifier = modifier.testTag("correctChoices:largeTopAppBar"),
-        actions = {
-            if (minutes.isNullOrBlank().not()) {
-                ElevatedCard(
-                    modifier = Modifier
-                        .padding(end = 5.dp)
-                        .animateContentSize(),
-                ) {
-                    Row(
-                        modifier = Modifier.padding(8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Icon(
-                            imageVector = Swr.AccessTime,
-                            contentDescription = "",
-                        )
-
-                        Spacer(modifier = Modifier.width(5.dp))
-
-                        Text(text = minutes!!)
-                    }
-                }
-            }
-        },
         scrollBehavior = scrollBehavior,
     )
 }

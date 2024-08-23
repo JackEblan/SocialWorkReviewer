@@ -60,6 +60,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.unit.dp
 import com.eblan.socialworkreviewer.core.designsystem.icon.Swr
 import com.eblan.socialworkreviewer.core.designsystem.theme.LocalGradientColors
@@ -210,7 +212,7 @@ private fun QuickQuestionText(modifier: Modifier = Modifier, question: String) {
             .padding(horizontal = 20.dp),
     ) {
         Text(
-            text = question,
+            text = AnnotatedString.fromHtml(question),
             style = MaterialTheme.typography.headlineSmall,
         )
     }

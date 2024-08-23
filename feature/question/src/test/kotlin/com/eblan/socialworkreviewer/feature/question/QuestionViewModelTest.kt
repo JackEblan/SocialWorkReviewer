@@ -213,12 +213,34 @@ class QuestionViewModelTest {
         }
         questionRepository.setQuestions(questions)
 
-        viewModel.showCorrectChoices(questionSettingIndex = 1, questions = questions)
+        viewModel.showCorrectChoices(questions = questions)
 
-        assertIs<QuestionUiState.ShowCorrectChoices>(viewModel.questionUiState.value)
+        assertIs<QuestionUiState.CorrectChoices>(viewModel.questionUiState.value)
 
         collectJob.cancel()
     }
+
+    @Test
+    fun showScore() = runTest {
+        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.questionUiState.collect() }
+
+        val questions = List(10) { _ ->
+            Question(
+                question = "",
+                correctChoices = listOf(),
+                wrongChoices = listOf(),
+                choices = listOf(),
+            )
+        }
+        questionRepository.setQuestions(questions)
+
+        viewModel.showScore(questionSettingIndex = 0, questions = questions)
+
+        assertIs<QuestionUiState.Score>(viewModel.questionUiState.value)
+
+        collectJob.cancel()
+    }
+
 
     @Test
     fun getCategory() = runTest {
