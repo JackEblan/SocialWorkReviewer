@@ -162,17 +162,17 @@ val dynamicTopBarTitleGradientColors = GradientColors(
 
 val defaultTopBarTitleGradientColors = GradientColors(
     topBarTitleColorsDefault = listOf(
-        Color(0xFFF7C2E6),
-        Color(0xFFCAA1D9),
-        Color(0xFF9D80CB),
+        Color(0xFF1E88E5),
+        Color(0xFFD81B60),
+        Color(0xFF9C27B0),
     ),
 )
 
 val androidTopBarTitleGradientColors = GradientColors(
     topBarTitleColorsDefault = listOf(
-        Color(0xFFCEE26B),
-        Color(0xFFA8D26D),
-        Color(0xFF5CB270),
+        Color(0xFFFDD835),
+        Color(0xFF00ACC1),
+        Color(0xFF4CAF50),
     ),
 )
 
