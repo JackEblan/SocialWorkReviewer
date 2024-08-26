@@ -21,6 +21,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.eblan.socialworkreviewer.feature.about.navigation.aboutScreen
+import com.eblan.socialworkreviewer.feature.about.navigation.navigateToAboutScreen
 import com.eblan.socialworkreviewer.feature.announcement.navigation.announcementScreen
 import com.eblan.socialworkreviewer.feature.announcement.navigation.navigateToAnnouncementScreen
 import com.eblan.socialworkreviewer.feature.category.navigation.CategoryRouteData
@@ -41,6 +43,7 @@ fun SwrNavHost(modifier: Modifier = Modifier) {
         CategoryDestination(),
         AnnouncementDestination(),
         SettingsDestination(),
+        AboutDestination(),
     )
 
     NavHost(
@@ -56,6 +59,7 @@ fun SwrNavHost(modifier: Modifier = Modifier) {
                     is CategoryDestination -> homeNavHostController.navigateToCategoryScreen()
                     is AnnouncementDestination -> homeNavHostController.navigateToAnnouncementScreen()
                     is SettingsDestination -> homeNavHostController.navigateToSettings()
+                    is AboutDestination -> homeNavHostController.navigateToAboutScreen()
                 }
             },
             builder = {
@@ -64,6 +68,8 @@ fun SwrNavHost(modifier: Modifier = Modifier) {
                 announcementScreen()
 
                 settingsScreen()
+
+                aboutScreen()
             },
         )
 

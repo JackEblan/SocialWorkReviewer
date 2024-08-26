@@ -40,6 +40,7 @@ include(":core:screenshot-testing")
 include(":core:testing")
 include(":core:ui")
 
+include(":feature:about")
 include(":feature:announcement")
 include(":feature:category")
 include(":feature:home")
@@ -47,5 +48,6 @@ include(":feature:question")
 include(":feature:settings")
 
 include(":framework:countdown-timer")
+include(":framework:link-parser")
 
 include(":lint")

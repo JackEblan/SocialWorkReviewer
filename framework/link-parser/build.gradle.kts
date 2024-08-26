@@ -18,28 +18,15 @@
 
 plugins {
     alias(libs.plugins.com.eblan.socialworkreviewer.library)
-    alias(libs.plugins.com.eblan.socialworkreviewer.libraryCompose)
+    alias(libs.plugins.com.eblan.socialworkreviewer.libraryJacoco)
     alias(libs.plugins.com.eblan.socialworkreviewer.hilt)
 }
 
 android {
-    namespace = "com.eblan.socialworkreviewer.core.testing"
+    namespace = "com.eblan.socialworkreviewer.framework.linkparser"
 }
 
 dependencies {
-    api(kotlin("test"))
-    api(libs.androidx.compose.ui.test)
-    api(projects.core.data)
-
-    debugApi(libs.androidx.compose.ui.test.manifest)
-
-    implementation(libs.androidx.test.rules)
-    implementation(libs.hilt.android.testing)
-    implementation(libs.kotlinx.coroutines.test)
-
     implementation(projects.core.common)
     implementation(projects.core.model)
-
-    implementation(projects.framework.countdownTimer)
-    implementation(projects.framework.linkParser)
 }

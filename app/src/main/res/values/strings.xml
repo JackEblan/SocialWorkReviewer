@@ -18,6 +18,7 @@
 <resources>
     <string name="app_name">Social Work Reviewer</string>
     <string name="category">Category</string>
-    <string name="announcement">Announcement</string>
+    <string name="announcement">Announce</string>
     <string name="settings">Settings</string>
+    <string name="about">About</string>
 </resources>

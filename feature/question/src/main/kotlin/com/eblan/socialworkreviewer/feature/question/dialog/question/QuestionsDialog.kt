@@ -142,7 +142,7 @@ private fun QuestionsDialogContent(
             modifier = Modifier,
             textAlign = TextAlign.Center,
             text = "Answered ${questionsWithSelectedChoices.size}/${questions.size} questions",
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.bodySmall,
         )
 
         Spacer(modifier = Modifier.height(20.dp))

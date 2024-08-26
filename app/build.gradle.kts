@@ -66,6 +66,7 @@ dependencies {
     implementation(projects.core.designSystem)
     implementation(projects.core.model)
 
+    implementation(projects.feature.about)
     implementation(projects.feature.announcement)
     implementation(projects.feature.category)
     implementation(projects.feature.home)
