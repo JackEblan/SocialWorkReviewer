@@ -15,8 +15,16 @@
  *   limitations under the License.
  *
  */
-package com.eblan.socialworkreviewer.feature.about.navigation
-import kotlinx.serialization.Serializable
+package com.eblan.socialworkreviewer.core.data.repository
 
-@Serializable
-data object AboutRouteData
+import com.eblan.socialworkreviewer.core.model.About
+import com.eblan.socialworkreviewer.core.network.firestore.AboutDataSource
+import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
+
+internal class DefaultAboutRepository @Inject constructor(private val aboutDataSource: AboutDataSource) :
+    AboutRepository {
+    override fun getAbouts(): Flow<List<About>> {
+        return aboutDataSource.getAboutDocuments()
+    }
+}

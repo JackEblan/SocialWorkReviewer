@@ -15,8 +15,19 @@
  *   limitations under the License.
  *
  */
-package com.eblan.socialworkreviewer.feature.about.navigation
-import kotlinx.serialization.Serializable
+package com.eblan.socialworkreviewer.core.network.model
 
-@Serializable
-data object AboutRouteData
+import androidx.annotation.Keep
+import com.google.firebase.Timestamp
+
+@NoArg
+@Keep
+data class AboutDocument(
+    val id: String?,
+    val date: Timestamp?,
+    val imageUrl: String?,
+    val title: String?,
+    val name: String?,
+    val message: String?,
+    val links: List<String>?,
+)

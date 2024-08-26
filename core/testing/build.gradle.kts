@@ -41,4 +41,5 @@ dependencies {
     implementation(projects.core.model)
 
     implementation(projects.framework.countdownTimer)
+    implementation(projects.framework.linkParser)
 }

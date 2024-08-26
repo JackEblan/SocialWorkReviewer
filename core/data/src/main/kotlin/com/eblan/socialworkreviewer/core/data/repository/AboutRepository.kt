@@ -15,8 +15,11 @@
  *   limitations under the License.
  *
  */
-package com.eblan.socialworkreviewer.feature.about.navigation
-import kotlinx.serialization.Serializable
+package com.eblan.socialworkreviewer.core.data.repository
 
-@Serializable
-data object AboutRouteData
+import com.eblan.socialworkreviewer.core.model.About
+import kotlinx.coroutines.flow.Flow
+
+interface AboutRepository {
+    fun getAbouts(): Flow<List<About>>
+}

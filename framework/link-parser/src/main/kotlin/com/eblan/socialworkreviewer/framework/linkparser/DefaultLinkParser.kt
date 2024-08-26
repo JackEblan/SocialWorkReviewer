@@ -15,26 +15,24 @@
  *   limitations under the License.
  *
  */
-package com.eblan.socialworkreviewer.feature.about.navigation
+package com.eblan.socialworkreviewer.framework.linkparser
 
-import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
-import com.eblan.socialworkreviewer.feature.about.AboutRoute
+import android.content.Context
+import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+import android.net.Uri
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-fun NavController.navigateToAboutScreen() {
-    navigate(AboutRouteData) {
-        popUpTo(graph.findStartDestination().id) {
-            saveState = true
+internal class DefaultLinkParser @Inject constructor(@ApplicationContext private val context: Context) :
+    LinkParser {
+    override fun openLink(url: String) {
+        val intent = Intent().apply {
+            action = Intent.ACTION_VIEW
+            data = Uri.parse(url)
+            flags = FLAG_ACTIVITY_NEW_TASK
         }
-        launchSingleTop = true
-        restoreState = true
-    }
-}
 
-fun NavGraphBuilder.aboutScreen() {
-    composable<AboutRouteData> {
-        AboutRoute()
+        context.startActivity(intent)
     }
 }

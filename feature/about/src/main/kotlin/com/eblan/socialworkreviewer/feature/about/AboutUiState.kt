@@ -15,8 +15,12 @@
  *   limitations under the License.
  *
  */
-package com.eblan.socialworkreviewer.feature.about.navigation
-import kotlinx.serialization.Serializable
+package com.eblan.socialworkreviewer.feature.about
 
-@Serializable
-data object AboutRouteData
+import com.eblan.socialworkreviewer.core.model.About
+
+sealed interface AboutUiState {
+    data class Success(val abouts: List<About>) : AboutUiState
+
+    data object Loading : AboutUiState
+}

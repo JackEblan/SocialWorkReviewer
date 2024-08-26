@@ -29,7 +29,7 @@ android {
 
 dependencies {
     implementation(projects.core.data)
-    implementation(projects.core.domain)
+    implementation(projects.framework.linkParser)
 
     testImplementation(libs.hilt.android.testing)
     testImplementation(libs.robolectric)

@@ -15,8 +15,13 @@
  *   limitations under the License.
  *
  */
-package com.eblan.socialworkreviewer.feature.about.navigation
-import kotlinx.serialization.Serializable
+package com.eblan.socialworkreviewer.core.model
 
-@Serializable
-data object AboutRouteData
+data class About(
+    val id: String,
+    val imageUrl: String,
+    val title: String,
+    val name: String,
+    val message: String,
+    val links: List<String>,
+)

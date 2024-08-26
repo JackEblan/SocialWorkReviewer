@@ -1,9 +1,30 @@
+/*
+ *
+ *   Copyright 2023 Einstein Blanco
+ *
+ *   Licensed under the GNU General Public License v3.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       https://www.gnu.org/licenses/gpl-3.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ */
 package com.eblan.socialworkreviewer.feature.about
 
-import androidx.annotation.DrawableRes
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,86 +33,108 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
+import com.eblan.socialworkreviewer.core.designsystem.component.SwrLoadingWheel
 import com.eblan.socialworkreviewer.core.designsystem.icon.Swr
+import com.eblan.socialworkreviewer.core.model.About
 
 @Composable
-internal fun AboutScreen(modifier: Modifier = Modifier) {
-    val scrollState: ScrollState = rememberScrollState()
+internal fun AboutRoute(
+    modifier: Modifier = Modifier,
+    viewModel: AboutViewModel = hiltViewModel(),
+) {
+    val aboutUiState = viewModel.aboutUiState.collectAsStateWithLifecycle().value
 
-    Column(
+    AboutScreen(modifier = modifier, aboutUiState = aboutUiState, onLinkCLick = viewModel::openLink)
+}
+
+@Composable
+internal fun AboutScreen(
+    modifier: Modifier = Modifier,
+    aboutUiState: AboutUiState,
+    onLinkCLick: (String) -> Unit,
+) {
+    Box(
         modifier = modifier
             .fillMaxSize()
-            .verticalScroll(scrollState)
             .testTag("about"),
     ) {
-        Details(
-            image = R.drawable.eblan,
-            title = "Social Work Reviewer",
-            name = "1.0",
-            message = "Your best companion app in preparing for your Licensure Exam for Social Work",
-            links = listOf(
-                "https://github.com/JackEblan/SocialWorkReviewer", "www.google.com",
-            ),
-            onLinkCLick = {},
-        )
+        when (aboutUiState) {
+            AboutUiState.Loading -> LoadingState(
+                modifier = Modifier.align(Alignment.Center),
+            )
 
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Details(
-            image = R.drawable.patrick,
-            title = "Owned and Maintained by",
-            name = "Patrick Allain Atilano",
-            message = "Enjoy your life",
-            links = listOf(
-                "https://www.facebook.com/ItsMePatikok",
-                "https://github.com/Patikok-Softworks",
-            ),
-            onLinkCLick = {},
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Details(
-            image = R.drawable.eblan,
-            title = "Developed by",
-            name = "Eblan",
-            message = "An idiot admires complexity. A genius admires simplicity",
-            links = listOf(
-                "https://www.facebook.com/profile.php?id=61560918532193",
-                "https://github.com/JackEblan",
-            ),
-            onLinkCLick = {},
-        )
+            is AboutUiState.Success -> {
+                if (aboutUiState.abouts.isNotEmpty()) {
+                    SuccessState(
+                        modifier = modifier,
+                        aboutUiState = aboutUiState,
+                        onLinkCLick = onLinkCLick,
+                    )
+                } else {
+                    EmptyState(text = "No Information found!")
+                }
+            }
+        }
     }
 }
 
 @Composable
-private fun Details(
+private fun SuccessState(
     modifier: Modifier = Modifier,
-    @DrawableRes image: Int,
-    title: String,
-    name: String,
-    message: String,
-    links: List<String>,
+    aboutUiState: AboutUiState.Success,
+    onLinkCLick: (String) -> Unit,
+) {
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Adaptive(300.dp),
+        modifier = modifier
+            .fillMaxSize()
+            .testTag("about:lazyVerticalGrid"),
+    ) {
+        items(
+            aboutUiState.abouts,
+            key = { about ->
+                about.id
+            },
+        ) { about ->
+            AboutItem(modifier = Modifier.animateItem(), about = about, onLinkCLick = onLinkCLick)
+        }
+    }
+}
+
+@Composable
+private fun AboutItem(
+    modifier: Modifier = Modifier,
+    about: About,
     onLinkCLick: (String) -> Unit,
 ) {
     OutlinedCard(
@@ -106,27 +149,20 @@ private fun Details(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Image(
-                modifier = Modifier
-                    .size(50.dp)
-                    .clip(CircleShape),
-                bitmap = ImageBitmap.imageResource(id = image),
-                contentDescription = "",
-                contentScale = ContentScale.Crop,
-            )
+            AboutImage(headerImageUrl = about.imageUrl)
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            Text(text = title, style = MaterialTheme.typography.bodySmall)
+            Text(text = about.title, style = MaterialTheme.typography.bodySmall)
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            Text(text = name)
+            Text(text = about.name)
 
             Spacer(modifier = Modifier.height(10.dp))
 
             Text(
-                text = message,
+                text = about.message,
                 fontStyle = FontStyle.Italic,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodySmall,
@@ -134,7 +170,7 @@ private fun Details(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            WebLinks(links = links, onLinkCLick = onLinkCLick)
+            WebLinks(links = about.links, onLinkCLick = onLinkCLick)
         }
     }
 }
@@ -163,4 +199,92 @@ private fun WebLinks(
             }
         }
     }
+}
+
+@Composable
+private fun AboutImage(
+    headerImageUrl: String?,
+) {
+    var isLoading by remember { mutableStateOf(true) }
+
+    var isError by remember { mutableStateOf(false) }
+
+    val imageLoader = rememberAsyncImagePainter(
+        model = headerImageUrl,
+        onState = { state ->
+            isLoading = state is AsyncImagePainter.State.Loading
+            isError = state is AsyncImagePainter.State.Error
+        },
+    )
+    val isLocalInspection = LocalInspectionMode.current
+
+    val transition = rememberInfiniteTransition(label = "Transition")
+
+    val lightGrayAnimation by transition.animateColor(
+        initialValue = Color.LightGray.copy(alpha = 0.2f),
+        targetValue = Color.LightGray,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 800),
+            repeatMode = RepeatMode.Reverse,
+        ),
+        label = "LightGrayAnimation",
+    )
+
+    Box(
+        modifier = Modifier
+            .size(50.dp)
+            .clip(CircleShape),
+        contentAlignment = Alignment.Center,
+    ) {
+        Image(
+            modifier = Modifier
+                .size(50.dp)
+                .clip(CircleShape)
+                .drawBehind {
+                    drawRect(
+                        color = if (isLoading) lightGrayAnimation else Color.Transparent,
+                        size = size,
+                    )
+                },
+            contentScale = ContentScale.Crop,
+            painter = if (isError.not() && isLocalInspection.not()) {
+                imageLoader
+            } else {
+                painterResource(com.eblan.socialworkreviewer.core.designsystem.R.drawable.ic_placeholder)
+            },
+            contentDescription = null,
+        )
+    }
+}
+
+@Composable
+private fun EmptyState(
+    modifier: Modifier = Modifier,
+    text: String,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .testTag("about:emptyListPlaceHolderScreen"),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Icon(
+            imageVector = Swr.Info,
+            contentDescription = null,
+            modifier = Modifier.size(100.dp),
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Text(text = text, style = MaterialTheme.typography.bodyLarge)
+    }
+}
+
+@Composable
+private fun LoadingState(modifier: Modifier = Modifier) {
+    SwrLoadingWheel(
+        modifier = modifier,
+        contentDescription = "SwrLoadingWheel",
+    )
 }

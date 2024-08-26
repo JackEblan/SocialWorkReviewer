@@ -17,10 +17,12 @@
  */
 package com.eblan.socialworkreviewer.core.data.di
 
+import com.eblan.socialworkreviewer.core.data.repository.AboutRepository
 import com.eblan.socialworkreviewer.core.data.repository.AnnouncementRepository
 import com.eblan.socialworkreviewer.core.data.repository.AverageRepository
 import com.eblan.socialworkreviewer.core.data.repository.CategoryRepository
 import com.eblan.socialworkreviewer.core.data.repository.ChoiceRepository
+import com.eblan.socialworkreviewer.core.data.repository.DefaultAboutRepository
 import com.eblan.socialworkreviewer.core.data.repository.DefaultAnnouncementRepository
 import com.eblan.socialworkreviewer.core.data.repository.DefaultAverageRepository
 import com.eblan.socialworkreviewer.core.data.repository.DefaultCategoryRepository
@@ -62,4 +64,8 @@ abstract class DataModule {
     @Binds
     @Singleton
     internal abstract fun announcementRepository(impl: DefaultAnnouncementRepository): AnnouncementRepository
+
+    @Binds
+    @Singleton
+    internal abstract fun aboutRepository(impl: DefaultAboutRepository): AboutRepository
 }

@@ -15,8 +15,19 @@
  *   limitations under the License.
  *
  */
-package com.eblan.socialworkreviewer.feature.about.navigation
-import kotlinx.serialization.Serializable
+package com.eblan.socialworkreviewer.framework.linkparser
 
-@Serializable
-data object AboutRouteData
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+internal interface LinkParserModule {
+
+    @Binds
+    @Singleton
+    fun linkParser(impl: DefaultLinkParser): LinkParser
+}
