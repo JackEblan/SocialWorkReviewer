@@ -83,14 +83,14 @@ internal fun HomeScreen(
             }
         },
     ) {
-        Scaffold(
+         Scaffold(
             topBar = {
                 HomeLargeTopAppBar(
                     title = stringResource(id = topBarTitleStringResource),
                     topAppBarScrollBehavior = topAppBarScrollBehavior,
                 )
             },
-        ) { paddingValues ->
+        ) {paddingValues ->
             NavHost(
                 modifier = modifier
                     .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
