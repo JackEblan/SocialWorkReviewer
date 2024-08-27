@@ -142,6 +142,8 @@ jobs:
     strategy:
       matrix:
         api-level: [ 26, 30 ]
+    permissions:
+      pull-requests: write
 
     steps:
       - name: Delete unnecessary tools 🔧

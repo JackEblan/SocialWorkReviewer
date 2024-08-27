@@ -30,4 +30,8 @@ data class AboutDocument(
     val name: String?,
     val message: String?,
     val links: List<String>?,
-)
+) {
+    companion object {
+        const val DATE = "date"
+    }
+}

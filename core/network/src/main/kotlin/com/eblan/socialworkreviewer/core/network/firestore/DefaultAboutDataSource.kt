@@ -21,7 +21,7 @@ import com.eblan.socialworkreviewer.core.model.About
 import com.eblan.socialworkreviewer.core.network.firestore.AboutDataSource.Companion.ABOUTS_COLLECTION
 import com.eblan.socialworkreviewer.core.network.mapper.toAbout
 import com.eblan.socialworkreviewer.core.network.model.AboutDocument
-import com.eblan.socialworkreviewer.core.network.model.AnnouncementDocument.Companion.DATE
+import com.eblan.socialworkreviewer.core.network.model.AboutDocument.Companion.DATE
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.snapshots
