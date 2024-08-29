@@ -19,7 +19,14 @@ package com.eblan.socialworkreviewer.core.testing.linkparser
 
 import com.eblan.socialworkreviewer.framework.linkparser.LinkParser
 
-class DummyLinkParser : LinkParser {
-    override fun openLink(url: String) {
+class FakeLinkParser : LinkParser {
+    private var _openLink = false
+
+    override fun openLink(url: String): Boolean {
+        return _openLink
+    }
+
+    fun setOpenLInk(value: Boolean) {
+        _openLink = value
     }
 }
