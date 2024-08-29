@@ -10,6 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
 
+    permissions:
+      contents: write
+
     steps:
       - name: Enable KVM group perms
         run: |
@@ -89,9 +92,6 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-          token: ${{ secrets.GITHUB_TOKEN }}
           files: |
             app/build/outputs/apk/release/swr-${{ github.ref_name }}.apk
             app/build/outputs/bundle/release/swr-${{ github.ref_name }}.aab
