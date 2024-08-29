@@ -33,8 +33,8 @@ fun NavController.navigateToAboutScreen() {
     }
 }
 
-fun NavGraphBuilder.aboutScreen() {
+fun NavGraphBuilder.aboutScreen(onShowSnackBar: (String) -> Unit) {
     composable<AboutRouteData> {
-        AboutRoute()
+        AboutRoute(onShowSnackBar = onShowSnackBar)
     }
 }

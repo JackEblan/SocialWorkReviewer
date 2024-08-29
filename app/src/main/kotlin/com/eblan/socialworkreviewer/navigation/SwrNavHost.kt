@@ -17,7 +17,10 @@
  */
 package com.eblan.socialworkreviewer.navigation
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
@@ -34,10 +37,17 @@ import com.eblan.socialworkreviewer.feature.question.navigation.navigateToQuesti
 import com.eblan.socialworkreviewer.feature.question.navigation.questionScreen
 import com.eblan.socialworkreviewer.feature.settings.navigation.navigateToSettings
 import com.eblan.socialworkreviewer.feature.settings.navigation.settingsScreen
+import kotlinx.coroutines.launch
 
 @Composable
 fun SwrNavHost(modifier: Modifier = Modifier) {
     val swrNavHostController = rememberNavController()
+
+    val snackbarHostState = remember {
+        SnackbarHostState()
+    }
+
+    val scope = rememberCoroutineScope()
 
     val topLevelDestinations = listOf(
         CategoryDestination(),
@@ -52,6 +62,7 @@ fun SwrNavHost(modifier: Modifier = Modifier) {
         startDestination = HomeRouteData::class,
     ) {
         homeScreen(
+            snackbarHostState = snackbarHostState,
             topLevelDestinations = topLevelDestinations,
             startDestination = CategoryRouteData::class,
             onItemClick = { homeNavHostController, homeDestination ->
@@ -69,7 +80,13 @@ fun SwrNavHost(modifier: Modifier = Modifier) {
 
                 settingsScreen()
 
-                aboutScreen()
+                aboutScreen(
+                    onShowSnackBar = { message ->
+                        scope.launch {
+                            snackbarHostState.showSnackbar(message = message)
+                        }
+                    },
+                )
             },
         )
 

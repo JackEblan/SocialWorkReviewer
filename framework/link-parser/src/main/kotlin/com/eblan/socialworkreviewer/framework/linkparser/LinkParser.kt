@@ -18,5 +18,5 @@
 package com.eblan.socialworkreviewer.framework.linkparser
 
 interface LinkParser {
-    fun openLink(url: String)
+    fun openLink(url: String): Boolean
 }

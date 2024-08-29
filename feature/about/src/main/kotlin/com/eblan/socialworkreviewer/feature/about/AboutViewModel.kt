@@ -22,9 +22,12 @@ import androidx.lifecycle.viewModelScope
 import com.eblan.socialworkreviewer.core.data.repository.AboutRepository
 import com.eblan.socialworkreviewer.framework.linkparser.LinkParser
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,7 +41,18 @@ class AboutViewModel @Inject constructor(
         initialValue = AboutUiState.Loading,
     )
 
+    private val _openLinkResult = MutableStateFlow<Boolean?>(null)
+    val openLinkResult = _openLinkResult.asStateFlow()
+
     fun openLink(url: String) {
-        linkParser.openLink(url = url)
+        _openLinkResult.update {
+            linkParser.openLink(url = url)
+        }
+    }
+
+    fun resetOpenLinkResult() {
+        _openLinkResult.update {
+            null
+        }
     }
 }

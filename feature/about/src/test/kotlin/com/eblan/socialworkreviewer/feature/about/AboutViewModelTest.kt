@@ -18,7 +18,7 @@
 package com.eblan.socialworkreviewer.feature.about
 
 import com.eblan.socialworkreviewer.core.model.About
-import com.eblan.socialworkreviewer.core.testing.linkparser.DummyLinkParser
+import com.eblan.socialworkreviewer.core.testing.linkparser.FakeLinkParser
 import com.eblan.socialworkreviewer.core.testing.repository.FakeAboutRepository
 import com.eblan.socialworkreviewer.core.testing.util.MainDispatcherRule
 import kotlinx.coroutines.flow.collect
@@ -28,7 +28,9 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import kotlin.test.Test
+import kotlin.test.assertFalse
 import kotlin.test.assertIs
+import kotlin.test.assertTrue
 
 class AboutViewModelTest {
     @get:Rule
@@ -36,7 +38,7 @@ class AboutViewModelTest {
 
     private lateinit var aboutRepository: FakeAboutRepository
 
-    private lateinit var linkParser: DummyLinkParser
+    private lateinit var linkParser: FakeLinkParser
 
     private lateinit var viewModel: AboutViewModel
 
@@ -44,7 +46,7 @@ class AboutViewModelTest {
     fun setup() {
         aboutRepository = FakeAboutRepository()
 
-        linkParser = DummyLinkParser()
+        linkParser = FakeLinkParser()
 
         viewModel = AboutViewModel(aboutRepository = aboutRepository, linkParser = linkParser)
     }
@@ -74,5 +76,23 @@ class AboutViewModelTest {
         assertIs<AboutUiState.Success>(viewModel.aboutUiState.value)
 
         collectJob.cancel()
+    }
+
+    @Test
+    fun openLink_isTrue() = runTest {
+        linkParser.setOpenLInk(true)
+
+        viewModel.openLink("")
+
+        assertTrue(viewModel.openLinkResult.value!!)
+    }
+
+    @Test
+    fun openLink_isFalse() = runTest {
+        linkParser.setOpenLInk(false)
+
+        viewModel.openLink("")
+
+        assertFalse(viewModel.openLinkResult.value!!)
     }
 }

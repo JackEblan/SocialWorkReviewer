@@ -17,6 +17,7 @@
  */
 package com.eblan.socialworkreviewer.framework.linkparser
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
@@ -26,13 +27,18 @@ import javax.inject.Inject
 
 internal class DefaultLinkParser @Inject constructor(@ApplicationContext private val context: Context) :
     LinkParser {
-    override fun openLink(url: String) {
+    override fun openLink(url: String): Boolean {
         val intent = Intent().apply {
             action = Intent.ACTION_VIEW
             data = Uri.parse(url)
             flags = FLAG_ACTIVITY_NEW_TASK
         }
 
-        context.startActivity(intent)
+        return try {
+            context.startActivity(intent)
+            true
+        } catch (_: ActivityNotFoundException) {
+            false
+        }
     }
 }
