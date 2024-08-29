@@ -91,6 +91,7 @@ jobs:
 
       - name: Release
         uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
             app/build/outputs/apk/release/swr-${{ github.ref_name }}.apk
