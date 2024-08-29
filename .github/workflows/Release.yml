@@ -2,8 +2,8 @@ name: Release
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - 'aab-gha'
 
 jobs:
   build:
@@ -49,8 +49,8 @@ jobs:
           cat /home/runner/work/SocialWorkReviewer/SocialWorkReviewer/app/google-services.json | base64
           echo $DATA > /home/runner/work/SocialWorkReviewer/SocialWorkReviewer/app/google-services.json
 
-      - name: Build release variant including baseline profile generation
-        run: ./gradlew :app:assembleRelease
+      - name: Build release variant including baseline profile generation and aab
+        run: ./gradlew :app:assembleRelease :app:bundleRelease
           -Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules=BaselineProfile
           -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect"
           -Pandroid.experimental.testOptions.managedDevices.emulator.showKernelLogging=true
@@ -69,26 +69,30 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: "34.0.0"
 
-      - name: Rename signed APK
-        run: mv ${{steps.sign_release_apk.outputs.signedReleaseFile}} app/build/outputs/apk/release/geto-${{ github.ref_name }}.apk
+      - name: Sign release AAB
+        uses: r0adkll/sign-android-release@v1
+        id: sign_release_aab
+        with:
+          releaseDirectory: app/build/outputs/bundle/release
+          signingKeyBase64: ${{ secrets.SIGNING_KEY_BASE64 }}
+          alias: ${{ secrets.SIGNING_KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.SIGNING_KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        env:
+          BUILD_TOOLS_VERSION: "34.0.0"
 
-      - name: Create release
-        id: create_release
-        uses: actions/create-release@v1
+      - name: Rename signed Files
+        run: |
+          mv ${{steps.sign_release_apk.outputs.signedReleaseFile}} app/build/outputs/apk/release/swr-${{ github.ref_name }}.apk
+          mv ${{steps.sign_release_aab.outputs.signedReleaseFile}} app/build/outputs/bundle/release/swr-${{ github.ref_name }}.aab
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
-          draft: false
-          prerelease: false
-
-      - name: Upload release asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: app/build/outputs/apk/release/geto-${{ github.ref_name }}.apk
-          asset_name: geto-${{ github.ref_name }}.apk
-          asset_content_type: application/vnd.android.package-archive
+          files: |
+            app/build/outputs/apk/release/swr-${{ github.ref_name }}.apk
+            app/build/outputs/bundle/release/swr-${{ github.ref_name }}.aab
