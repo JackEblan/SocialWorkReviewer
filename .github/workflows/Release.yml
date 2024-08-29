@@ -49,7 +49,7 @@ jobs:
           cat /home/runner/work/SocialWorkReviewer/SocialWorkReviewer/app/google-services.json | base64
           echo $DATA > /home/runner/work/SocialWorkReviewer/SocialWorkReviewer/app/google-services.json
 
-      - name: Build release variant including baseline profile generation and aab
+      - name: Build release variant including baseline profile generation
         run: ./gradlew :app:assembleRelease :app:bundleRelease
           -Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules=BaselineProfile
           -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect"
