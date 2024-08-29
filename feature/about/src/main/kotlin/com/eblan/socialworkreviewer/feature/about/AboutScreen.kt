@@ -43,6 +43,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -71,8 +72,18 @@ import com.eblan.socialworkreviewer.core.model.About
 internal fun AboutRoute(
     modifier: Modifier = Modifier,
     viewModel: AboutViewModel = hiltViewModel(),
+    onShowSnackBar: (String) -> Unit,
 ) {
     val aboutUiState = viewModel.aboutUiState.collectAsStateWithLifecycle().value
+
+    val openLinkResult = viewModel.openLinkResult.collectAsStateWithLifecycle().value
+
+    LaunchedEffect(key1 = openLinkResult) {
+        if (openLinkResult != null && openLinkResult.not()) {
+            onShowSnackBar("Invalid link")
+            viewModel.resetOpenLinkResult()
+        }
+    }
 
     AboutScreen(modifier = modifier, aboutUiState = aboutUiState, onLinkCLick = viewModel::openLink)
 }

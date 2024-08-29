@@ -24,6 +24,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -50,6 +52,7 @@ import kotlin.reflect.KClass
 @Composable
 internal fun HomeScreen(
     modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState,
     navController: NavHostController = rememberNavController(),
     topLevelDestinations: List<HomeDestination>,
     startDestination: KClass<*>,
@@ -89,6 +92,9 @@ internal fun HomeScreen(
                     title = stringResource(id = topBarTitleStringResource),
                     topAppBarScrollBehavior = topAppBarScrollBehavior,
                 )
+            },
+            snackbarHost = {
+                SnackbarHost(hostState = snackbarHostState)
             },
         ) { paddingValues ->
             NavHost(
