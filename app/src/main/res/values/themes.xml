@@ -19,7 +19,6 @@
 
     <style name="NightAdjusted.Theme.SocialWorkReviewer" parent="android:Theme.Material.Light.NoActionBar" />
 
-    <!-- The final theme we use -->
     <style name="Theme.SocialWorkReviewer" parent="NightAdjusted.Theme.SocialWorkReviewer" />
 
     <style name="NightAdjusted.Theme.Splash" parent="Theme.SplashScreen">
@@ -28,7 +27,7 @@
     </style>
 
     <style name="Theme.SocialWorkReviewer.Splash" parent="NightAdjusted.Theme.Splash">
-        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
         <item name="windowSplashScreenAnimationDuration">1000</item>
         <item name="postSplashScreenTheme">@style/Theme.SocialWorkReviewer</item>
     </style>
