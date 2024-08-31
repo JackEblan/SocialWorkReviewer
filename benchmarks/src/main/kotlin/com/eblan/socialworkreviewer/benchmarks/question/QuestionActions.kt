@@ -15,12 +15,24 @@
  *   limitations under the License.
  *
  */
-package com.eblan.socialworkreviewer.benchmarks
+package com.eblan.socialworkreviewer.benchmarks.question
 
 import androidx.benchmark.macro.MacrobenchmarkScope
 import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Until
+import com.eblan.socialworkreviewer.benchmarks.flingElementDownUp
 
-fun MacrobenchmarkScope.waitForLoadingWheelToDisappear() {
-    device.wait(Until.gone(By.res("SwrLoadingWheel")), 5_000)
+fun MacrobenchmarkScope.onBoardingScrollDownUp() {
+    val questionModes = device.findObject(By.res("question:onBoarding:lazyVerticalStaggeredGrid"))
+    device.flingElementDownUp(questionModes)
+}
+
+fun MacrobenchmarkScope.onBoardingClickFirstItem() {
+    val questionModes = device.findObject(By.res("question:onBoarding:lazyVerticalStaggeredGrid"))
+    val firstItem = questionModes.findObject(By.res("question:onBoarding:onBoardingItem"))
+    firstItem.click()
+}
+
+fun MacrobenchmarkScope.showQuestionDialog() {
+    val fab = device.findObject(By.desc("Check Button"))
+    fab.click()
 }

@@ -38,7 +38,7 @@ internal fun LoadingScreen(modifier: Modifier = Modifier) {
         ) {
             SwrLoadingWheel(
                 modifier = Modifier.align(Alignment.Center),
-                contentDescription = "SocialWorkReviewerLoadingWheel",
+                contentDescription = "SwrLoadingWheel",
             )
         }
     }

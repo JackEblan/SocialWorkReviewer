@@ -15,12 +15,20 @@
  *   limitations under the License.
  *
  */
-package com.eblan.socialworkreviewer.benchmarks
+package com.eblan.socialworkreviewer.benchmarks.announcement
 
 import androidx.benchmark.macro.MacrobenchmarkScope
 import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Until
+import com.eblan.socialworkreviewer.benchmarks.flingElementDownUp
 
-fun MacrobenchmarkScope.waitForLoadingWheelToDisappear() {
-    device.wait(Until.gone(By.res("SwrLoadingWheel")), 5_000)
+fun MacrobenchmarkScope.announcementScrollDownUp() {
+    val announcements = device.findObject(By.res("announcement:lazyVerticalStaggeredGrid"))
+    device.flingElementDownUp(announcements)
+}
+
+fun MacrobenchmarkScope.navigateToAnnouncementScreen() {
+    val announcementSelector = By.text("Announce")
+    val announcementButton = device.findObject(announcementSelector)
+    announcementButton.click()
+    device.waitForIdle()
 }

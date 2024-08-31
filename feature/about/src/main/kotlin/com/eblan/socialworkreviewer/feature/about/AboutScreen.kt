@@ -49,6 +49,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
@@ -57,6 +58,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -88,6 +91,7 @@ internal fun AboutRoute(
     AboutScreen(modifier = modifier, aboutUiState = aboutUiState, onLinkCLick = viewModel::openLink)
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 internal fun AboutScreen(
     modifier: Modifier = Modifier,
@@ -97,6 +101,9 @@ internal fun AboutScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
+            .semantics {
+                testTagsAsResourceId = true
+            }
             .testTag("about"),
     ) {
         when (aboutUiState) {
@@ -129,7 +136,7 @@ private fun SuccessState(
         columns = StaggeredGridCells.Adaptive(300.dp),
         modifier = modifier
             .fillMaxSize()
-            .testTag("about:lazyVerticalGrid"),
+            .testTag("about:lazyVerticalStaggeredGrid"),
     ) {
         items(
             aboutUiState.abouts,

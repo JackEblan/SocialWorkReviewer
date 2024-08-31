@@ -98,7 +98,8 @@ internal fun SuccessOnBoardingScreen(
         LazyVerticalGrid(
             modifier = modifier
                 .fillMaxSize()
-                .nestedScroll(scrollBehavior.nestedScrollConnection),
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
+                .testTag("question:onBoarding:lazyVerticalStaggeredGrid"),
             columns = GridCells.Adaptive(300.dp),
             contentPadding = paddingValues,
         ) {
@@ -112,7 +113,7 @@ internal fun SuccessOnBoardingScreen(
                         )
                     },
                 ) {
-                    QuestionSettingItem(questionSetting = questionSetting)
+                    OnBoardingItem(questionSetting = questionSetting)
                 }
             }
         }
@@ -120,11 +121,12 @@ internal fun SuccessOnBoardingScreen(
 }
 
 @Composable
-private fun QuestionSettingItem(modifier: Modifier = Modifier, questionSetting: QuestionSetting) {
+private fun OnBoardingItem(modifier: Modifier = Modifier, questionSetting: QuestionSetting) {
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(10.dp),
+            .padding(10.dp)
+            .testTag("question:onBoarding:onBoardingItem"),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),

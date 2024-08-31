@@ -73,11 +73,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.unit.dp
@@ -130,6 +133,7 @@ internal fun QuestionRoute(
     )
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @VisibleForTesting
 @Composable
 internal fun QuestionScreen(
@@ -148,7 +152,7 @@ internal fun QuestionScreen(
     onQuitQuestions: () -> Unit,
 ) {
     AnimatedContent(
-        modifier = modifier,
+        modifier = modifier.semantics { testTagsAsResourceId = true },
         targetState = questionUiState,
         label = "",
         transitionSpec = {
@@ -324,7 +328,7 @@ private fun Questions(
                 ) {
                     Icon(
                         imageVector = Swr.Check,
-                        contentDescription = "",
+                        contentDescription = "Check Button",
                     )
                 }
             }
