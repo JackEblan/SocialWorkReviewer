@@ -15,12 +15,19 @@
  *   limitations under the License.
  *
  */
-package com.eblan.socialworkreviewer.benchmarks
+package com.eblan.socialworkreviewer.benchmarks.category
 
 import androidx.benchmark.macro.MacrobenchmarkScope
 import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Until
+import com.eblan.socialworkreviewer.benchmarks.flingElementDownUp
 
-fun MacrobenchmarkScope.waitForLoadingWheelToDisappear() {
-    device.wait(Until.gone(By.res("SwrLoadingWheel")), 5_000)
+fun MacrobenchmarkScope.categoryScrollDownUp() {
+    val categories = device.findObject(By.res("category:lazyVerticalStaggeredGrid"))
+    device.flingElementDownUp(categories)
+}
+
+fun MacrobenchmarkScope.categoryClickFirstItem() {
+    val categories = device.findObject(By.res("category:lazyVerticalStaggeredGrid"))
+    val firstItem = categories.findObject(By.res("category:categoryItem"))
+    firstItem.click()
 }

@@ -112,7 +112,7 @@ private fun SuccessState(
         columns = StaggeredGridCells.Adaptive(300.dp),
         modifier = modifier
             .fillMaxSize()
-            .testTag("announcement:lazyVerticalGrid"),
+            .testTag("announcement:lazyVerticalStaggeredGrid"),
     ) {
         items(
             announcementUiState.announcements,

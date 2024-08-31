@@ -139,7 +139,7 @@ private fun SuccessState(
         columns = StaggeredGridCells.Adaptive(300.dp),
         modifier = modifier
             .fillMaxSize()
-            .testTag("category:lazyVerticalGrid"),
+            .testTag("category:lazyVerticalStaggeredGrid"),
     ) {
         items(
             categoryUiState.categories,
