@@ -50,6 +50,7 @@
             <option value="$PROJECT_DIR$/framework" />
             <option value="$PROJECT_DIR$/framework/countdown-timer" />
             <option value="$PROJECT_DIR$/framework/link-parser" />
+            <option value="$PROJECT_DIR$/framework/network-monitor" />
             <option value="$PROJECT_DIR$/lint" />
           </set>
         </option>

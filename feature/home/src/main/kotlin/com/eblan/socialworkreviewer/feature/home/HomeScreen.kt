@@ -31,11 +31,14 @@ import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -48,6 +51,33 @@ import com.eblan.socialworkreviewer.core.designsystem.theme.LocalGradientColors
 import com.eblan.socialworkreviewer.feature.home.navigation.HomeDestination
 import kotlin.reflect.KClass
 
+@Composable
+internal fun HomeRoute(
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel = hiltViewModel(),
+    snackbarHostState: SnackbarHostState,
+    navController: NavHostController = rememberNavController(),
+    topLevelDestinations: List<HomeDestination>,
+    startDestination: KClass<*>,
+    onItemClick: (NavHostController, HomeDestination) -> Unit,
+    onShowSnackBar: (String) -> Unit,
+    builder: NavGraphBuilder.() -> Unit,
+) {
+    val isOnline = viewModel.isOnline.collectAsStateWithLifecycle().value
+
+    HomeScreen(
+        modifier = modifier,
+        snackbarHostState = snackbarHostState,
+        navController = navController,
+        topLevelDestinations = topLevelDestinations,
+        startDestination = startDestination,
+        isOnline = isOnline,
+        onItemClick = onItemClick,
+        onShowSnackBar = onShowSnackBar,
+        builder = builder,
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun HomeScreen(
@@ -56,7 +86,9 @@ internal fun HomeScreen(
     navController: NavHostController = rememberNavController(),
     topLevelDestinations: List<HomeDestination>,
     startDestination: KClass<*>,
+    isOnline: Boolean?,
     onItemClick: (NavHostController, HomeDestination) -> Unit,
+    onShowSnackBar: (String) -> Unit,
     builder: NavGraphBuilder.() -> Unit,
 ) {
     val topAppBarScrollBehavior = enterAlwaysScrollBehavior()
@@ -66,6 +98,12 @@ internal fun HomeScreen(
     val topBarTitleStringResource = topLevelDestinations.find { destination ->
         currentDestination.isTopLevelDestinationInHierarchy(destination.route)
     }?.label ?: topLevelDestinations.first().label
+
+    LaunchedEffect(key1 = isOnline) {
+        if (isOnline != null && isOnline.not()) {
+            onShowSnackBar("No internet connection")
+        }
+    }
 
     NavigationSuiteScaffold(
         navigationSuiteItems = {

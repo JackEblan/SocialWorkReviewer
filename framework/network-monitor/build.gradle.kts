@@ -17,27 +17,16 @@
  */
 
 plugins {
-    alias(libs.plugins.com.eblan.socialworkreviewer.feature)
-    alias(libs.plugins.com.eblan.socialworkreviewer.libraryCompose)
+    alias(libs.plugins.com.eblan.socialworkreviewer.library)
     alias(libs.plugins.com.eblan.socialworkreviewer.libraryJacoco)
-    alias(libs.plugins.roborazzi)
+    alias(libs.plugins.com.eblan.socialworkreviewer.hilt)
 }
 
 android {
-    namespace = "com.eblan.socialworkreviewer.feature.home"
+    namespace = "com.eblan.socialworkreviewer.framework.networkmonitor"
 }
 
 dependencies {
-    implementation(projects.framework.networkMonitor)
-
-    implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
-
-    testImplementation(libs.hilt.android.testing)
-    testImplementation(libs.robolectric)
-    testImplementation(projects.core.testing)
-    testImplementation(projects.core.screenshotTesting)
-    testImplementation(libs.roborazzi)
-
-    androidTestImplementation(libs.androidx.navigation.testing)
-    androidTestImplementation(projects.core.testing)
+    implementation(projects.core.common)
+    implementation(projects.core.model)
 }
