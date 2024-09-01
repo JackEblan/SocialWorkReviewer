@@ -49,5 +49,6 @@ include(":feature:settings")
 
 include(":framework:countdown-timer")
 include(":framework:link-parser")
+include(":framework:network-monitor")
 
 include(":lint")

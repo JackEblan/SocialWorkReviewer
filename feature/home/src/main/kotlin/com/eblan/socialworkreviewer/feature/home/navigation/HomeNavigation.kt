@@ -21,7 +21,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.eblan.socialworkreviewer.feature.home.HomeScreen
+import com.eblan.socialworkreviewer.feature.home.HomeRoute
 import kotlin.reflect.KClass
 
 fun NavGraphBuilder.homeScreen(
@@ -29,14 +29,16 @@ fun NavGraphBuilder.homeScreen(
     topLevelDestinations: List<HomeDestination>,
     startDestination: KClass<*>,
     onItemClick: (NavHostController, HomeDestination) -> Unit,
+    onShowSnackBar: (String) -> Unit,
     builder: NavGraphBuilder.() -> Unit,
 ) {
     composable<HomeRouteData> {
-        HomeScreen(
+        HomeRoute(
             snackbarHostState = snackbarHostState,
             topLevelDestinations = topLevelDestinations,
             startDestination = startDestination,
             onItemClick = onItemClick,
+            onShowSnackBar = onShowSnackBar,
             builder = builder,
         )
     }

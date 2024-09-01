@@ -73,6 +73,14 @@ fun SwrNavHost(modifier: Modifier = Modifier) {
                     is AboutDestination -> homeNavHostController.navigateToAboutScreen()
                 }
             },
+            onShowSnackBar = { message ->
+                scope.launch {
+                    snackbarHostState.showSnackbar(
+                        message = message,
+                        withDismissAction = true,
+                    )
+                }
+            },
             builder = {
                 categoryScreen(onCategoryClick = swrNavHostController::navigateToQuestionScreen)
 
