@@ -17,6 +17,7 @@
  */
 package com.eblan.socialworkreviewer.navigation
 
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -78,6 +79,7 @@ fun SwrNavHost(modifier: Modifier = Modifier) {
                     snackbarHostState.showSnackbar(
                         message = message,
                         withDismissAction = true,
+                        duration = SnackbarDuration.Indefinite,
                     )
                 }
             },
