@@ -19,7 +19,6 @@ package com.eblan.socialworkreviewer.feature.settings.dialog.theme
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import com.eblan.socialworkreviewer.core.designsystem.component.SwrBackground
 import com.eblan.socialworkreviewer.core.designsystem.theme.SwrTheme
 import com.eblan.socialworkreviewer.core.screenshottesting.util.DefaultTestDevices
 import com.eblan.socialworkreviewer.core.screenshottesting.util.captureDialogForDevice
@@ -72,16 +71,14 @@ class ThemeDialogScreenshotTest {
             darkMode = true,
         ) {
             SwrTheme {
-                SwrBackground {
-                    ThemeDialog(
-                        onDismissRequest = {},
-                        selected = 0,
-                        onSelect = {},
-                        onCancelClick = {},
-                        onChangeClick = {},
-                        contentDescription = "",
-                    )
-                }
+                ThemeDialog(
+                    onDismissRequest = {},
+                    selected = 0,
+                    onSelect = {},
+                    onCancelClick = {},
+                    onChangeClick = {},
+                    contentDescription = "",
+                )
             }
         }
     }

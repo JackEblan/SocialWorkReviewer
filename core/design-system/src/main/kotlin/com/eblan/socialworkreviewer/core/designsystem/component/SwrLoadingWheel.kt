@@ -17,6 +17,7 @@
  */
 package com.eblan.socialworkreviewer.core.designsystem.component
 
+import android.content.res.Configuration
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -47,9 +48,18 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.eblan.socialworkreviewer.core.designsystem.theme.SwrTheme
 import kotlinx.coroutines.launch
+
+/**
+ * Multipreview annotation that represents light and dark themes. Add this annotation to a
+ * composable to render the both themes.
+ */
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, name = "Light theme")
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, name = "Dark theme")
+annotation class ThemePreviews
 
 @Composable
 fun SwrLoadingWheel(

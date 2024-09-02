@@ -26,15 +26,10 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.unit.dp
-import com.eblan.socialworkreviewer.core.designsystem.theme.BackgroundTheme
-import com.eblan.socialworkreviewer.core.designsystem.theme.DarkAndroidBackgroundTheme
 import com.eblan.socialworkreviewer.core.designsystem.theme.DarkAndroidColorScheme
 import com.eblan.socialworkreviewer.core.designsystem.theme.DarkDefaultColorScheme
-import com.eblan.socialworkreviewer.core.designsystem.theme.LightAndroidBackgroundTheme
 import com.eblan.socialworkreviewer.core.designsystem.theme.LightAndroidColorScheme
 import com.eblan.socialworkreviewer.core.designsystem.theme.LightDefaultColorScheme
-import com.eblan.socialworkreviewer.core.designsystem.theme.LocalBackgroundTheme
 import com.eblan.socialworkreviewer.core.designsystem.theme.LocalTintTheme
 import com.eblan.socialworkreviewer.core.designsystem.theme.SwrTheme
 import com.eblan.socialworkreviewer.core.designsystem.theme.TintTheme
@@ -65,8 +60,6 @@ class ThemeTest {
             ) {
                 val colorScheme = LightDefaultColorScheme
                 assertColorSchemesEqual(colorScheme, MaterialTheme.colorScheme)
-                val backgroundTheme = defaultBackgroundTheme(colorScheme)
-                assertEquals(backgroundTheme, LocalBackgroundTheme.current)
                 val tintTheme = defaultTintTheme()
                 assertEquals(tintTheme, LocalTintTheme.current)
             }
@@ -83,8 +76,6 @@ class ThemeTest {
             ) {
                 val colorScheme = DarkDefaultColorScheme
                 assertColorSchemesEqual(colorScheme, MaterialTheme.colorScheme)
-                val backgroundTheme = defaultBackgroundTheme(colorScheme)
-                assertEquals(backgroundTheme, LocalBackgroundTheme.current)
                 val tintTheme = defaultTintTheme()
                 assertEquals(tintTheme, LocalTintTheme.current)
             }
@@ -101,8 +92,6 @@ class ThemeTest {
             ) {
                 val colorScheme = dynamicLightColorSchemeWithFallback()
                 assertColorSchemesEqual(colorScheme, MaterialTheme.colorScheme)
-                val backgroundTheme = defaultBackgroundTheme(colorScheme)
-                assertEquals(backgroundTheme, LocalBackgroundTheme.current)
                 val tintTheme = dynamicTintThemeWithFallback(colorScheme)
                 assertEquals(tintTheme, LocalTintTheme.current)
             }
@@ -119,8 +108,6 @@ class ThemeTest {
             ) {
                 val colorScheme = dynamicDarkColorSchemeWithFallback()
                 assertColorSchemesEqual(colorScheme, MaterialTheme.colorScheme)
-                val backgroundTheme = defaultBackgroundTheme(colorScheme)
-                assertEquals(backgroundTheme, LocalBackgroundTheme.current)
                 val tintTheme = dynamicTintThemeWithFallback(colorScheme)
                 assertEquals(tintTheme, LocalTintTheme.current)
             }
@@ -137,8 +124,6 @@ class ThemeTest {
             ) {
                 val colorScheme = LightAndroidColorScheme
                 assertColorSchemesEqual(colorScheme, MaterialTheme.colorScheme)
-                val backgroundTheme = LightAndroidBackgroundTheme
-                assertEquals(backgroundTheme, LocalBackgroundTheme.current)
                 val tintTheme = defaultTintTheme()
                 assertEquals(tintTheme, LocalTintTheme.current)
             }
@@ -155,8 +140,6 @@ class ThemeTest {
             ) {
                 val colorScheme = DarkAndroidColorScheme
                 assertColorSchemesEqual(colorScheme, MaterialTheme.colorScheme)
-                val backgroundTheme = DarkAndroidBackgroundTheme
-                assertEquals(backgroundTheme, LocalBackgroundTheme.current)
                 val tintTheme = defaultTintTheme()
                 assertEquals(tintTheme, LocalTintTheme.current)
             }
@@ -173,8 +156,6 @@ class ThemeTest {
             ) {
                 val colorScheme = LightAndroidColorScheme
                 assertColorSchemesEqual(colorScheme, MaterialTheme.colorScheme)
-                val backgroundTheme = LightAndroidBackgroundTheme
-                assertEquals(backgroundTheme, LocalBackgroundTheme.current)
                 val tintTheme = defaultTintTheme()
                 assertEquals(tintTheme, LocalTintTheme.current)
             }
@@ -191,8 +172,6 @@ class ThemeTest {
             ) {
                 val colorScheme = DarkAndroidColorScheme
                 assertColorSchemesEqual(colorScheme, MaterialTheme.colorScheme)
-                val backgroundTheme = DarkAndroidBackgroundTheme
-                assertEquals(backgroundTheme, LocalBackgroundTheme.current)
                 val tintTheme = defaultTintTheme()
                 assertEquals(tintTheme, LocalTintTheme.current)
             }
@@ -210,11 +189,6 @@ class ThemeTest {
         SDK_INT >= VERSION_CODES.S -> dynamicDarkColorScheme(LocalContext.current)
         else -> DarkDefaultColorScheme
     }
-
-    private fun defaultBackgroundTheme(colorScheme: ColorScheme): BackgroundTheme = BackgroundTheme(
-        color = colorScheme.surface,
-        tonalElevation = 2.dp,
-    )
 
     private fun defaultTintTheme(): TintTheme = TintTheme()
 
