@@ -19,7 +19,6 @@ package com.eblan.socialworkreviewer.feature.settings
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import com.eblan.socialworkreviewer.core.designsystem.component.SwrBackground
 import com.eblan.socialworkreviewer.core.designsystem.theme.SwrTheme
 import com.eblan.socialworkreviewer.core.model.DarkThemeConfig
 import com.eblan.socialworkreviewer.core.model.ThemeBrand
@@ -97,21 +96,19 @@ class SettingsScreenScreenshotTest {
             darkMode = true,
         ) {
             SwrTheme {
-                SwrBackground {
-                    SettingsScreen(
-                        settingsUiState = SettingsUiState.Success(
-                            userData = UserData(
-                                themeBrand = ThemeBrand.DEFAULT,
-                                useDynamicColor = false,
-                                darkThemeConfig = DarkThemeConfig.DARK,
-                            ),
+                SettingsScreen(
+                    settingsUiState = SettingsUiState.Success(
+                        userData = UserData(
+                            themeBrand = ThemeBrand.DEFAULT,
+                            useDynamicColor = false,
+                            darkThemeConfig = DarkThemeConfig.DARK,
                         ),
-                        supportDynamicColor = true,
-                        onUpdateThemeBrand = {},
-                        onUpdateDarkThemeConfig = {},
-                        onChangeDynamicColorPreference = {},
-                    )
-                }
+                    ),
+                    supportDynamicColor = true,
+                    onUpdateThemeBrand = {},
+                    onUpdateDarkThemeConfig = {},
+                    onChangeDynamicColorPreference = {},
+                )
             }
         }
     }
@@ -125,15 +122,13 @@ class SettingsScreenScreenshotTest {
             darkMode = true,
         ) {
             SwrTheme {
-                SwrBackground {
-                    SettingsScreen(
-                        settingsUiState = SettingsUiState.Loading,
-                        supportDynamicColor = true,
-                        onUpdateThemeBrand = {},
-                        onUpdateDarkThemeConfig = {},
-                        onChangeDynamicColorPreference = {},
-                    )
-                }
+                SettingsScreen(
+                    settingsUiState = SettingsUiState.Loading,
+                    supportDynamicColor = true,
+                    onUpdateThemeBrand = {},
+                    onUpdateDarkThemeConfig = {},
+                    onChangeDynamicColorPreference = {},
+                )
             }
         }
     }

@@ -33,7 +33,6 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.eblan.socialworkreviewer.core.designsystem.component.SwrBackground
 import com.eblan.socialworkreviewer.core.designsystem.theme.SwrTheme
 import com.eblan.socialworkreviewer.core.model.DarkThemeConfig
 import com.eblan.socialworkreviewer.core.model.ThemeBrand
@@ -91,9 +90,7 @@ class MainActivity : ComponentActivity() {
                 androidTheme = shouldUseAndroidTheme(mainActivityUiState),
                 disableDynamicTheming = shouldDisableDynamicTheming(mainActivityUiState),
             ) {
-                SwrBackground {
-                    SwrNavHost()
-                }
+                SwrNavHost()
             }
         }
     }
