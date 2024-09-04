@@ -70,54 +70,12 @@ internal fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule
         roborazziOptions: RoborazziOptions,
     ) -> Unit,
 ) {
-    val swrMultiThemes = listOf(
-        SwrMultiTheme(
-            greenTheme = true,
-            purpleTheme = false,
-            darkTheme = false,
-            dynamicTheme = false,
-            description = "GreenTheme",
-        ),
-        SwrMultiTheme(
-            greenTheme = false,
-            purpleTheme = true,
-            darkTheme = false,
-            dynamicTheme = false,
-            description = "PurpleTheme",
-        ),
-        SwrMultiTheme(
-            greenTheme = true,
-            purpleTheme = false,
-            darkTheme = true,
-            dynamicTheme = false,
-            description = "GreenDarkTheme",
-        ),
-        SwrMultiTheme(
-            greenTheme = false,
-            purpleTheme = true,
-            darkTheme = true,
-            dynamicTheme = false,
-            description = "PurpleDarkTheme",
-        ),
-        SwrMultiTheme(
-            greenTheme = false,
-            purpleTheme = false,
-            darkTheme = false,
-            dynamicTheme = true,
-            description = "DynamicTheme",
-        ),
-        SwrMultiTheme(
-            greenTheme = false,
-            purpleTheme = false,
-            darkTheme = true,
-            dynamicTheme = true,
-            description = "DynamicDarkTheme",
-        ),
-    )
-
     var greenTheme by mutableStateOf(true)
+
     var purpleTheme by mutableStateOf(true)
+
     var darkTheme by mutableStateOf(true)
+
     var dynamicTheme by mutableStateOf(false)
 
     this.setContent {
@@ -157,4 +115,49 @@ private data class SwrMultiTheme(
     val darkTheme: Boolean,
     val dynamicTheme: Boolean,
     val description: String,
+)
+
+private val swrMultiThemes = listOf(
+    SwrMultiTheme(
+        greenTheme = true,
+        purpleTheme = false,
+        darkTheme = false,
+        dynamicTheme = false,
+        description = "GreenTheme",
+    ),
+    SwrMultiTheme(
+        greenTheme = false,
+        purpleTheme = true,
+        darkTheme = false,
+        dynamicTheme = false,
+        description = "PurpleTheme",
+    ),
+    SwrMultiTheme(
+        greenTheme = true,
+        purpleTheme = false,
+        darkTheme = true,
+        dynamicTheme = false,
+        description = "GreenDarkTheme",
+    ),
+    SwrMultiTheme(
+        greenTheme = false,
+        purpleTheme = true,
+        darkTheme = true,
+        dynamicTheme = false,
+        description = "PurpleDarkTheme",
+    ),
+    SwrMultiTheme(
+        greenTheme = false,
+        purpleTheme = false,
+        darkTheme = false,
+        dynamicTheme = true,
+        description = "DynamicTheme",
+    ),
+    SwrMultiTheme(
+        greenTheme = false,
+        purpleTheme = false,
+        darkTheme = true,
+        dynamicTheme = true,
+        description = "DynamicDarkTheme",
+    ),
 )
