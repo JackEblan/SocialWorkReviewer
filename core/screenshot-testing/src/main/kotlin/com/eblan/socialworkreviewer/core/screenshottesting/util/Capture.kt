@@ -21,10 +21,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.test.ext.junit.rules.ActivityScenarioRule
@@ -70,94 +67,36 @@ internal fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule
         roborazziOptions: RoborazziOptions,
     ) -> Unit,
 ) {
-    var greenTheme by mutableStateOf(true)
-
-    var purpleTheme by mutableStateOf(true)
-
-    var darkTheme by mutableStateOf(true)
-
-    var dynamicTheme by mutableStateOf(false)
-
     this.setContent {
         CompositionLocalProvider(
             LocalInspectionMode provides true,
         ) {
-            SwrTheme(
-                greenTheme = greenTheme,
-                purpleTheme = purpleTheme,
-                darkTheme = darkTheme,
-                dynamicTheme = dynamicTheme,
-            ) {
-                // Keying is necessary in some cases (e.g. animations)
-                key(greenTheme, purpleTheme, darkTheme, dynamicTheme) {
-                    content()
+            listOf(
+                Triple(true, false, "GreenTheme"),
+                Triple(false, true, "PurpleTheme"),
+                Triple(true, false, "GreenDarkTheme"),
+                Triple(false, true, "PurpleDarkTheme"),
+                Triple(false, false, "DynamicTheme"),
+                Triple(false, false, "DynamicDarkTheme"),
+            ).forEach { (isGreen, isPurple, description) ->
+                val isDark = description.contains("Dark")
+                val isDynamic = description.contains("Dynamic")
+
+                SwrTheme(
+                    greenTheme = isGreen,
+                    purpleTheme = isPurple,
+                    darkTheme = isDark,
+                    dynamicTheme = isDynamic,
+                ) {
+                    key(isGreen, isPurple, isDark, isDynamic) {
+                        content()
+                    }
                 }
+
+                val filePath =
+                    "src/test/screenshots/$name/${overrideFileName ?: name}$description.png"
+                onCapture(filePath, roborazziOptions)
             }
         }
     }
-
-    swrMultiThemes.forEach { swrMultiTheme ->
-        greenTheme = swrMultiTheme.greenTheme
-        purpleTheme = swrMultiTheme.purpleTheme
-        darkTheme = swrMultiTheme.darkTheme
-        dynamicTheme = swrMultiTheme.dynamicTheme
-
-        onCapture(
-            "src/test/screenshots/" + "$name/${overrideFileName ?: name}" + swrMultiTheme.description + ".png",
-            roborazziOptions,
-        )
-    }
 }
-
-private data class SwrMultiTheme(
-    val greenTheme: Boolean,
-    val purpleTheme: Boolean,
-    val darkTheme: Boolean,
-    val dynamicTheme: Boolean,
-    val description: String,
-)
-
-private val swrMultiThemes = listOf(
-    SwrMultiTheme(
-        greenTheme = true,
-        purpleTheme = false,
-        darkTheme = false,
-        dynamicTheme = false,
-        description = "GreenTheme",
-    ),
-    SwrMultiTheme(
-        greenTheme = false,
-        purpleTheme = true,
-        darkTheme = false,
-        dynamicTheme = false,
-        description = "PurpleTheme",
-    ),
-    SwrMultiTheme(
-        greenTheme = true,
-        purpleTheme = false,
-        darkTheme = true,
-        dynamicTheme = false,
-        description = "GreenDarkTheme",
-    ),
-    SwrMultiTheme(
-        greenTheme = false,
-        purpleTheme = true,
-        darkTheme = true,
-        dynamicTheme = false,
-        description = "PurpleDarkTheme",
-    ),
-    SwrMultiTheme(
-        greenTheme = false,
-        purpleTheme = false,
-        darkTheme = false,
-        dynamicTheme = true,
-        description = "DynamicTheme",
-    ),
-    SwrMultiTheme(
-        greenTheme = false,
-        purpleTheme = false,
-        darkTheme = true,
-        dynamicTheme = true,
-        description = "DynamicDarkTheme",
-    ),
-)
