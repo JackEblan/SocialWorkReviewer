@@ -64,71 +64,97 @@ internal fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule
     name: String,
     overrideFileName: String? = null,
     roborazziOptions: RoborazziOptions = DefaultRoborazziOptions,
-    shouldCompareDarkMode: Boolean = true,
-    shouldCompareDynamicColor: Boolean = true,
-    shouldCompareAndroidTheme: Boolean = true,
-    content: @Composable (desc: String) -> Unit,
+    content: @Composable () -> Unit,
     onCapture: (
         filePath: String,
         roborazziOptions: RoborazziOptions,
     ) -> Unit,
 ) {
-    val darkModeValues = if (shouldCompareDarkMode) listOf(true, false) else listOf(false)
-    val dynamicThemingValues = if (shouldCompareDynamicColor) listOf(true, false) else listOf(false)
-    val androidThemeValues = if (shouldCompareAndroidTheme) listOf(true, false) else listOf(false)
+    val swrMultiThemes = listOf(
+        SwrMultiTheme(
+            greenTheme = true,
+            purpleTheme = false,
+            darkTheme = false,
+            dynamicTheme = false,
+            description = "GreenTheme",
+        ),
+        SwrMultiTheme(
+            greenTheme = false,
+            purpleTheme = true,
+            darkTheme = false,
+            dynamicTheme = false,
+            description = "PurpleTheme",
+        ),
+        SwrMultiTheme(
+            greenTheme = true,
+            purpleTheme = false,
+            darkTheme = true,
+            dynamicTheme = false,
+            description = "GreenDarkTheme",
+        ),
+        SwrMultiTheme(
+            greenTheme = false,
+            purpleTheme = true,
+            darkTheme = true,
+            dynamicTheme = false,
+            description = "PurpleDarkTheme",
+        ),
+        SwrMultiTheme(
+            greenTheme = false,
+            purpleTheme = false,
+            darkTheme = false,
+            dynamicTheme = true,
+            description = "DynamicTheme",
+        ),
+        SwrMultiTheme(
+            greenTheme = false,
+            purpleTheme = false,
+            darkTheme = true,
+            dynamicTheme = true,
+            description = "DynamicDarkTheme",
+        ),
+    )
 
-    var darkMode by mutableStateOf(true)
-    var dynamicTheming by mutableStateOf(false)
-    var androidTheme by mutableStateOf(false)
+    var greenTheme by mutableStateOf(true)
+    var purpleTheme by mutableStateOf(true)
+    var darkTheme by mutableStateOf(true)
+    var dynamicTheme by mutableStateOf(false)
 
     this.setContent {
         CompositionLocalProvider(
             LocalInspectionMode provides true,
         ) {
             SwrTheme(
-                purpleTheme = androidTheme,
-                darkTheme = darkMode,
-                disableDynamicTheming = !dynamicTheming,
+                greenTheme = greenTheme,
+                purpleTheme = purpleTheme,
+                darkTheme = darkTheme,
+                dynamicTheme = dynamicTheme,
             ) {
                 // Keying is necessary in some cases (e.g. animations)
-                key(androidTheme, darkMode, dynamicTheming) {
-                    val description = generateDescription(
-                        shouldCompareDarkMode = shouldCompareDarkMode,
-                        darkMode = darkMode,
-                        shouldCompareAndroidTheme = shouldCompareAndroidTheme,
-                        androidTheme = androidTheme,
-                        shouldCompareDynamicColor = shouldCompareDynamicColor,
-                        dynamicTheming = dynamicTheming,
-                    )
-                    content(description)
+                key(greenTheme, purpleTheme, darkTheme, dynamicTheme) {
+                    content()
                 }
             }
         }
     }
 
-    // Create permutations
-    darkModeValues.forEach { isDarkMode ->
-        darkMode = isDarkMode
-        val darkModeDesc = if (isDarkMode) "dark" else "light"
+    swrMultiThemes.forEach { swrMultiTheme ->
+        greenTheme = swrMultiTheme.greenTheme
+        purpleTheme = swrMultiTheme.purpleTheme
+        darkTheme = swrMultiTheme.darkTheme
+        dynamicTheme = swrMultiTheme.dynamicTheme
 
-        androidThemeValues.forEach { isAndroidTheme ->
-            androidTheme = isAndroidTheme
-            val androidThemeDesc = if (isAndroidTheme) "androidTheme" else "defaultTheme"
-
-            dynamicThemingValues.forEach dynamicTheme@{ isDynamicTheming ->
-                // Skip tests with both Android Theme and Dynamic color as they're incompatible.
-                if (isAndroidTheme && isDynamicTheming) return@dynamicTheme
-
-                dynamicTheming = isDynamicTheming
-                val dynamicThemingDesc = if (isDynamicTheming) "dynamic" else "notDynamic"
-
-                val filename = overrideFileName ?: name
-
-                onCapture(
-                    "src/test/screenshots/" + "$name/$filename" + "_$darkModeDesc" + "_$androidThemeDesc" + "_$dynamicThemingDesc" + ".png",
-                    roborazziOptions,
-                )
-            }
-        }
+        onCapture(
+            "src/test/screenshots/" + "$name/${overrideFileName ?: name}" + swrMultiTheme.description + ".png",
+            roborazziOptions,
+        )
     }
 }
+
+private data class SwrMultiTheme(
+    val greenTheme: Boolean,
+    val purpleTheme: Boolean,
+    val darkTheme: Boolean,
+    val dynamicTheme: Boolean,
+    val description: String,
+)
