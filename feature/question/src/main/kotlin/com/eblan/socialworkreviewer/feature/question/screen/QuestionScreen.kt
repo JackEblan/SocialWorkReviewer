@@ -208,6 +208,7 @@ internal fun QuestionScreen(
                 if (state.category != null && state.category.questionSettings.isNotEmpty()) {
                     SuccessOnBoardingScreen(
                         category = state.category,
+                        statistics = state.statistics,
                         onStartQuestions = onStartQuestions,
                         onStartQuickQuestions = onStartQuickQuestions,
                     )

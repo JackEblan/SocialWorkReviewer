@@ -20,7 +20,6 @@ package com.eblan.socialworkreviewer.feature.category
 import androidx.annotation.VisibleForTesting
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -37,11 +36,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -53,7 +50,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.testTag
@@ -68,7 +64,6 @@ import coil.compose.rememberAsyncImagePainter
 import com.eblan.socialworkreviewer.core.designsystem.component.SwrLoadingWheel
 import com.eblan.socialworkreviewer.core.designsystem.icon.Swr
 import com.eblan.socialworkreviewer.core.model.Category
-import kotlin.math.roundToInt
 
 @Composable
 internal fun CategoryRoute(
@@ -187,13 +182,6 @@ private fun CategoryItem(
             Spacer(modifier = Modifier.height(10.dp))
 
             Text(text = category.description, style = MaterialTheme.typography.bodyLarge)
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            AverageCircularProgressIndicator(
-                modifier = Modifier.align(Alignment.End),
-                average = category.average,
-            )
         }
     }
 }
@@ -250,32 +238,6 @@ private fun CategoryHeaderImage(
                 painterResource(com.eblan.socialworkreviewer.core.designsystem.R.drawable.ic_placeholder)
             },
             contentDescription = null,
-        )
-    }
-}
-
-@Composable
-private fun AverageCircularProgressIndicator(modifier: Modifier = Modifier, average: Double) {
-    val animatedProgress by animateFloatAsState(
-        targetValue = (average / 100).toFloat(),
-        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
-        label = "animatedProgress",
-    )
-
-    Box(modifier = modifier.size(60.dp)) {
-        Text(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .padding(5.dp),
-            text = "${average.roundToInt()}%",
-            style = MaterialTheme.typography.bodySmall,
-        )
-
-        CircularProgressIndicator(
-            modifier = Modifier.fillMaxSize(),
-            progress = { animatedProgress },
-            strokeCap = StrokeCap.Round,
-            trackColor = ProgressIndicatorDefaults.linearTrackColor,
         )
     }
 }

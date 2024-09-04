@@ -20,6 +20,7 @@ package com.eblan.socialworkreviewer.feature.question
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.testing.invoke
 import com.eblan.socialworkreviewer.core.domain.GetQuestionsUseCase
+import com.eblan.socialworkreviewer.core.domain.GetStatisticsUseCase
 import com.eblan.socialworkreviewer.core.domain.UpdateChoiceUseCase
 import com.eblan.socialworkreviewer.core.model.Choice
 import com.eblan.socialworkreviewer.core.model.Question
@@ -63,6 +64,8 @@ class QuestionViewModelTest {
 
     private lateinit var updateChoiceUseCase: UpdateChoiceUseCase
 
+    private lateinit var getStatisticsUseCase: GetStatisticsUseCase
+
     private lateinit var viewModel: QuestionViewModel
 
     @Before
@@ -85,6 +88,8 @@ class QuestionViewModelTest {
 
         updateChoiceUseCase = UpdateChoiceUseCase(choiceRepository = choiceRepository)
 
+        getStatisticsUseCase = GetStatisticsUseCase(averageRepository = averageRepository)
+
         viewModel = QuestionViewModel(
             savedStateHandle = savedStateHandle,
             choiceRepository = choiceRepository,
@@ -93,6 +98,7 @@ class QuestionViewModelTest {
             countDownTimerWrapper = countDownTimerWrapper,
             getQuestionsUseCase = getQuestionsUseCase,
             updateChoiceUseCase = updateChoiceUseCase,
+            getStatisticsUseCase = getStatisticsUseCase,
         )
     }
 

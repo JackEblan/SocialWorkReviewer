@@ -19,7 +19,7 @@ package com.eblan.socialworkreviewer.feature.category
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.eblan.socialworkreviewer.core.domain.GetCategoriesAndAverageUseCase
+import com.eblan.socialworkreviewer.core.data.repository.CategoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -28,9 +28,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CategoryViewModel @Inject constructor(
-    getCategoriesAndAverageUseCase: GetCategoriesAndAverageUseCase,
+    categoryRepository: CategoryRepository,
 ) : ViewModel() {
-    val categoryUiState = getCategoriesAndAverageUseCase().map(CategoryUiState::Success).stateIn(
+    val categoryUiState = categoryRepository.getCategories().map(CategoryUiState::Success).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = CategoryUiState.Loading,

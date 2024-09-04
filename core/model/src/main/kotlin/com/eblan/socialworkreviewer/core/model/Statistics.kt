@@ -17,10 +17,8 @@
  */
 package com.eblan.socialworkreviewer.core.model
 
-data class Category(
-    val id: String,
-    val title: String,
-    val description: String,
-    val imageUrl: String,
-    val questionSettings: List<QuestionSetting>,
+data class Statistics(
+    val totalAverage: Double,
+    val totalScore: Int,
+    val totalNumberOfQuestions: Int,
 )

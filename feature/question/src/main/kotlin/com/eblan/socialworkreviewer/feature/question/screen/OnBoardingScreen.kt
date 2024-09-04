@@ -23,6 +23,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,12 +35,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
@@ -49,6 +52,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
@@ -56,6 +60,8 @@ import com.eblan.socialworkreviewer.core.designsystem.icon.Swr
 import com.eblan.socialworkreviewer.core.designsystem.theme.LocalGradientColors
 import com.eblan.socialworkreviewer.core.model.Category
 import com.eblan.socialworkreviewer.core.model.QuestionSetting
+import com.eblan.socialworkreviewer.core.model.Statistics
+import kotlin.math.roundToInt
 
 @Composable
 internal fun LoadingOnBoardingScreen(
@@ -74,6 +80,7 @@ internal fun LoadingOnBoardingScreen(
 internal fun SuccessOnBoardingScreen(
     modifier: Modifier = Modifier,
     category: Category,
+    statistics: Statistics,
     onStartQuestions: (Int, QuestionSetting) -> Unit,
     onStartQuickQuestions: () -> Unit,
 ) {
@@ -103,6 +110,15 @@ internal fun SuccessOnBoardingScreen(
             columns = GridCells.Adaptive(300.dp),
             contentPadding = paddingValues,
         ) {
+            item {
+                Statistics(
+                    modifier = modifier,
+                    average = statistics.totalAverage,
+                    totalScore = statistics.totalScore,
+                    totalNumberOfQuestions = statistics.totalNumberOfQuestions,
+                )
+            }
+
             itemsIndexed(category.questionSettings) { index, questionSetting ->
                 OutlinedCard(
                     modifier = Modifier.padding(10.dp),
@@ -192,4 +208,52 @@ private fun OnBoardingLargeTopAppBar(
         modifier = modifier.testTag("onBoarding:largeTopAppBar"),
         scrollBehavior = scrollBehavior,
     )
+}
+
+@Composable
+private fun Statistics(
+    modifier: Modifier = Modifier,
+    average: Double,
+    totalScore: Int,
+    totalNumberOfQuestions: Int,
+) {
+    Column(modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+        AverageCircularProgressIndicator(average = average)
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Text(text = "Total Score", style = MaterialTheme.typography.bodySmall)
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Text(text = "$totalScore")
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Text(text = "Total Number Of Questions", style = MaterialTheme.typography.bodySmall)
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Text(text = "$totalNumberOfQuestions")
+    }
+}
+
+@Composable
+private fun AverageCircularProgressIndicator(modifier: Modifier = Modifier, average: Double) {
+    Box(modifier = modifier.size(60.dp)) {
+        Text(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(5.dp),
+            text = "${average.roundToInt()}%",
+            style = MaterialTheme.typography.bodySmall,
+        )
+
+        CircularProgressIndicator(
+            modifier = Modifier.fillMaxSize(),
+            progress = { (average / 100).toFloat() },
+            strokeCap = StrokeCap.Round,
+            trackColor = ProgressIndicatorDefaults.linearTrackColor,
+        )
+    }
 }
