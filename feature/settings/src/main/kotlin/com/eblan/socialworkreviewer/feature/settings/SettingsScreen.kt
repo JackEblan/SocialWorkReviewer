@@ -247,7 +247,7 @@ private fun DynamicSetting(
     supportDynamicColor: Boolean = supportsDynamicTheming(),
     onChangeDynamicColorPreference: (Boolean) -> Unit,
 ) {
-    if (settingsUiState.userData.themeBrand == ThemeBrand.DEFAULT && supportDynamicColor) {
+    if (supportDynamicColor) {
         Spacer(modifier = Modifier.height(8.dp))
 
         Row(

@@ -86,7 +86,7 @@ internal fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule
             LocalInspectionMode provides true,
         ) {
             SwrTheme(
-                androidTheme = androidTheme,
+                purpleTheme = androidTheme,
                 darkTheme = darkMode,
                 disableDynamicTheming = !dynamicTheming,
             ) {

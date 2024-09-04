@@ -119,9 +119,13 @@ class QuestionViewModelTest {
 
     @Test
     fun startQuestions() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.questionUiState.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher()) {
+            viewModel.questionUiState.collect()
+        }
 
-        val collectJob2 = launch(UnconfinedTestDispatcher()) { viewModel.countDownTime.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher()) {
+            viewModel.countDownTime.collect()
+        }
 
         val questions = List(10) { _ ->
             Question(
@@ -144,15 +148,13 @@ class QuestionViewModelTest {
         assertIs<QuestionUiState.Questions>(viewModel.questionUiState.value)
 
         assertNotNull(viewModel.countDownTime.value)
-
-        collectJob.cancel()
-
-        collectJob2.cancel()
     }
 
     @Test
     fun startQuickQuestions() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.questionUiState.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher()) {
+            viewModel.questionUiState.collect()
+        }
 
         val questions = List(10) { _ ->
             Question(
@@ -167,14 +169,13 @@ class QuestionViewModelTest {
         viewModel.startQuickQuestions()
 
         assertIs<QuestionUiState.QuickQuestions>(viewModel.questionUiState.value)
-
-        collectJob.cancel()
     }
 
     @Test
     fun addCurrentQuestion() = runTest {
-        val collectJob =
-            launch(UnconfinedTestDispatcher()) { viewModel.currentQuestionData.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher()) {
+            viewModel.currentQuestionData.collect()
+        }
 
         val question = Question(
             question = "",
@@ -195,13 +196,13 @@ class QuestionViewModelTest {
         assertTrue(viewModel.currentQuestionData.value.selectedChoices.isNotEmpty())
 
         assertTrue(viewModel.currentQuestionData.value.questionsWithSelectedChoices.isNotEmpty())
-
-        collectJob.cancel()
     }
 
     @Test
     fun showCorrectChoices() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.questionUiState.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher()) {
+            viewModel.questionUiState.collect()
+        }
 
         val questions = List(10) { _ ->
             Question(
@@ -216,13 +217,13 @@ class QuestionViewModelTest {
         viewModel.showCorrectChoices(questions = questions)
 
         assertIs<QuestionUiState.CorrectChoices>(viewModel.questionUiState.value)
-
-        collectJob.cancel()
     }
 
     @Test
     fun showScore() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.questionUiState.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher()) {
+            viewModel.questionUiState.collect()
+        }
 
         val questions = List(10) { _ ->
             Question(
@@ -237,13 +238,13 @@ class QuestionViewModelTest {
         viewModel.showScore(questionSettingIndex = 0, questions = questions)
 
         assertIs<QuestionUiState.Score>(viewModel.questionUiState.value)
-
-        collectJob.cancel()
     }
 
     @Test
     fun getCategory() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.questionUiState.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher()) {
+            viewModel.questionUiState.collect()
+        }
 
         val questions = List(10) { _ ->
             Question(
@@ -258,7 +259,5 @@ class QuestionViewModelTest {
         viewModel.getCategory()
 
         assertIs<QuestionUiState.OnBoarding>(viewModel.questionUiState.value)
-
-        collectJob.cancel()
     }
 }

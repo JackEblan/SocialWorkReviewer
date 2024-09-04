@@ -67,6 +67,10 @@ class CategoryViewModelTest {
 
     @Test
     fun categoryUiState_isSuccess() = runTest {
+        backgroundScope.launch(UnconfinedTestDispatcher()) {
+            viewModel.categoryUiState.collect()
+        }
+
         val categories = List(10) { index ->
             Category(
                 id = "$index",
@@ -87,14 +91,10 @@ class CategoryViewModelTest {
             )
         }
 
-        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.categoryUiState.collect() }
-
         categoryRepository.setCategories(categories)
 
         averageRepository.setAverages(averages)
 
         assertIs<CategoryUiState.Success>(viewModel.categoryUiState.value)
-
-        collectJob.cancel()
     }
 }

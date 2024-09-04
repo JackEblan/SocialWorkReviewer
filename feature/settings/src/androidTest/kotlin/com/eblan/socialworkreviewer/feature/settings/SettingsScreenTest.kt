@@ -57,7 +57,7 @@ class SettingsScreenTest {
             SettingsScreen(
                 settingsUiState = SettingsUiState.Success(
                     UserData(
-                        themeBrand = ThemeBrand.DEFAULT,
+                        themeBrand = ThemeBrand.GREEN,
                         useDynamicColor = true,
                         darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
                     ),
@@ -78,7 +78,7 @@ class SettingsScreenTest {
             SettingsScreen(
                 settingsUiState = SettingsUiState.Success(
                     UserData(
-                        themeBrand = ThemeBrand.DEFAULT,
+                        themeBrand = ThemeBrand.GREEN,
                         useDynamicColor = true,
                         darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
                     ),
@@ -99,7 +99,7 @@ class SettingsScreenTest {
             SettingsScreen(
                 settingsUiState = SettingsUiState.Success(
                     UserData(
-                        themeBrand = ThemeBrand.DEFAULT,
+                        themeBrand = ThemeBrand.GREEN,
                         useDynamicColor = false,
                         darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
                     ),
@@ -120,7 +120,7 @@ class SettingsScreenTest {
             SettingsScreen(
                 settingsUiState = SettingsUiState.Success(
                     UserData(
-                        themeBrand = ThemeBrand.DEFAULT,
+                        themeBrand = ThemeBrand.GREEN,
                         useDynamicColor = true,
                         darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
                     ),
@@ -141,7 +141,7 @@ class SettingsScreenTest {
             SettingsScreen(
                 settingsUiState = SettingsUiState.Success(
                     UserData(
-                        themeBrand = ThemeBrand.ANDROID,
+                        themeBrand = ThemeBrand.PURPLE,
                         useDynamicColor = true,
                         darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
                     ),
@@ -162,7 +162,7 @@ class SettingsScreenTest {
             SettingsScreen(
                 settingsUiState = SettingsUiState.Success(
                     UserData(
-                        themeBrand = ThemeBrand.DEFAULT,
+                        themeBrand = ThemeBrand.GREEN,
                         useDynamicColor = true,
                         darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
                     ),

@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val networkMonitor: NetworkMonitor) : ViewModel() {
+class HomeViewModel @Inject constructor(networkMonitor: NetworkMonitor) : ViewModel() {
     val isOnline = networkMonitor.isOnline.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),

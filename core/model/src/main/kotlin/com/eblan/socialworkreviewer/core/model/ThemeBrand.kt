@@ -18,6 +18,6 @@
 package com.eblan.socialworkreviewer.core.model
 
 enum class ThemeBrand(val title: String) {
-    DEFAULT("Default"),
-    ANDROID("Android"),
+    GREEN("Green"),
+    PURPLE("Purple"),
 }

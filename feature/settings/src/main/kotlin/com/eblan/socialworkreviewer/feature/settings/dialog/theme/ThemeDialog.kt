@@ -45,6 +45,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.eblan.socialworkreviewer.core.model.ThemeBrand
 import com.eblan.socialworkreviewer.feature.settings.R
 
 @Composable
@@ -120,17 +121,12 @@ private fun ThemeDialogRadioButtonGroup(
     selected: Int,
     onSelect: (Int) -> Unit,
 ) {
-    val items = arrayOf(
-        stringResource(R.string.default_theme),
-        stringResource(R.string.android_theme),
-    )
-
     Spacer(modifier = Modifier.height(10.dp))
 
     Column(
         modifier = modifier.selectableGroup(),
     ) {
-        items.forEachIndexed { index, text ->
+        ThemeBrand.entries.forEachIndexed { index, themeBrand ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -144,7 +140,7 @@ private fun ThemeDialogRadioButtonGroup(
                         },
                     )
                     .padding(horizontal = 16.dp)
-                    .semantics { contentDescription = text },
+                    .semantics { contentDescription = themeBrand.title },
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 RadioButton(
@@ -152,7 +148,7 @@ private fun ThemeDialogRadioButtonGroup(
                     onClick = null,
                 )
                 Text(
-                    text = text,
+                    text = themeBrand.title,
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(start = 16.dp),
                 )

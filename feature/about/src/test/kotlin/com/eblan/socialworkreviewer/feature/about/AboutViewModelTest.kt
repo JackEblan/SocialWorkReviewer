@@ -58,7 +58,9 @@ class AboutViewModelTest {
 
     @Test
     fun aboutUiState_isSuccess() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.aboutUiState.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher()) {
+            viewModel.aboutUiState.collect()
+        }
 
         val abouts = List(10) { index ->
             About(
@@ -74,12 +76,14 @@ class AboutViewModelTest {
         aboutRepository.setAbouts(abouts)
 
         assertIs<AboutUiState.Success>(viewModel.aboutUiState.value)
-
-        collectJob.cancel()
     }
 
     @Test
     fun openLink_isTrue() = runTest {
+        backgroundScope.launch(UnconfinedTestDispatcher()) {
+            viewModel.openLinkResult.collect()
+        }
+
         linkParser.setOpenLInk(true)
 
         viewModel.openLink("")
@@ -89,6 +93,10 @@ class AboutViewModelTest {
 
     @Test
     fun openLink_isFalse() = runTest {
+        backgroundScope.launch(UnconfinedTestDispatcher()) {
+            viewModel.openLinkResult.collect()
+        }
+
         linkParser.setOpenLInk(false)
 
         viewModel.openLink("")

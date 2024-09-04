@@ -53,8 +53,9 @@ class AnnouncementViewModelTest {
 
     @Test
     fun announcementUiState_isSuccess() = runTest {
-        val collectJob =
-            launch(UnconfinedTestDispatcher()) { viewModel.announcementUiState.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher()) {
+            viewModel.announcementUiState.collect()
+        }
 
         val announcements = List(10) { index ->
             Announcement(id = "$index", title = "", message = "")
@@ -63,7 +64,5 @@ class AnnouncementViewModelTest {
         announcementRepository.setAnnouncements(announcements)
 
         assertIs<AnnouncementUiState.Success>(viewModel.announcementUiState.value)
-
-        collectJob.cancel()
     }
 }

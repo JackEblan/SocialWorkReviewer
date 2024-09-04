@@ -45,6 +45,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.eblan.socialworkreviewer.core.model.DarkThemeConfig
 import com.eblan.socialworkreviewer.feature.settings.R
 
 @Composable
@@ -120,16 +121,10 @@ private fun DarkDialogRadioButtonGroup(
     selected: Int,
     onSelect: (Int) -> Unit,
 ) {
-    val items = arrayOf(
-        stringResource(id = R.string.follow_system),
-        stringResource(id = R.string.light),
-        stringResource(id = R.string.dark),
-    )
-
     Column(
         modifier = modifier.selectableGroup(),
     ) {
-        items.forEachIndexed { index, text ->
+        DarkThemeConfig.entries.forEachIndexed { index, darkThemeConfig ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -143,7 +138,7 @@ private fun DarkDialogRadioButtonGroup(
                         },
                     )
                     .padding(horizontal = 16.dp)
-                    .semantics { contentDescription = text },
+                    .semantics { contentDescription = darkThemeConfig.title },
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 RadioButton(
@@ -151,7 +146,7 @@ private fun DarkDialogRadioButtonGroup(
                     onClick = null,
                 )
                 Text(
-                    text = text,
+                    text = darkThemeConfig.title,
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(start = 16.dp),
                 )
