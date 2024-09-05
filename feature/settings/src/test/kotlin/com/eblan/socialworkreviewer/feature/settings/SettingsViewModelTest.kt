@@ -56,22 +56,22 @@ class SettingsViewModelTest {
 
     @Test
     fun settingsUiState_isSuccess() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.settingsUiState.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher()) {
+            viewModel.settingsUiState.collect()
+        }
 
         userDataRepository.setUserData(
             userData = UserData(
-                themeBrand = ThemeBrand.DEFAULT,
+                themeBrand = ThemeBrand.GREEN,
                 darkThemeConfig = DarkThemeConfig.DARK,
                 useDynamicColor = false,
             ),
         )
 
-        userDataRepository.setThemeBrand(ThemeBrand.ANDROID)
+        userDataRepository.setThemeBrand(ThemeBrand.PURPLE)
 
         userDataRepository.setDarkThemeConfig(DarkThemeConfig.DARK)
 
         assertIs<SettingsUiState.Success>(viewModel.settingsUiState.value)
-
-        collectJob.cancel()
     }
 }

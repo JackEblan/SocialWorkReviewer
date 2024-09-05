@@ -29,8 +29,6 @@ internal fun toCategory(categoryDocument: CategoryDocument?): Category {
 
     val imageUrl = categoryDocument?.imageUrl.toString()
 
-    val average = 0.0
-
     val questionSettings = categoryDocument?.questionSettings?.map { questionSettingDocument ->
         toQuestionSetting(questionSettingDocument = questionSettingDocument)
     } ?: emptyList()
@@ -40,7 +38,6 @@ internal fun toCategory(categoryDocument: CategoryDocument?): Category {
         title = title,
         description = description,
         imageUrl = imageUrl,
-        average = average,
         questionSettings = questionSettings,
     )
 }

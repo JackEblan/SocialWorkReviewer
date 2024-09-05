@@ -88,17 +88,11 @@ fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.c
 fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.captureMultiTheme(
     name: String,
     overrideFileName: String? = null,
-    shouldCompareDarkMode: Boolean = true,
-    shouldCompareDynamicColor: Boolean = true,
-    shouldCompareAndroidTheme: Boolean = true,
-    content: @Composable (desc: String) -> Unit,
+    content: @Composable () -> Unit,
 ) {
     captureMultiTheme(
         name = name,
         overrideFileName = overrideFileName,
-        shouldCompareDarkMode = shouldCompareDarkMode,
-        shouldCompareDynamicColor = shouldCompareDynamicColor,
-        shouldCompareAndroidTheme = shouldCompareAndroidTheme,
         content = content,
         onCapture = { filePath, roborazziOptions ->
             onRoot().captureRoboImage(
@@ -107,32 +101,6 @@ fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.c
             )
         },
     )
-}
-
-@Composable
-internal fun generateDescription(
-    shouldCompareDarkMode: Boolean,
-    darkMode: Boolean,
-    shouldCompareAndroidTheme: Boolean,
-    androidTheme: Boolean,
-    shouldCompareDynamicColor: Boolean,
-    dynamicTheming: Boolean,
-): String {
-    val description = "" + if (shouldCompareDarkMode) {
-        if (darkMode) "Dark" else "Light"
-    } else {
-        ""
-    } + if (shouldCompareAndroidTheme) {
-        if (androidTheme) " Android" else " Default"
-    } else {
-        ""
-    } + if (shouldCompareDynamicColor) {
-        if (dynamicTheming) " Dynamic" else ""
-    } else {
-        ""
-    }
-
-    return description.trim()
 }
 
 /**

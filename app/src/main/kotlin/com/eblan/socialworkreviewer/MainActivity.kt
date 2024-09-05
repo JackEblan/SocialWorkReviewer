@@ -69,7 +69,13 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
+            val greenTheme = shouldUseGreenTheme(mainActivityUiState)
+
+            val purpleTheme = shouldUsePurpleTheme(mainActivityUiState)
+
             val darkTheme = shouldUseDarkTheme(mainActivityUiState)
+
+            val dynamicTheme = shouldUseDynamicTheme(mainActivityUiState)
 
             DisposableEffect(darkTheme) {
                 enableEdgeToEdge(
@@ -86,9 +92,10 @@ class MainActivity : ComponentActivity() {
             }
 
             SwrTheme(
+                greenTheme = greenTheme,
+                purpleTheme = purpleTheme,
                 darkTheme = darkTheme,
-                androidTheme = shouldUseAndroidTheme(mainActivityUiState),
-                disableDynamicTheming = shouldDisableDynamicTheming(mainActivityUiState),
+                dynamicTheme = dynamicTheme,
             ) {
                 SwrNavHost()
             }
@@ -97,22 +104,25 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-private fun shouldUseAndroidTheme(
-    uiState: MainActivityUiState,
-): Boolean = when (uiState) {
+private fun shouldUseGreenTheme(
+    mainActivityUiState: MainActivityUiState,
+): Boolean = when (mainActivityUiState) {
     MainActivityUiState.Loading -> false
-    is MainActivityUiState.Success -> when (uiState.userData.themeBrand) {
-        ThemeBrand.DEFAULT -> false
-        ThemeBrand.ANDROID -> true
+    is MainActivityUiState.Success -> when (mainActivityUiState.userData.themeBrand) {
+        ThemeBrand.GREEN -> true
+        ThemeBrand.PURPLE -> false
     }
 }
 
 @Composable
-private fun shouldDisableDynamicTheming(
-    uiState: MainActivityUiState,
-): Boolean = when (uiState) {
+private fun shouldUsePurpleTheme(
+    mainActivityUiState: MainActivityUiState,
+): Boolean = when (mainActivityUiState) {
     MainActivityUiState.Loading -> false
-    is MainActivityUiState.Success -> !uiState.userData.useDynamicColor
+    is MainActivityUiState.Success -> when (mainActivityUiState.userData.themeBrand) {
+        ThemeBrand.GREEN -> false
+        ThemeBrand.PURPLE -> true
+    }
 }
 
 @Composable
@@ -125,6 +135,14 @@ private fun shouldUseDarkTheme(
         DarkThemeConfig.LIGHT -> false
         DarkThemeConfig.DARK -> true
     }
+}
+
+@Composable
+private fun shouldUseDynamicTheme(
+    mainActivityUiState: MainActivityUiState,
+): Boolean = when (mainActivityUiState) {
+    MainActivityUiState.Loading -> false
+    is MainActivityUiState.Success -> mainActivityUiState.userData.useDynamicColor
 }
 
 private val lightScrim = android.graphics.Color.argb(0xe6, 0xFF, 0xFF, 0xFF)

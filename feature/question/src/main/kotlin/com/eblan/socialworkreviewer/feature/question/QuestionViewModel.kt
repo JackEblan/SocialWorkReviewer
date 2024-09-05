@@ -25,6 +25,7 @@ import com.eblan.socialworkreviewer.core.data.repository.AverageRepository
 import com.eblan.socialworkreviewer.core.data.repository.CategoryRepository
 import com.eblan.socialworkreviewer.core.data.repository.ChoiceRepository
 import com.eblan.socialworkreviewer.core.domain.GetQuestionsUseCase
+import com.eblan.socialworkreviewer.core.domain.GetStatisticsUseCase
 import com.eblan.socialworkreviewer.core.domain.UpdateChoiceUseCase
 import com.eblan.socialworkreviewer.core.model.Average
 import com.eblan.socialworkreviewer.core.model.Choice
@@ -51,6 +52,7 @@ class QuestionViewModel @Inject constructor(
     private val countDownTimerWrapper: CountDownTimerWrapper,
     private val getQuestionsUseCase: GetQuestionsUseCase,
     private val updateChoiceUseCase: UpdateChoiceUseCase,
+    private val getStatisticsUseCase: GetStatisticsUseCase,
 ) : ViewModel() {
 
     private val questionRouteData = savedStateHandle.toRoute<QuestionRouteData>()
@@ -170,7 +172,10 @@ class QuestionViewModel @Inject constructor(
             }
 
             _questionUiState.update {
-                QuestionUiState.OnBoarding(categoryRepository.getCategory(categoryId = id))
+                QuestionUiState.OnBoarding(
+                    categoryRepository.getCategory(categoryId = id),
+                    statistics = getStatisticsUseCase(categoryId = id),
+                )
             }
         }
     }

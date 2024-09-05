@@ -19,6 +19,7 @@ package com.eblan.socialworkreviewer.feature.question
 
 import com.eblan.socialworkreviewer.core.model.Category
 import com.eblan.socialworkreviewer.core.model.Question
+import com.eblan.socialworkreviewer.core.model.Statistics
 
 sealed interface QuestionUiState {
     data class Questions(val questionSettingIndex: Int, val questions: List<Question>) :
@@ -30,7 +31,8 @@ sealed interface QuestionUiState {
         val questions: List<Question>,
     ) : QuestionUiState
 
-    data class OnBoarding(val category: Category? = null) : QuestionUiState
+    data class OnBoarding(val category: Category? = null, val statistics: Statistics) :
+        QuestionUiState
 
     data class QuickQuestions(val questions: List<Question>) : QuestionUiState
 

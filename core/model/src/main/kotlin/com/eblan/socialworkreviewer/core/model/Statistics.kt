@@ -15,15 +15,10 @@
  *   limitations under the License.
  *
  */
-package com.eblan.socialworkreviewer.core.designsystem.theme
+package com.eblan.socialworkreviewer.core.model
 
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.graphics.Color
-
-@Immutable
-data class TintTheme(
-    val iconTint: Color = Color.Unspecified,
+data class Statistics(
+    val totalAverage: Double,
+    val totalScore: Int,
+    val totalNumberOfQuestions: Int,
 )
-
-val LocalTintTheme = staticCompositionLocalOf { TintTheme() }

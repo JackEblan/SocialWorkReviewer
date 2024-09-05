@@ -17,10 +17,7 @@
  */
 package com.eblan.socialworkreviewer.feature.category
 
-import com.eblan.socialworkreviewer.core.domain.GetCategoriesAndAverageUseCase
-import com.eblan.socialworkreviewer.core.model.Average
 import com.eblan.socialworkreviewer.core.model.Category
-import com.eblan.socialworkreviewer.core.testing.repository.FakeAverageRepository
 import com.eblan.socialworkreviewer.core.testing.repository.FakeCategoryRepository
 import com.eblan.socialworkreviewer.core.testing.util.MainDispatcherRule
 import kotlinx.coroutines.flow.collect
@@ -36,11 +33,7 @@ class CategoryViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private lateinit var getCategoriesAndAverageUseCase: GetCategoriesAndAverageUseCase
-
     private lateinit var categoryRepository: FakeCategoryRepository
-
-    private lateinit var averageRepository: FakeAverageRepository
 
     private lateinit var viewModel: CategoryViewModel
 
@@ -48,15 +41,8 @@ class CategoryViewModelTest {
     fun setup() {
         categoryRepository = FakeCategoryRepository()
 
-        averageRepository = FakeAverageRepository()
-
-        getCategoriesAndAverageUseCase = GetCategoriesAndAverageUseCase(
-            categoryRepository = categoryRepository,
-            averageRepository = averageRepository,
-        )
-
         viewModel = CategoryViewModel(
-            getCategoriesAndAverageUseCase = getCategoriesAndAverageUseCase,
+            categoryRepository = categoryRepository,
         )
     }
 
@@ -67,34 +53,22 @@ class CategoryViewModelTest {
 
     @Test
     fun categoryUiState_isSuccess() = runTest {
+        backgroundScope.launch(UnconfinedTestDispatcher()) {
+            viewModel.categoryUiState.collect()
+        }
+
         val categories = List(10) { index ->
             Category(
                 id = "$index",
                 title = "title",
                 description = "",
                 imageUrl = "",
-                average = 0.0,
                 questionSettings = emptyList(),
             )
         }
 
-        val averages = List(10) { index ->
-            Average(
-                questionSettingIndex = index,
-                score = index,
-                numberOfQuestions = 0,
-                categoryId = "",
-            )
-        }
-
-        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.categoryUiState.collect() }
-
         categoryRepository.setCategories(categories)
 
-        averageRepository.setAverages(averages)
-
         assertIs<CategoryUiState.Success>(viewModel.categoryUiState.value)
-
-        collectJob.cancel()
     }
 }

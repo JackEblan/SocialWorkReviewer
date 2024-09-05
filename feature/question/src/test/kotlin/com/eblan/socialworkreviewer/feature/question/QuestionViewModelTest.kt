@@ -20,7 +20,10 @@ package com.eblan.socialworkreviewer.feature.question
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.testing.invoke
 import com.eblan.socialworkreviewer.core.domain.GetQuestionsUseCase
+import com.eblan.socialworkreviewer.core.domain.GetStatisticsUseCase
 import com.eblan.socialworkreviewer.core.domain.UpdateChoiceUseCase
+import com.eblan.socialworkreviewer.core.model.Average
+import com.eblan.socialworkreviewer.core.model.Category
 import com.eblan.socialworkreviewer.core.model.Choice
 import com.eblan.socialworkreviewer.core.model.Question
 import com.eblan.socialworkreviewer.core.model.QuestionData
@@ -63,6 +66,8 @@ class QuestionViewModelTest {
 
     private lateinit var updateChoiceUseCase: UpdateChoiceUseCase
 
+    private lateinit var getStatisticsUseCase: GetStatisticsUseCase
+
     private lateinit var viewModel: QuestionViewModel
 
     @Before
@@ -85,6 +90,8 @@ class QuestionViewModelTest {
 
         updateChoiceUseCase = UpdateChoiceUseCase(choiceRepository = choiceRepository)
 
+        getStatisticsUseCase = GetStatisticsUseCase(averageRepository = averageRepository)
+
         viewModel = QuestionViewModel(
             savedStateHandle = savedStateHandle,
             choiceRepository = choiceRepository,
@@ -93,6 +100,7 @@ class QuestionViewModelTest {
             countDownTimerWrapper = countDownTimerWrapper,
             getQuestionsUseCase = getQuestionsUseCase,
             updateChoiceUseCase = updateChoiceUseCase,
+            getStatisticsUseCase = getStatisticsUseCase,
         )
     }
 
@@ -119,9 +127,13 @@ class QuestionViewModelTest {
 
     @Test
     fun startQuestions() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.questionUiState.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher()) {
+            viewModel.questionUiState.collect()
+        }
 
-        val collectJob2 = launch(UnconfinedTestDispatcher()) { viewModel.countDownTime.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher()) {
+            viewModel.countDownTime.collect()
+        }
 
         val questions = List(10) { _ ->
             Question(
@@ -144,15 +156,13 @@ class QuestionViewModelTest {
         assertIs<QuestionUiState.Questions>(viewModel.questionUiState.value)
 
         assertNotNull(viewModel.countDownTime.value)
-
-        collectJob.cancel()
-
-        collectJob2.cancel()
     }
 
     @Test
     fun startQuickQuestions() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.questionUiState.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher()) {
+            viewModel.questionUiState.collect()
+        }
 
         val questions = List(10) { _ ->
             Question(
@@ -167,14 +177,13 @@ class QuestionViewModelTest {
         viewModel.startQuickQuestions()
 
         assertIs<QuestionUiState.QuickQuestions>(viewModel.questionUiState.value)
-
-        collectJob.cancel()
     }
 
     @Test
     fun addCurrentQuestion() = runTest {
-        val collectJob =
-            launch(UnconfinedTestDispatcher()) { viewModel.currentQuestionData.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher()) {
+            viewModel.currentQuestionData.collect()
+        }
 
         val question = Question(
             question = "",
@@ -195,13 +204,13 @@ class QuestionViewModelTest {
         assertTrue(viewModel.currentQuestionData.value.selectedChoices.isNotEmpty())
 
         assertTrue(viewModel.currentQuestionData.value.questionsWithSelectedChoices.isNotEmpty())
-
-        collectJob.cancel()
     }
 
     @Test
     fun showCorrectChoices() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.questionUiState.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher()) {
+            viewModel.questionUiState.collect()
+        }
 
         val questions = List(10) { _ ->
             Question(
@@ -216,13 +225,13 @@ class QuestionViewModelTest {
         viewModel.showCorrectChoices(questions = questions)
 
         assertIs<QuestionUiState.CorrectChoices>(viewModel.questionUiState.value)
-
-        collectJob.cancel()
     }
 
     @Test
     fun showScore() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.questionUiState.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher()) {
+            viewModel.questionUiState.collect()
+        }
 
         val questions = List(10) { _ ->
             Question(
@@ -237,28 +246,39 @@ class QuestionViewModelTest {
         viewModel.showScore(questionSettingIndex = 0, questions = questions)
 
         assertIs<QuestionUiState.Score>(viewModel.questionUiState.value)
-
-        collectJob.cancel()
     }
 
     @Test
     fun getCategory() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.questionUiState.collect() }
+        backgroundScope.launch(UnconfinedTestDispatcher()) {
+            viewModel.questionUiState.collect()
+        }
 
-        val questions = List(10) { _ ->
-            Question(
-                question = "",
-                correctChoices = listOf(),
-                wrongChoices = listOf(),
-                choices = listOf(),
+        val categories = List(10) { index ->
+            Category(
+                id = "id",
+                title = "Title $index",
+                description = "description",
+                imageUrl = "imageUrl",
+                questionSettings = emptyList(),
             )
         }
-        questionRepository.setQuestions(questions)
+
+        val averages = List(10) { index ->
+            Average(
+                questionSettingIndex = 1,
+                score = 10,
+                numberOfQuestions = 10,
+                categoryId = "id",
+            )
+        }
+
+        categoryRepository.setCategories(value = categories)
+
+        averageRepository.setAverages(value = averages)
 
         viewModel.getCategory()
 
         assertIs<QuestionUiState.OnBoarding>(viewModel.questionUiState.value)
-
-        collectJob.cancel()
     }
 }

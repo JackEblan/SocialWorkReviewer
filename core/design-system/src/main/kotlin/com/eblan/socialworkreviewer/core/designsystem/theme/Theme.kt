@@ -32,7 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 @VisibleForTesting
-val LightDefaultColorScheme = lightColorScheme(
+val LightGreenColorScheme = lightColorScheme(
     primary = Green.primaryLight,
     onPrimary = Green.onPrimaryLight,
     primaryContainer = Green.primaryContainerLight,
@@ -71,7 +71,7 @@ val LightDefaultColorScheme = lightColorScheme(
 )
 
 @VisibleForTesting
-val DarkDefaultColorScheme = darkColorScheme(
+val DarkGreenColorScheme = darkColorScheme(
     primary = Green.primaryDark,
     onPrimary = Green.onPrimaryDark,
     primaryContainer = Green.primaryContainerDark,
@@ -110,7 +110,7 @@ val DarkDefaultColorScheme = darkColorScheme(
 )
 
 @VisibleForTesting
-val LightAndroidColorScheme = lightColorScheme(
+val LightPurpleColorScheme = lightColorScheme(
     primary = Purple.primaryLight,
     onPrimary = Purple.onPrimaryLight,
     primaryContainer = Purple.primaryContainerLight,
@@ -149,7 +149,7 @@ val LightAndroidColorScheme = lightColorScheme(
 )
 
 @VisibleForTesting
-val DarkAndroidColorScheme = darkColorScheme(
+val DarkPurpleColorScheme = darkColorScheme(
     primary = Purple.primaryDark,
     onPrimary = Purple.onPrimaryDark,
     primaryContainer = Purple.primaryContainerDark,
@@ -187,7 +187,7 @@ val DarkAndroidColorScheme = darkColorScheme(
     surfaceContainerHighest = Purple.surfaceContainerHighestDark,
 )
 
-val dynamicTopBarTitleGradientColors = GradientColors(
+val dynamicGradientColors = GradientColors(
     topBarTitleColorsDefault = listOf(
         Color(0xFF00BCD4),
         Color(0xFF03A9F4),
@@ -195,7 +195,7 @@ val dynamicTopBarTitleGradientColors = GradientColors(
     ),
 )
 
-val defaultTopBarTitleGradientColors = GradientColors(
+val greenGradientColors = GradientColors(
     topBarTitleColorsDefault = listOf(
         Color(0xFF43A047),
         Color(0xFF7CB342),
@@ -203,7 +203,7 @@ val defaultTopBarTitleGradientColors = GradientColors(
     ),
 )
 
-val androidTopBarTitleGradientColors = GradientColors(
+val purpleGradientColors = GradientColors(
     topBarTitleColorsDefault = listOf(
         Color(0xFF8E24AA),
         Color(0xFFD81B60),
@@ -213,25 +213,33 @@ val androidTopBarTitleGradientColors = GradientColors(
 
 @Composable
 fun SwrTheme(
+    greenTheme: Boolean = false,
+    purpleTheme: Boolean = false,
     darkTheme: Boolean = isSystemInDarkTheme(),
-    androidTheme: Boolean = false,
-    disableDynamicTheming: Boolean = true,
+    dynamicTheme: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val colorScheme = when {
-        androidTheme -> if (darkTheme) DarkAndroidColorScheme else LightAndroidColorScheme
-        !disableDynamicTheming && supportsDynamicTheming() -> {
+        supportsDynamicTheming() && dynamicTheme -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        else -> if (darkTheme) DarkDefaultColorScheme else LightDefaultColorScheme
+        greenTheme -> if (darkTheme) DarkGreenColorScheme else LightGreenColorScheme
+
+        purpleTheme -> if (darkTheme) DarkPurpleColorScheme else LightPurpleColorScheme
+
+        else -> if (darkTheme) DarkGreenColorScheme else LightGreenColorScheme
     }
 
     val topBarTitleGradientColors = when {
-        androidTheme -> androidTopBarTitleGradientColors
-        !disableDynamicTheming && supportsDynamicTheming() -> dynamicTopBarTitleGradientColors
-        else -> defaultTopBarTitleGradientColors
+        supportsDynamicTheming() && dynamicTheme -> dynamicGradientColors
+
+        greenTheme -> greenGradientColors
+
+        purpleTheme -> purpleGradientColors
+
+        else -> greenGradientColors
     }
 
     CompositionLocalProvider(
