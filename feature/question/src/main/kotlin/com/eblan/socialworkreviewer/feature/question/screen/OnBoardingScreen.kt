@@ -220,7 +220,7 @@ private fun Statistics(
     Column(modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         AverageCircularProgressIndicator(average = average)
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         Text(text = "Total Score", style = MaterialTheme.typography.bodySmall)
 

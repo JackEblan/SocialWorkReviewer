@@ -22,6 +22,8 @@ import androidx.navigation.testing.invoke
 import com.eblan.socialworkreviewer.core.domain.GetQuestionsUseCase
 import com.eblan.socialworkreviewer.core.domain.GetStatisticsUseCase
 import com.eblan.socialworkreviewer.core.domain.UpdateChoiceUseCase
+import com.eblan.socialworkreviewer.core.model.Average
+import com.eblan.socialworkreviewer.core.model.Category
 import com.eblan.socialworkreviewer.core.model.Choice
 import com.eblan.socialworkreviewer.core.model.Question
 import com.eblan.socialworkreviewer.core.model.QuestionData
@@ -252,15 +254,28 @@ class QuestionViewModelTest {
             viewModel.questionUiState.collect()
         }
 
-        val questions = List(10) { _ ->
-            Question(
-                question = "",
-                correctChoices = listOf(),
-                wrongChoices = listOf(),
-                choices = listOf(),
+        val categories = List(10) { index ->
+            Category(
+                id = "id",
+                title = "Title $index",
+                description = "description",
+                imageUrl = "imageUrl",
+                questionSettings = emptyList(),
             )
         }
-        questionRepository.setQuestions(questions)
+
+        val averages = List(10) { index ->
+            Average(
+                questionSettingIndex = 1,
+                score = 10,
+                numberOfQuestions = 10,
+                categoryId = "id",
+            )
+        }
+
+        categoryRepository.setCategories(value = categories)
+
+        averageRepository.setAverages(value = averages)
 
         viewModel.getCategory()
 
