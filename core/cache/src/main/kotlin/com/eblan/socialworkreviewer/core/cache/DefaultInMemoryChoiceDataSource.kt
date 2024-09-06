@@ -42,6 +42,8 @@ internal class DefaultInMemoryChoiceDataSource @Inject constructor(
         onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
 
+    override val questions get() = _questions.toList()
+
     override val selectedChoices get() = _selectedChoices.toList()
 
     override val currentQuestionData get() = _currentQuestionData.asSharedFlow()

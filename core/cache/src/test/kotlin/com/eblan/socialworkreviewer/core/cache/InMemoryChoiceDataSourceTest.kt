@@ -84,6 +84,15 @@ class InMemoryChoiceDataSourceTest {
 
     @Test
     fun clearCache() = runTest {
+        val questions = List(10) { index ->
+            Question(
+                question = "",
+                correctChoices = listOf(),
+                wrongChoices = listOf(),
+                choices = listOf(),
+            )
+        }
+
         val choice = Choice(
             question = Question(
                 question = "",
@@ -94,9 +103,15 @@ class InMemoryChoiceDataSourceTest {
             choice = "",
         )
 
+        inMemoryChoiceDataSource.addQuestions(questions = questions)
+
         inMemoryChoiceDataSource.addChoice(choice = choice)
 
         inMemoryChoiceDataSource.clearCache()
+
+        assertTrue {
+            inMemoryChoiceDataSource.questions.isEmpty()
+        }
 
         assertTrue {
             inMemoryChoiceDataSource.selectedChoices.isEmpty()

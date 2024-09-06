@@ -23,6 +23,8 @@ import com.eblan.socialworkreviewer.core.model.QuestionData
 import kotlinx.coroutines.flow.SharedFlow
 
 interface InMemoryChoiceDataSource {
+    val questions: List<Question>
+
     val selectedChoices: List<Choice>
 
     val currentQuestionData: SharedFlow<QuestionData>
