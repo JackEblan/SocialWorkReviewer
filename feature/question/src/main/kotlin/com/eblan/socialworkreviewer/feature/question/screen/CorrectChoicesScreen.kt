@@ -131,7 +131,6 @@ internal fun CorrectChoicesScreen(
                 CorrectChoicesPage(
                     modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                     page = page,
-                    isScrollInProgress = pagerState.isScrollInProgress,
                     questions = questions,
                     selectedChoices = selectedChoices,
                 )
@@ -160,7 +159,6 @@ private fun CorrectChoicesPage(
     modifier: Modifier = Modifier,
     scrollState: ScrollState = rememberScrollState(),
     page: Int,
-    isScrollInProgress: Boolean,
     questions: List<Question>,
     selectedChoices: List<String>,
 ) {
@@ -176,7 +174,6 @@ private fun CorrectChoicesPage(
         )
 
         CorrectChoicesSelection(
-            isScrollInProgress = isScrollInProgress,
             choices = questions[page].choices,
             correctChoices = questions[page].correctChoices,
             selectedChoices = selectedChoices,
@@ -203,7 +200,6 @@ private fun CorrectChoicesQuestionText(modifier: Modifier = Modifier, question: 
 @Composable
 private fun CorrectChoicesSelection(
     modifier: Modifier = Modifier,
-    isScrollInProgress: Boolean,
     choices: List<String>,
     correctChoices: List<String>,
     selectedChoices: List<String>,
@@ -222,10 +218,9 @@ private fun CorrectChoicesSelection(
             .padding(horizontal = 10.dp),
     ) {
         choices.forEach { choice ->
-            val correctChoice = isScrollInProgress.not() && choice in correctChoices
+            val correctChoice = choice in correctChoices
 
-            val wrongChoice =
-                isScrollInProgress.not() && choice !in correctChoices && choice in selectedChoices
+            val wrongChoice = choice !in correctChoices && choice in selectedChoices
 
             val choiceBrush = if (correctChoice) {
                 Brush.linearGradient(
@@ -242,7 +237,7 @@ private fun CorrectChoicesSelection(
             OutlinedCard(
                 onClick = {},
                 modifier = Modifier.fillMaxWidth(),
-                border = BorderStroke(width = 1.dp, brush = choiceBrush),
+                border = BorderStroke(width = 2.dp, brush = choiceBrush),
             ) {
                 Box(
                     modifier = Modifier

@@ -18,7 +18,9 @@
 package com.eblan.socialworkreviewer.feature.question.screen
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.keyframes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Box
@@ -57,6 +59,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.AnnotatedString
@@ -141,8 +144,8 @@ internal fun QuickQuestionsScreen(
             ) { page ->
                 QuickQuestionPage(
                     modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-                    page = page,
                     isScrollInProgress = pagerState.isScrollInProgress,
+                    page = page,
                     questions = questions,
                     selectedChoices = selectedChoices,
                     onUpdateChoice = onUpdateChoice,
@@ -171,8 +174,8 @@ internal fun QuickQuestionsScreen(
 private fun QuickQuestionPage(
     modifier: Modifier = Modifier,
     scrollState: ScrollState = rememberScrollState(),
-    page: Int,
     isScrollInProgress: Boolean,
+    page: Int,
     questions: List<Question>,
     selectedChoices: List<String>,
     onUpdateChoice: (Choice) -> Unit,
@@ -238,6 +241,15 @@ private fun QuickQuestionChoicesSelection(
 
     val redGradientColors = listOf(Color.Red, Color.Blue, Color.Red)
 
+    val animatedOffsetX by animateFloatAsState(
+        targetValue = 0f,
+        animationSpec = keyframes {
+            durationMillis = 1000
+            100f at 500 using LinearEasing
+        },
+        label = "",
+    )
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -274,8 +286,10 @@ private fun QuickQuestionChoicesSelection(
                         onUpdateChoice(choice)
                     }
                 },
-                modifier = Modifier.fillMaxWidth(),
-                border = BorderStroke(width = 1.dp, brush = choiceBrush),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .graphicsLayer { translationX = animatedOffsetX },
+                border = BorderStroke(width = 2.dp, brush = choiceBrush),
             ) {
                 Box(
                     modifier = Modifier

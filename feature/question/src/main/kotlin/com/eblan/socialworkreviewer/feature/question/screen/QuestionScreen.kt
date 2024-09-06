@@ -362,7 +362,6 @@ private fun Questions(
                 QuestionPage(
                     modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                     page = page,
-                    isScrollInProgress = pagerState.isScrollInProgress,
                     questions = questions,
                     selectedChoices = selectedChoices,
                     onUpdateChoice = onUpdateChoice,
@@ -395,7 +394,7 @@ private fun Questions(
             onQuestionClick = { index ->
                 scope.launch {
                     showQuestionsDialog = false
-                    pagerState.scrollToPage(index)
+                    pagerState.animateScrollToPage(index)
                 }
             },
             onOkayClick = {
@@ -411,7 +410,6 @@ private fun QuestionPage(
     modifier: Modifier = Modifier,
     scrollState: ScrollState = rememberScrollState(),
     page: Int,
-    isScrollInProgress: Boolean,
     questions: List<Question>,
     selectedChoices: List<String>,
     onUpdateChoice: (Choice) -> Unit,
@@ -428,7 +426,6 @@ private fun QuestionPage(
         )
 
         QuestionChoicesSelection(
-            isScrollInProgress = isScrollInProgress,
             choices = questions[page].choices,
             selectedChoices = selectedChoices,
             onUpdateChoice = { choice ->
@@ -486,7 +483,6 @@ internal fun ChoicesType(
 @Composable
 private fun QuestionChoicesSelection(
     modifier: Modifier = Modifier,
-    isScrollInProgress: Boolean,
     choices: List<String>,
     selectedChoices: List<String>,
     onUpdateChoice: (String) -> Unit,
@@ -503,7 +499,7 @@ private fun QuestionChoicesSelection(
             .padding(horizontal = 10.dp),
     ) {
         choices.forEach { choice ->
-            val selectedChoiceBrush = if (choice in selectedChoices && isScrollInProgress.not()) {
+            val selectedChoiceBrush = if (choice in selectedChoices) {
                 Brush.linearGradient(
                     colors = greenGradientColors,
                 )
@@ -516,7 +512,7 @@ private fun QuestionChoicesSelection(
                     onUpdateChoice(choice)
                 },
                 modifier = Modifier.fillMaxWidth(),
-                border = BorderStroke(width = 1.dp, brush = selectedChoiceBrush),
+                border = BorderStroke(width = 2.dp, brush = selectedChoiceBrush),
             ) {
                 Box(
                     modifier = Modifier
