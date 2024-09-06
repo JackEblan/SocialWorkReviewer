@@ -18,7 +18,7 @@
 package com.eblan.socialworkreviewer.feature.question.screen
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.keyframes
 import androidx.compose.foundation.BorderStroke
@@ -52,6 +52,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
@@ -70,6 +72,7 @@ import com.eblan.socialworkreviewer.core.designsystem.theme.LocalGradientColors
 import com.eblan.socialworkreviewer.core.model.Choice
 import com.eblan.socialworkreviewer.core.model.Question
 import com.eblan.socialworkreviewer.feature.question.dialog.quit.QuitAlertDialog
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -241,14 +244,11 @@ private fun QuickQuestionChoicesSelection(
 
     val redGradientColors = listOf(Color.Red, Color.Blue, Color.Red)
 
-    val animatedOffsetX by animateFloatAsState(
-        targetValue = 0f,
-        animationSpec = keyframes {
-            durationMillis = 1000
-            100f at 500 using LinearEasing
-        },
-        label = "",
-    )
+    val wrongChoiceAnimation = remember { Animatable(0f) }
+
+    val correctChoiceAnimation = remember { Animatable(1f) }
+
+    val scope = rememberCoroutineScope()
 
     Column(
         modifier = modifier
@@ -284,11 +284,38 @@ private fun QuickQuestionChoicesSelection(
                 onClick = {
                     if (selectedChoice.not() && selectedChoices.size < correctChoices.size) {
                         onUpdateChoice(choice)
+
+                        scope.launch {
+                            correctChoiceAnimation.animateTo(
+                                targetValue = 1f,
+                                animationSpec = keyframes {
+                                    durationMillis = 300
+                                    1f at 0
+                                    1.1f at 150
+                                },
+                            )
+
+                            wrongChoiceAnimation.animateTo(
+                                targetValue = 0f,
+                                animationSpec = keyframes {
+                                    durationMillis = 300
+                                    50f at 100
+                                    (-50f) at 200
+                                },
+                            )
+                        }
                     }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .graphicsLayer { translationX = animatedOffsetX },
+                    .graphicsLayer {
+                        if (wrongChoice) {
+                            translationX = wrongChoiceAnimation.value
+                        } else if (correctChoice) {
+                            scaleX = correctChoiceAnimation.value
+                            scaleY = correctChoiceAnimation.value
+                        }
+                    },
                 border = BorderStroke(width = 2.dp, brush = choiceBrush),
             ) {
                 Box(

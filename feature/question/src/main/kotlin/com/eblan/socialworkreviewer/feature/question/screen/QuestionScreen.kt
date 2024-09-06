@@ -22,7 +22,9 @@ import androidx.annotation.VisibleForTesting
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -78,6 +80,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
@@ -493,13 +496,19 @@ private fun QuestionChoicesSelection(
         Color(0xFF039BE5),
     )
 
+    val choiceAnimation = remember { Animatable(0f) }
+
+    val scope = rememberCoroutineScope()
+
     Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 10.dp),
     ) {
         choices.forEach { choice ->
-            val selectedChoiceBrush = if (choice in selectedChoices) {
+            val selectedChoice = choice in selectedChoices
+
+            val selectedChoiceBrush = if (selectedChoice) {
                 Brush.linearGradient(
                     colors = greenGradientColors,
                 )
@@ -510,8 +519,25 @@ private fun QuestionChoicesSelection(
             OutlinedCard(
                 onClick = {
                     onUpdateChoice(choice)
+                    scope.launch {
+                        choiceAnimation.animateTo(
+                            targetValue = 1f,
+                            animationSpec = keyframes {
+                                durationMillis = 300
+                                1f at 0
+                                1.1f at 150
+                            },
+                        )
+                    }
                 },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .graphicsLayer {
+                        if (selectedChoice && choiceAnimation.value != 0f) {
+                            scaleX = choiceAnimation.value
+                            scaleY = choiceAnimation.value
+                        }
+                    },
                 border = BorderStroke(width = 2.dp, brush = selectedChoiceBrush),
             ) {
                 Box(
