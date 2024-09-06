@@ -31,12 +31,11 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -48,7 +47,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -56,6 +55,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -76,6 +76,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
@@ -176,6 +177,7 @@ internal fun QuestionScreen(
                 if (state.questions.isNotEmpty()) {
                     Questions(
                         snackbarHostState = snackbarHostState,
+                        currentQuestionData = currentQuestionData,
                         questionSettingIndex = state.questionSettingIndex,
                         questions = state.questions,
                         selectedChoices = currentQuestionData.selectedChoices,
@@ -252,6 +254,7 @@ internal fun QuestionScreen(
 private fun Questions(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
+    currentQuestionData: QuestionData,
     questionSettingIndex: Int,
     questions: List<Question>,
     selectedChoices: List<String>,
@@ -387,8 +390,8 @@ private fun Questions(
         QuestionsDialog(
             modifier = modifier,
             minutes = countDownTime?.minutes,
-            questions = questions,
-            questionsWithSelectedChoices = questionsWithSelectedChoices,
+            questionsSize = questions.size,
+            answeredQuestions = currentQuestionData.answeredQuestions,
             onQuestionClick = { index ->
                 scope.launch {
                     showQuestionsDialog = false
@@ -488,29 +491,42 @@ private fun QuestionChoicesSelection(
     selectedChoices: List<String>,
     onUpdateChoice: (String) -> Unit,
 ) {
+    val greenGradientColors = listOf(
+        Color(0xFF43A047),
+        Color(0xFF7CB342),
+        Color(0xFF039BE5),
+    )
+
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp),
     ) {
         choices.forEach { choice ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        onUpdateChoice(choice)
-                    },
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Checkbox(
-                    checked = choice in selectedChoices && isScrollInProgress.not(),
-                    onCheckedChange = {
-                        onUpdateChoice(choice)
-                    },
+            val selectedChoiceBrush = if (choice in selectedChoices && isScrollInProgress.not()) {
+                Brush.linearGradient(
+                    colors = greenGradientColors,
                 )
+            } else {
+                CardDefaults.outlinedCardBorder().brush
+            }
 
+            OutlinedCard(
+                onClick = {
+                    onUpdateChoice(choice)
+                },
+                modifier = Modifier.fillMaxWidth(),
+                border = BorderStroke(width = 1.dp, brush = selectedChoiceBrush),
+            ) {
                 Box(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp),
                 ) {
-                    Text(text = choice)
+                    Text(
+                        text = choice,
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
                 }
             }
 

@@ -19,6 +19,7 @@ package com.eblan.socialworkreviewer.core.cache
 
 import com.eblan.socialworkreviewer.core.common.Dispatcher
 import com.eblan.socialworkreviewer.core.common.SwrDispatchers.Default
+import com.eblan.socialworkreviewer.core.model.AnsweredQuestion
 import com.eblan.socialworkreviewer.core.model.Choice
 import com.eblan.socialworkreviewer.core.model.Question
 import com.eblan.socialworkreviewer.core.model.QuestionData
@@ -32,6 +33,8 @@ import javax.inject.Inject
 internal class DefaultInMemoryChoiceDataSource @Inject constructor(
     @Dispatcher(Default) private val defaultDispatcher: CoroutineDispatcher,
 ) : InMemoryChoiceDataSource {
+    private val _questions = mutableListOf<Question>()
+
     private val _selectedChoices = mutableListOf<Choice>()
 
     private val _currentQuestionData = MutableSharedFlow<QuestionData>(
@@ -43,6 +46,10 @@ internal class DefaultInMemoryChoiceDataSource @Inject constructor(
 
     override val currentQuestionData get() = _currentQuestionData.asSharedFlow()
 
+    override fun addQuestions(questions: List<Question>) {
+        _questions.addAll(questions)
+    }
+
     override suspend fun addChoice(choice: Choice) {
         _selectedChoices.add(choice)
 
@@ -53,6 +60,7 @@ internal class DefaultInMemoryChoiceDataSource @Inject constructor(
                     defaultValue = emptyList(),
                 ),
                 questionsWithSelectedChoices = getQuestionsWithSelectedChoices(),
+                answeredQuestions = getAnsweredQuestions(),
             ),
         )
     }
@@ -67,11 +75,14 @@ internal class DefaultInMemoryChoiceDataSource @Inject constructor(
                     defaultValue = emptyList(),
                 ),
                 questionsWithSelectedChoices = getQuestionsWithSelectedChoices(),
+                answeredQuestions = getAnsweredQuestions(),
             ),
         )
     }
 
     override fun clearCache() {
+        _questions.clear()
+
         _selectedChoices.clear()
 
         _currentQuestionData.resetReplayCache()
@@ -85,6 +96,7 @@ internal class DefaultInMemoryChoiceDataSource @Inject constructor(
                     defaultValue = emptyList(),
                 ),
                 questionsWithSelectedChoices = getQuestionsWithSelectedChoices(),
+                answeredQuestions = getAnsweredQuestions(),
             ),
         )
     }
@@ -100,6 +112,17 @@ internal class DefaultInMemoryChoiceDataSource @Inject constructor(
     private suspend fun getQuestionsWithSelectedChoices(): Map<Question, List<String>> {
         return withContext(defaultDispatcher) {
             _selectedChoices.groupBy({ it.question }, { it.choice })
+        }
+    }
+
+    private suspend fun getAnsweredQuestions(): List<AnsweredQuestion> {
+        return withContext(defaultDispatcher) {
+            _questions.map { question ->
+                AnsweredQuestion(
+                    question = question,
+                    isAnswered = question in getQuestionsWithSelectedChoices(),
+                )
+            }
         }
     }
 }

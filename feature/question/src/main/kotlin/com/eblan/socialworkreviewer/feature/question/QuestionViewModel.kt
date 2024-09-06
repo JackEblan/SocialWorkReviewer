@@ -68,6 +68,7 @@ class QuestionViewModel @Inject constructor(
         initialValue = QuestionData(
             selectedChoices = emptyList(),
             questionsWithSelectedChoices = emptyMap(),
+            answeredQuestions = emptyList(),
         ),
     )
 
@@ -99,6 +100,8 @@ class QuestionViewModel @Inject constructor(
                     questions = questions,
                 )
             }
+
+            choiceRepository.addQuestions(questions = questions)
 
             countDownTimerWrapper.start()
         }

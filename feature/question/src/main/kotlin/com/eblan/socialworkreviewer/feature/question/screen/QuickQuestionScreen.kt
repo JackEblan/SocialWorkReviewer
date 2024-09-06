@@ -19,11 +19,10 @@ package com.eblan.socialworkreviewer.feature.question.screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,12 +33,12 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -54,9 +53,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
@@ -80,9 +79,11 @@ internal fun QuickQuestionsScreen(
     onUpdateChoice: (Choice) -> Unit,
     onQuitQuestions: () -> Unit,
 ) {
-    val pagerState = rememberPagerState(pageCount = {
-        questions.size
-    })
+    val pagerState = rememberPagerState(
+        pageCount = {
+            questions.size
+        },
+    )
 
     val scrollBehavior = enterAlwaysScrollBehavior()
 
@@ -229,13 +230,18 @@ private fun QuickQuestionChoicesSelection(
     selectedChoices: List<String>,
     onUpdateChoice: (String) -> Unit,
 ) {
-    val wrongChoiceColor = CheckboxDefaults.colors().copy(
-        checkedBoxColor = MaterialTheme.colorScheme.error,
-        checkedBorderColor = MaterialTheme.colorScheme.error,
+    val greenGradientColors = listOf(
+        Color(0xFF43A047),
+        Color(0xFF7CB342),
+        Color(0xFF039BE5),
     )
 
+    val redGradientColors = listOf(Color.Red, Color.Blue, Color.Red)
+
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp),
     ) {
         choices.forEach { choice ->
             val selectedChoice = isScrollInProgress.not() && choice in selectedChoices
@@ -246,33 +252,42 @@ private fun QuickQuestionChoicesSelection(
             val wrongChoice =
                 isScrollInProgress.not() && selectedChoices.size == correctChoices.size && choice !in correctChoices && choice in selectedChoices
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        if (selectedChoice.not() && selectedChoices.size < correctChoices.size) {
-                            onUpdateChoice(choice)
-                        }
-                    },
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Checkbox(
-                    checked = selectedChoice || correctChoice || wrongChoice,
-                    onCheckedChange = {
-                        if (selectedChoice.not() && selectedChoices.size < correctChoices.size) {
-                            onUpdateChoice(choice)
-                        }
-                    },
-                    colors = if (wrongChoice) wrongChoiceColor else CheckboxDefaults.colors(),
+            val choiceBrush = if (selectedChoice && correctChoice) {
+                Brush.linearGradient(
+                    colors = greenGradientColors,
                 )
-
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(text = choice)
-                }
+            } else if (correctChoice) {
+                Brush.linearGradient(
+                    colors = greenGradientColors,
+                )
+            } else if (wrongChoice) {
+                Brush.linearGradient(
+                    colors = redGradientColors,
+                )
+            } else {
+                CardDefaults.outlinedCardBorder().brush
             }
 
+            OutlinedCard(
+                onClick = {
+                    if (selectedChoice.not() && selectedChoices.size < correctChoices.size) {
+                        onUpdateChoice(choice)
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                border = BorderStroke(width = 1.dp, brush = choiceBrush),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp),
+                ) {
+                    Text(
+                        text = choice,
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
+            }
             Spacer(modifier = Modifier.height(10.dp))
         }
     }

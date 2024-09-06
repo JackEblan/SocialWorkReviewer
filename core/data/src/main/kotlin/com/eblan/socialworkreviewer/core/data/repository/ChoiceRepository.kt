@@ -27,6 +27,8 @@ interface ChoiceRepository {
 
     val currentQuestionData: SharedFlow<QuestionData>
 
+    fun addQuestions(questions: List<Question>)
+
     suspend fun addChoice(choice: Choice)
 
     suspend fun deleteChoice(choice: Choice)

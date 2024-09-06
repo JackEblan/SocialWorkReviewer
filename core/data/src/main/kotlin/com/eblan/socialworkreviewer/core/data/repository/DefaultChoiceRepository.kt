@@ -33,6 +33,10 @@ internal class DefaultChoiceRepository @Inject constructor(
     override val currentQuestionData: SharedFlow<QuestionData>
         get() = inMemoryChoiceDataSource.currentQuestionData
 
+    override fun addQuestions(questions: List<Question>) {
+        inMemoryChoiceDataSource.addQuestions(questions = questions)
+    }
+
     override suspend fun addChoice(choice: Choice) {
         inMemoryChoiceDataSource.addChoice(choice)
     }

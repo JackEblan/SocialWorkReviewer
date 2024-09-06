@@ -115,6 +115,7 @@ class QuestionViewModelTest {
             expected = QuestionData(
                 selectedChoices = emptyList(),
                 questionsWithSelectedChoices = emptyMap(),
+                answeredQuestions = emptyList(),
             ),
             actual = viewModel.currentQuestionData.value,
         )
@@ -264,7 +265,7 @@ class QuestionViewModelTest {
             )
         }
 
-        val averages = List(10) { index ->
+        val averages = List(10) { _ ->
             Average(
                 questionSettingIndex = 1,
                 score = 10,

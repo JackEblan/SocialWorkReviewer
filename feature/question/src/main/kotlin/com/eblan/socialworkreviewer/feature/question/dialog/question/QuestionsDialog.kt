@@ -47,14 +47,14 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.eblan.socialworkreviewer.core.designsystem.icon.Swr
-import com.eblan.socialworkreviewer.core.model.Question
+import com.eblan.socialworkreviewer.core.model.AnsweredQuestion
 
 @Composable
 internal fun QuestionsDialog(
     modifier: Modifier = Modifier,
     minutes: String?,
-    questions: List<Question>,
-    questionsWithSelectedChoices: Map<Question, List<String>>,
+    questionsSize: Int,
+    answeredQuestions: List<AnsweredQuestion>,
     onQuestionClick: (Int) -> Unit,
     onOkayClick: () -> Unit,
     contentDescription: String,
@@ -74,8 +74,8 @@ internal fun QuestionsDialog(
 
             QuestionsDialogContent(
                 minutes = minutes,
-                questions = questions,
-                questionsWithSelectedChoices = questionsWithSelectedChoices,
+                questionsSize = questionsSize,
+                answeredQuestions = answeredQuestions,
                 onQuestionClick = onQuestionClick,
             )
 
@@ -120,8 +120,8 @@ private fun QuestionsDialogTitle(modifier: Modifier = Modifier) {
 @Composable
 private fun QuestionsDialogContent(
     minutes: String?,
-    questions: List<Question>,
-    questionsWithSelectedChoices: Map<Question, List<String>>,
+    questionsSize: Int,
+    answeredQuestions: List<AnsweredQuestion>,
     onQuestionClick: (Int) -> Unit,
 ) {
     Column(
@@ -141,18 +141,17 @@ private fun QuestionsDialogContent(
         Text(
             modifier = Modifier,
             textAlign = TextAlign.Center,
-            text = "Answered ${questionsWithSelectedChoices.size}/${questions.size} questions",
+            text = "Answered ${answeredQuestions.count { it.isAnswered }}/$questionsSize questions",
             style = MaterialTheme.typography.bodySmall,
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
         LazyRow(modifier = Modifier.fillMaxWidth()) {
-            itemsIndexed(questions) { index, question ->
+            itemsIndexed(answeredQuestions) { index, answeredQuestion ->
                 QuestionItem(
                     index = index,
-                    question = question,
-                    questionsWithSelectedChoices = questionsWithSelectedChoices,
+                    answeredQuestion = answeredQuestion,
                     onQuestionClick = onQuestionClick,
                 )
             }
@@ -164,8 +163,7 @@ private fun QuestionsDialogContent(
 private fun QuestionItem(
     modifier: Modifier = Modifier,
     index: Int,
-    question: Question,
-    questionsWithSelectedChoices: Map<Question, List<String>>,
+    answeredQuestion: AnsweredQuestion,
     onQuestionClick: (Int) -> Unit,
 ) {
     Card(
@@ -185,7 +183,7 @@ private fun QuestionItem(
             Spacer(modifier = Modifier.height(10.dp))
 
             Icon(
-                imageVector = if (question in questionsWithSelectedChoices.keys) Swr.Check else Swr.Close,
+                imageVector = if (answeredQuestion.isAnswered) Swr.Check else Swr.Close,
                 contentDescription = "",
             )
         }
