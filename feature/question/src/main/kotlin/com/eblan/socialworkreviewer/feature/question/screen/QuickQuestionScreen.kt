@@ -71,6 +71,7 @@ import com.eblan.socialworkreviewer.core.designsystem.icon.Swr
 import com.eblan.socialworkreviewer.core.designsystem.theme.LocalGradientColors
 import com.eblan.socialworkreviewer.core.model.Choice
 import com.eblan.socialworkreviewer.core.model.Question
+import com.eblan.socialworkreviewer.core.model.QuestionData
 import com.eblan.socialworkreviewer.feature.question.dialog.quit.QuitAlertDialog
 import kotlinx.coroutines.launch
 
@@ -80,7 +81,7 @@ internal fun QuickQuestionsScreen(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
     questions: List<Question>,
-    selectedChoices: List<String>,
+    currentQuestionData: QuestionData,
     onAddCurrentQuestion: (Question) -> Unit,
     onUpdateChoice: (Choice) -> Unit,
     onQuitQuestions: () -> Unit,
@@ -147,10 +148,9 @@ internal fun QuickQuestionsScreen(
             ) { page ->
                 QuickQuestionPage(
                     modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-                    isScrollInProgress = pagerState.isScrollInProgress,
                     page = page,
                     questions = questions,
-                    selectedChoices = selectedChoices,
+                    currentQuestionData = currentQuestionData,
                     onUpdateChoice = onUpdateChoice,
                 )
             }
@@ -177,10 +177,9 @@ internal fun QuickQuestionsScreen(
 private fun QuickQuestionPage(
     modifier: Modifier = Modifier,
     scrollState: ScrollState = rememberScrollState(),
-    isScrollInProgress: Boolean,
     page: Int,
     questions: List<Question>,
-    selectedChoices: List<String>,
+    currentQuestionData: QuestionData,
     onUpdateChoice: (Choice) -> Unit,
 ) {
     Column(
@@ -195,18 +194,11 @@ private fun QuickQuestionPage(
         )
 
         QuickQuestionChoicesSelection(
-            isScrollInProgress = isScrollInProgress,
+            currentQuestion = questions[page],
             choices = questions[page].choices,
             correctChoices = questions[page].correctChoices,
-            selectedChoices = selectedChoices,
-            onUpdateChoice = { choice ->
-                onUpdateChoice(
-                    Choice(
-                        question = questions[page],
-                        choice = choice,
-                    ),
-                )
-            },
+            currentQuestionData = currentQuestionData,
+            onUpdateChoice = onUpdateChoice,
         )
     }
 }
@@ -230,11 +222,11 @@ private fun QuickQuestionText(modifier: Modifier = Modifier, question: String) {
 @Composable
 private fun QuickQuestionChoicesSelection(
     modifier: Modifier = Modifier,
-    isScrollInProgress: Boolean,
+    currentQuestion: Question,
     choices: List<String>,
     correctChoices: List<String>,
-    selectedChoices: List<String>,
-    onUpdateChoice: (String) -> Unit,
+    currentQuestionData: QuestionData,
+    onUpdateChoice: (Choice) -> Unit,
 ) {
     val greenGradientColors = listOf(
         Color(0xFF43A047),
@@ -250,19 +242,25 @@ private fun QuickQuestionChoicesSelection(
 
     val scope = rememberCoroutineScope()
 
+    val (question, selectedChoices) = currentQuestionData
+
+    val isCurrentQuestion = question == currentQuestion
+
     Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 10.dp),
     ) {
         choices.forEach { choice ->
-            val selectedChoice = isScrollInProgress.not() && choice in selectedChoices
+            val selectedChoice = isCurrentQuestion && choice in selectedChoices
+
+            val selectedChoiceSizeLimit = selectedChoices.size == correctChoices.size
 
             val correctChoice =
-                isScrollInProgress.not() && selectedChoices.size == correctChoices.size && choice in correctChoices
+                isCurrentQuestion && selectedChoiceSizeLimit && choice in correctChoices
 
             val wrongChoice =
-                isScrollInProgress.not() && selectedChoices.size == correctChoices.size && choice !in correctChoices && choice in selectedChoices
+                isCurrentQuestion && selectedChoiceSizeLimit && choice !in correctChoices && choice in selectedChoices
 
             val choiceBrush = if (selectedChoice && correctChoice) {
                 Brush.linearGradient(
@@ -283,7 +281,12 @@ private fun QuickQuestionChoicesSelection(
             OutlinedCard(
                 onClick = {
                     if (selectedChoice.not() && selectedChoices.size < correctChoices.size) {
-                        onUpdateChoice(choice)
+                        onUpdateChoice(
+                            Choice(
+                                question = question,
+                                choice = choice,
+                            ),
+                        )
 
                         scope.launch {
                             correctChoiceAnimation.animateTo(

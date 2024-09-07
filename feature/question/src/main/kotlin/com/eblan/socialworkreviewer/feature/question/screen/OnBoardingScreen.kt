@@ -55,6 +55,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.eblan.socialworkreviewer.core.designsystem.icon.Swr
 import com.eblan.socialworkreviewer.core.designsystem.theme.LocalGradientColors
@@ -226,7 +227,7 @@ private fun Statistics(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        Text(text = "$totalScore")
+        Text(fontWeight = FontWeight.Bold, text = "$totalScore")
 
         Spacer(modifier = Modifier.height(10.dp))
 
@@ -234,7 +235,7 @@ private fun Statistics(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        Text(text = "$totalNumberOfQuestions")
+        Text(fontWeight = FontWeight.Bold, text = "$totalNumberOfQuestions")
     }
 }
 

@@ -57,6 +57,7 @@ internal class DefaultInMemoryChoiceDataSource @Inject constructor(
 
         _currentQuestionData.emit(
             QuestionData(
+                question = choice.question,
                 selectedChoices = getQuestionsWithSelectedChoices().getOrDefault(
                     key = choice.question,
                     defaultValue = emptyList(),
@@ -72,6 +73,7 @@ internal class DefaultInMemoryChoiceDataSource @Inject constructor(
 
         _currentQuestionData.emit(
             QuestionData(
+                question = choice.question,
                 selectedChoices = getQuestionsWithSelectedChoices().getOrDefault(
                     key = choice.question,
                     defaultValue = emptyList(),
@@ -93,6 +95,7 @@ internal class DefaultInMemoryChoiceDataSource @Inject constructor(
     override suspend fun addCurrentQuestion(question: Question) {
         _currentQuestionData.emit(
             QuestionData(
+                question = question,
                 selectedChoices = getQuestionsWithSelectedChoices().getOrDefault(
                     key = question,
                     defaultValue = emptyList(),

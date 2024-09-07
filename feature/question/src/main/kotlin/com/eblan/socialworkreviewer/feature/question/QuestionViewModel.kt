@@ -66,6 +66,12 @@ class QuestionViewModel @Inject constructor(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = QuestionData(
+            question = Question(
+                question = "",
+                correctChoices = emptyList(),
+                wrongChoices = emptyList(),
+                choices = emptyList(),
+            ),
             selectedChoices = emptyList(),
             questionsWithSelectedChoices = emptyMap(),
             answeredQuestions = emptyList(),

@@ -18,6 +18,7 @@
 package com.eblan.socialworkreviewer.core.model
 
 data class QuestionData(
+    val question: Question,
     val selectedChoices: List<String>,
     val questionsWithSelectedChoices: Map<Question, List<String>>,
     val answeredQuestions: List<AnsweredQuestion>,

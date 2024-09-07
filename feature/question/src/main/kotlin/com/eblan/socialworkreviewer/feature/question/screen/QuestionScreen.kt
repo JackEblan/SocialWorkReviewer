@@ -183,8 +183,6 @@ internal fun QuestionScreen(
                         currentQuestionData = currentQuestionData,
                         questionSettingIndex = state.questionSettingIndex,
                         questions = state.questions,
-                        selectedChoices = currentQuestionData.selectedChoices,
-                        questionsWithSelectedChoices = currentQuestionData.questionsWithSelectedChoices,
                         countDownTime = countDownTime,
                         onAddCurrentQuestion = onAddCurrentQuestion,
                         onUpdateChoice = onUpdateChoice,
@@ -203,7 +201,7 @@ internal fun QuestionScreen(
             is QuestionUiState.CorrectChoices -> {
                 CorrectChoicesScreen(
                     questions = state.questions,
-                    selectedChoices = currentQuestionData.selectedChoices,
+                    currentQuestionData = currentQuestionData,
                     onAddCurrentQuestion = onAddCurrentQuestion,
                     onQuitQuestions = onQuitQuestions,
                 )
@@ -231,7 +229,7 @@ internal fun QuestionScreen(
                     QuickQuestionsScreen(
                         snackbarHostState = snackbarHostState,
                         questions = state.questions,
-                        selectedChoices = currentQuestionData.selectedChoices,
+                        currentQuestionData = currentQuestionData,
                         onAddCurrentQuestion = onAddCurrentQuestion,
                         onUpdateChoice = onUpdateChoice,
                         onQuitQuestions = onQuitQuestions,
@@ -260,8 +258,6 @@ private fun Questions(
     currentQuestionData: QuestionData,
     questionSettingIndex: Int,
     questions: List<Question>,
-    selectedChoices: List<String>,
-    questionsWithSelectedChoices: Map<Question, List<String>>,
     countDownTime: CountDownTime?,
     onAddCurrentQuestion: (Question) -> Unit,
     onUpdateChoice: (Choice) -> Unit,
@@ -326,7 +322,7 @@ private fun Questions(
             ) {
                 FloatingActionButton(
                     onClick = {
-                        if (questionsWithSelectedChoices.size < questions.size) {
+                        if (currentQuestionData.questionsWithSelectedChoices.size < questions.size) {
                             showQuestionsDialog = true
                         } else {
                             onShowScore(questionSettingIndex, questions)
@@ -366,7 +362,7 @@ private fun Questions(
                     modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                     page = page,
                     questions = questions,
-                    selectedChoices = selectedChoices,
+                    currentQuestionData = currentQuestionData,
                     onUpdateChoice = onUpdateChoice,
                 )
             }
@@ -383,7 +379,7 @@ private fun Questions(
                 onQuitQuestions()
             },
             dialogTitle = "Quit Questions",
-            dialogText = "You have answered ${questionsWithSelectedChoices.size} out of ${questions.size} questions. Are you sure you want to quit?",
+            dialogText = "You have answered ${currentQuestionData.questionsWithSelectedChoices.size} out of ${questions.size} questions. Are you sure you want to quit?",
             icon = Swr.Question,
         )
     }
@@ -414,7 +410,7 @@ private fun QuestionPage(
     scrollState: ScrollState = rememberScrollState(),
     page: Int,
     questions: List<Question>,
-    selectedChoices: List<String>,
+    currentQuestionData: QuestionData,
     onUpdateChoice: (Choice) -> Unit,
 ) {
     Column(
@@ -429,16 +425,10 @@ private fun QuestionPage(
         )
 
         QuestionChoicesSelection(
+            currentQuestion = questions[page],
             choices = questions[page].choices,
-            selectedChoices = selectedChoices,
-            onUpdateChoice = { choice ->
-                onUpdateChoice(
-                    Choice(
-                        question = questions[page],
-                        choice = choice,
-                    ),
-                )
-            },
+            currentQuestionData = currentQuestionData,
+            onUpdateChoice = onUpdateChoice,
         )
     }
 }
@@ -486,9 +476,10 @@ internal fun ChoicesType(
 @Composable
 private fun QuestionChoicesSelection(
     modifier: Modifier = Modifier,
+    currentQuestion: Question,
     choices: List<String>,
-    selectedChoices: List<String>,
-    onUpdateChoice: (String) -> Unit,
+    currentQuestionData: QuestionData,
+    onUpdateChoice: (Choice) -> Unit,
 ) {
     val greenGradientColors = listOf(
         Color(0xFF43A047),
@@ -500,13 +491,17 @@ private fun QuestionChoicesSelection(
 
     val scope = rememberCoroutineScope()
 
+    val (question, selectedChoices) = currentQuestionData
+
+    val isCurrentQuestion = question == currentQuestion
+
     Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 10.dp),
     ) {
         choices.forEach { choice ->
-            val selectedChoice = choice in selectedChoices
+            val selectedChoice = isCurrentQuestion && choice in selectedChoices
 
             val selectedChoiceBrush = if (selectedChoice) {
                 Brush.linearGradient(
@@ -518,7 +513,12 @@ private fun QuestionChoicesSelection(
 
             OutlinedCard(
                 onClick = {
-                    onUpdateChoice(choice)
+                    onUpdateChoice(
+                        Choice(
+                            question = currentQuestion,
+                            choice = choice,
+                        ),
+                    )
                     scope.launch {
                         choiceAnimation.animateTo(
                             targetValue = 1f,

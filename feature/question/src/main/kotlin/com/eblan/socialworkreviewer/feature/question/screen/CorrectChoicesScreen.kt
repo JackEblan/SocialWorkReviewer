@@ -63,6 +63,7 @@ import androidx.compose.ui.unit.dp
 import com.eblan.socialworkreviewer.core.designsystem.icon.Swr
 import com.eblan.socialworkreviewer.core.designsystem.theme.LocalGradientColors
 import com.eblan.socialworkreviewer.core.model.Question
+import com.eblan.socialworkreviewer.core.model.QuestionData
 import com.eblan.socialworkreviewer.feature.question.dialog.quit.QuitAlertDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -70,7 +71,7 @@ import com.eblan.socialworkreviewer.feature.question.dialog.quit.QuitAlertDialog
 internal fun CorrectChoicesScreen(
     modifier: Modifier = Modifier,
     questions: List<Question>,
-    selectedChoices: List<String>,
+    currentQuestionData: QuestionData,
     onAddCurrentQuestion: (Question) -> Unit,
     onQuitQuestions: () -> Unit,
 ) {
@@ -132,7 +133,7 @@ internal fun CorrectChoicesScreen(
                     modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                     page = page,
                     questions = questions,
-                    selectedChoices = selectedChoices,
+                    currentQuestionData = currentQuestionData,
                 )
             }
         }
@@ -160,7 +161,7 @@ private fun CorrectChoicesPage(
     scrollState: ScrollState = rememberScrollState(),
     page: Int,
     questions: List<Question>,
-    selectedChoices: List<String>,
+    currentQuestionData: QuestionData,
 ) {
     Column(
         modifier = modifier
@@ -174,9 +175,10 @@ private fun CorrectChoicesPage(
         )
 
         CorrectChoicesSelection(
+            currentQuestion = questions[page],
             choices = questions[page].choices,
             correctChoices = questions[page].correctChoices,
-            selectedChoices = selectedChoices,
+            currentQuestionData = currentQuestionData,
         )
     }
 }
@@ -200,9 +202,10 @@ private fun CorrectChoicesQuestionText(modifier: Modifier = Modifier, question: 
 @Composable
 private fun CorrectChoicesSelection(
     modifier: Modifier = Modifier,
+    currentQuestion: Question,
     choices: List<String>,
     correctChoices: List<String>,
-    selectedChoices: List<String>,
+    currentQuestionData: QuestionData,
 ) {
     val greenGradientColors = listOf(
         Color(0xFF43A047),
@@ -212,15 +215,20 @@ private fun CorrectChoicesSelection(
 
     val redGradientColors = listOf(Color.Red, Color.Blue, Color.Red)
 
+    val (question, selectedChoices) = currentQuestionData
+
+    val isCurrentQuestion = question == currentQuestion
+
     Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 10.dp),
     ) {
         choices.forEach { choice ->
-            val correctChoice = choice in correctChoices
+            val correctChoice = isCurrentQuestion && choice in correctChoices
 
-            val wrongChoice = choice !in correctChoices && choice in selectedChoices
+            val wrongChoice =
+                isCurrentQuestion && choice !in correctChoices && choice in selectedChoices
 
             val choiceBrush = if (correctChoice) {
                 Brush.linearGradient(
