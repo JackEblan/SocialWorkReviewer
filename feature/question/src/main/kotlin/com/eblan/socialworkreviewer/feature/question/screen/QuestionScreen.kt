@@ -496,7 +496,7 @@ private fun QuestionChoicesSelection(
         Color(0xFF039BE5),
     )
 
-    val choiceAnimation = remember { Animatable(0f) }
+    val choiceAnimation = remember { Animatable(1f) }
 
     val scope = rememberCoroutineScope()
 
@@ -533,7 +533,7 @@ private fun QuestionChoicesSelection(
                 modifier = Modifier
                     .fillMaxWidth()
                     .graphicsLayer {
-                        if (selectedChoice && choiceAnimation.value != 0f) {
+                        if (selectedChoice) {
                             scaleX = choiceAnimation.value
                             scaleY = choiceAnimation.value
                         }
