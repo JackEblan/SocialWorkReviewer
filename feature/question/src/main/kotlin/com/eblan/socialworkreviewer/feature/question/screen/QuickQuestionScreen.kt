@@ -37,8 +37,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LargeTopAppBar
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.ProgressIndicatorDefaults
@@ -47,7 +45,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -64,9 +61,9 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.unit.dp
+import com.eblan.socialworkreviewer.core.designsystem.component.SwrLargeTopAppBar
+import com.eblan.socialworkreviewer.core.designsystem.component.SwrLinearProgressIndicator
 import com.eblan.socialworkreviewer.core.designsystem.icon.Swr
 import com.eblan.socialworkreviewer.core.designsystem.theme.LocalGradientColors
 import com.eblan.socialworkreviewer.core.model.Choice
@@ -116,8 +113,18 @@ internal fun QuickQuestionsScreen(
 
     Scaffold(
         topBar = {
-            QuickQuestionLargeTopAppBar(
-                title = "Quick Questions",
+            SwrLargeTopAppBar(
+                title = {
+                    Text(
+                        text = "Quick Questions",
+                        style = MaterialTheme.typography.headlineSmall.copy(
+                            brush = Brush.linearGradient(
+                                colors = LocalGradientColors.current.topBarTitleColorsDefault,
+                            ),
+                        ),
+                    )
+                },
+                modifier = modifier.testTag("quickQuestion:largeTopAppBar"),
                 scrollBehavior = scrollBehavior,
             )
         },
@@ -131,14 +138,14 @@ internal fun QuickQuestionsScreen(
                 .consumeWindowInsets(paddingValues)
                 .padding(paddingValues),
         ) {
-            LinearProgressIndicator(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(30.dp)
-                    .padding(10.dp),
+            SwrLinearProgressIndicator(
                 progress = {
                     animatedProgress
                 },
+                modifier = modifier
+                    .fillMaxWidth()
+                    .height(30.dp)
+                    .padding(10.dp),
                 strokeCap = StrokeCap.Round,
             )
 
@@ -187,9 +194,9 @@ private fun QuickQuestionPage(
             .fillMaxSize()
             .verticalScroll(scrollState),
     ) {
-        QuickQuestionText(question = questions[page].question)
+        QuestionText(question = questions[page].question)
 
-        ChoicesType(
+        ChoicesTypeText(
             numberOfChoices = questions[page].correctChoices.size,
         )
 
@@ -201,22 +208,6 @@ private fun QuickQuestionPage(
             onUpdateChoice = onUpdateChoice,
         )
     }
-}
-
-@Composable
-private fun QuickQuestionText(modifier: Modifier = Modifier, question: String) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp),
-    ) {
-        Text(
-            text = AnnotatedString.fromHtml(question),
-            style = MaterialTheme.typography.headlineSmall,
-        )
-    }
-
-    Spacer(modifier = Modifier.height(10.dp))
 }
 
 @Composable
@@ -335,27 +326,4 @@ private fun QuickQuestionChoicesSelection(
             Spacer(modifier = Modifier.height(10.dp))
         }
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun QuickQuestionLargeTopAppBar(
-    modifier: Modifier = Modifier,
-    title: String,
-    scrollBehavior: TopAppBarScrollBehavior,
-) {
-    LargeTopAppBar(
-        title = {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.headlineSmall.copy(
-                    brush = Brush.linearGradient(
-                        colors = LocalGradientColors.current.topBarTitleColorsDefault,
-                    ),
-                ),
-            )
-        },
-        modifier = modifier.testTag("quickQuestion:largeTopAppBar"),
-        scrollBehavior = scrollBehavior,
-    )
 }

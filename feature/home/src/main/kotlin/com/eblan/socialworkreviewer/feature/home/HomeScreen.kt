@@ -21,14 +21,12 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
@@ -48,6 +46,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.eblan.socialworkreviewer.core.designsystem.component.SwrLargeTopAppBar
 import com.eblan.socialworkreviewer.core.designsystem.theme.LocalGradientColors
 import com.eblan.socialworkreviewer.feature.home.navigation.HomeDestination
 import kotlin.reflect.KClass
@@ -128,9 +127,19 @@ internal fun HomeScreen(
     ) {
         Scaffold(
             topBar = {
-                HomeLargeTopAppBar(
-                    title = stringResource(id = topBarTitleStringResource),
-                    topAppBarScrollBehavior = topAppBarScrollBehavior,
+                SwrLargeTopAppBar(
+                    title = {
+                        Text(
+                            text = stringResource(id = topBarTitleStringResource),
+                            style = MaterialTheme.typography.headlineSmall.copy(
+                                brush = Brush.linearGradient(
+                                    colors = LocalGradientColors.current.topBarTitleColorsDefault,
+                                ),
+                            ),
+                        )
+                    },
+                    modifier = modifier.testTag("home:largeTopAppBar"),
+                    scrollBehavior = topAppBarScrollBehavior,
                 )
             },
             snackbarHost = {
@@ -148,29 +157,6 @@ internal fun HomeScreen(
             )
         }
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun HomeLargeTopAppBar(
-    modifier: Modifier = Modifier,
-    title: String,
-    topAppBarScrollBehavior: TopAppBarScrollBehavior,
-) {
-    LargeTopAppBar(
-        title = {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.headlineSmall.copy(
-                    brush = Brush.linearGradient(
-                        colors = LocalGradientColors.current.topBarTitleColorsDefault,
-                    ),
-                ),
-            )
-        },
-        modifier = modifier.testTag("largeTopAppBar"),
-        scrollBehavior = topAppBarScrollBehavior,
-    )
 }
 
 private fun NavDestination?.isTopLevelDestinationInHierarchy(route: KClass<*>) =
