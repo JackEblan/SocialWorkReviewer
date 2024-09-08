@@ -253,17 +253,19 @@ private fun QuickQuestionChoicesSelection(
             val wrongChoice =
                 isCurrentQuestion && selectedChoiceSizeLimit && choice !in correctChoices && choice in selectedChoices
 
-            val choiceBrush = if (selectedChoice && correctChoice) {
-                Brush.linearGradient(
-                    colors = greenGradientColors,
-                )
+            val choiceBorderGradientColors = if (selectedChoice && correctChoice) {
+                greenGradientColors
             } else if (correctChoice) {
-                Brush.linearGradient(
-                    colors = greenGradientColors,
-                )
+                greenGradientColors
             } else if (wrongChoice) {
+                redGradientColors
+            } else {
+                emptyList()
+            }
+
+            val choiceBrush = if (choiceBorderGradientColors.isNotEmpty()) {
                 Brush.linearGradient(
-                    colors = redGradientColors,
+                    colors = choiceBorderGradientColors,
                 )
             } else {
                 CardDefaults.outlinedCardBorder().brush
@@ -310,7 +312,10 @@ private fun QuickQuestionChoicesSelection(
                             scaleY = correctChoiceAnimation.value
                         }
                     },
-                border = BorderStroke(width = 2.dp, brush = choiceBrush),
+                border = BorderStroke(
+                    width = 2.dp,
+                    brush = choiceBrush,
+                ),
             ) {
                 Box(
                     modifier = Modifier

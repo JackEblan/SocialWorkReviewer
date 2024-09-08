@@ -221,13 +221,17 @@ private fun CorrectChoicesSelection(
             val wrongChoice =
                 isCurrentQuestion && choice !in correctChoices && choice in selectedChoices
 
-            val choiceBrush = if (correctChoice) {
-                Brush.linearGradient(
-                    colors = greenGradientColors,
-                )
+            val choiceBorderGradientColors = if (correctChoice) {
+                greenGradientColors
             } else if (wrongChoice) {
+                redGradientColors
+            } else {
+                emptyList()
+            }
+
+            val choiceBrush = if (choiceBorderGradientColors.isNotEmpty()) {
                 Brush.linearGradient(
-                    colors = redGradientColors,
+                    colors = choiceBorderGradientColors,
                 )
             } else {
                 CardDefaults.outlinedCardBorder().brush
@@ -236,7 +240,10 @@ private fun CorrectChoicesSelection(
             OutlinedCard(
                 onClick = {},
                 modifier = Modifier.fillMaxWidth(),
-                border = BorderStroke(width = 2.dp, brush = choiceBrush),
+                border = BorderStroke(
+                    width = 2.dp,
+                    brush = choiceBrush,
+                ),
             ) {
                 Box(
                     modifier = Modifier

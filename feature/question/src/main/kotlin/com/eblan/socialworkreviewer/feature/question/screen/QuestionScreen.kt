@@ -512,9 +512,15 @@ private fun QuestionChoicesSelection(
         choices.forEach { choice ->
             val selectedChoice = isCurrentQuestion && choice in selectedChoices
 
-            val selectedChoiceBrush = if (selectedChoice) {
+            val choiceBorderGradientColors = if (selectedChoice) {
+                greenGradientColors
+            } else {
+                emptyList()
+            }
+
+            val choiceBrush = if (choiceBorderGradientColors.isNotEmpty()) {
                 Brush.linearGradient(
-                    colors = greenGradientColors,
+                    colors = choiceBorderGradientColors,
                 )
             } else {
                 CardDefaults.outlinedCardBorder().brush
@@ -547,7 +553,10 @@ private fun QuestionChoicesSelection(
                             scaleY = choiceAnimation.value
                         }
                     },
-                border = BorderStroke(width = 2.dp, brush = selectedChoiceBrush),
+                border = BorderStroke(
+                    width = 2.dp,
+                    brush = choiceBrush,
+                ),
             ) {
                 Box(
                     modifier = Modifier
