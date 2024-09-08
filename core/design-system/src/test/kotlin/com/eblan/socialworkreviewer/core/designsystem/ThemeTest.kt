@@ -33,6 +33,8 @@ import com.eblan.socialworkreviewer.core.designsystem.theme.LightPurpleColorSche
 import com.eblan.socialworkreviewer.core.designsystem.theme.SwrTheme
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import kotlin.test.assertEquals
 
 /**
@@ -41,6 +43,7 @@ import kotlin.test.assertEquals
  *
  * It verifies that the various composition locals — [MaterialTheme] and design system.
  */
+@RunWith(RobolectricTestRunner::class)
 class ThemeTest {
 
     @get:Rule

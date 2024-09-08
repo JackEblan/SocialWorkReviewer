@@ -113,6 +113,12 @@ class QuestionViewModelTest {
     fun currentQuestionData_isEmpty_whenStarted() = runTest {
         assertEquals(
             expected = QuestionData(
+                question = Question(
+                    question = "",
+                    correctChoices = emptyList(),
+                    wrongChoices = emptyList(),
+                    choices = emptyList(),
+                ),
                 selectedChoices = emptyList(),
                 questionsWithSelectedChoices = emptyMap(),
                 answeredQuestions = emptyList(),

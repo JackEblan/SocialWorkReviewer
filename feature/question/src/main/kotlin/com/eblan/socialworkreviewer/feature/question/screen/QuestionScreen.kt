@@ -76,6 +76,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
@@ -318,7 +319,6 @@ private fun Questions(
                 modifier = modifier.testTag("question:largeTopAppBar"),
                 scrollBehavior = scrollBehavior,
             )
-
         },
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
@@ -356,6 +356,11 @@ private fun Questions(
                 progress = {
                     animatedProgress
                 },
+                modifier = modifier
+                    .fillMaxWidth()
+                    .height(30.dp)
+                    .padding(10.dp),
+                strokeCap = StrokeCap.Round,
             )
 
             HorizontalPager(
@@ -507,9 +512,15 @@ private fun QuestionChoicesSelection(
         choices.forEach { choice ->
             val selectedChoice = isCurrentQuestion && choice in selectedChoices
 
-            val selectedChoiceBrush = if (selectedChoice) {
+            val choiceBorderGradientColors = if (selectedChoice) {
+                greenGradientColors
+            } else {
+                emptyList()
+            }
+
+            val choiceBrush = if (choiceBorderGradientColors.isNotEmpty()) {
                 Brush.linearGradient(
-                    colors = greenGradientColors,
+                    colors = choiceBorderGradientColors,
                 )
             } else {
                 CardDefaults.outlinedCardBorder().brush
@@ -542,7 +553,10 @@ private fun QuestionChoicesSelection(
                             scaleY = choiceAnimation.value
                         }
                     },
-                border = BorderStroke(width = 2.dp, brush = selectedChoiceBrush),
+                border = BorderStroke(
+                    width = 2.dp,
+                    brush = choiceBrush,
+                ),
             ) {
                 Box(
                     modifier = Modifier
