@@ -77,7 +77,7 @@ class TopAppBarScreenshotTests {
             }
         }
         composeTestRule.onRoot().captureRoboImage(
-            "src/test/screenshots/TopAppBar/TopAppBar_fontScale2.png",
+            "src/test/screenshots/LargeTopAppBar/LargeTopAppBar_fontScale2.png",
             roborazziOptions = DefaultRoborazziOptions,
         )
     }
