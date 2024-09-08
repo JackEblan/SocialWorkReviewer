@@ -318,7 +318,6 @@ private fun Questions(
                 modifier = modifier.testTag("question:largeTopAppBar"),
                 scrollBehavior = scrollBehavior,
             )
-
         },
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)

@@ -116,7 +116,6 @@ internal fun CorrectChoicesScreen(
                 modifier = modifier.testTag("correctChoices:largeTopAppBar"),
                 scrollBehavior = scrollBehavior,
             )
-
         },
     ) { paddingValues ->
         Column(
