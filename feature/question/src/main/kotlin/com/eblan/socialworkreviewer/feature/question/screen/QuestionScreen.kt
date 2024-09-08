@@ -76,6 +76,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
@@ -355,6 +356,11 @@ private fun Questions(
                 progress = {
                     animatedProgress
                 },
+                modifier = modifier
+                    .fillMaxWidth()
+                    .height(30.dp)
+                    .padding(10.dp),
+                strokeCap = StrokeCap.Round,
             )
 
             HorizontalPager(
