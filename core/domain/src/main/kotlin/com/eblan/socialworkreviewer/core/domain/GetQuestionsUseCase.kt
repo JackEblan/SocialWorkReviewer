@@ -28,10 +28,12 @@ class GetQuestionsUseCase @Inject constructor(
         id: String,
         numberOfQuestions: Int? = null,
     ): List<Question> {
+        val shuffledQuestions = questionRepository.getQuestions(id = id).shuffled()
+
         return if (numberOfQuestions != null) {
-            questionRepository.getQuestions(id = id).shuffled().take(numberOfQuestions)
+            shuffledQuestions.take(numberOfQuestions)
         } else {
-            questionRepository.getQuestions(id = id).shuffled()
+            shuffledQuestions
         }
     }
 }

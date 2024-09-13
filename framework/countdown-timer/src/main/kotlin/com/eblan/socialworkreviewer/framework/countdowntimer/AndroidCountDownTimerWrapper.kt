@@ -22,7 +22,6 @@ import com.eblan.socialworkreviewer.core.model.CountDownTime
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import java.util.Locale
 import javax.inject.Inject
 
 internal class AndroidCountDownTimerWrapper @Inject constructor() : CountDownTimerWrapper {
@@ -72,8 +71,8 @@ internal class AndroidCountDownTimerWrapper @Inject constructor() : CountDownTim
 
         val minutes = totalSeconds / 60
 
-        val remainingSeconds = totalSeconds % 60
+        val seconds = totalSeconds % 60
 
-        return String.format(Locale.getDefault(), "%02d %s %02d", minutes, ":", remainingSeconds)
+        return "%02d:%02d".format(minutes, seconds)
     }
 }
