@@ -15,7 +15,7 @@
  *   limitations under the License.
  *
  */
-package com.eblan.socialworkreviewer.core.testing.linkparser
+package com.eblan.socialworkreviewer.core.testing.linkopener
 
 import com.eblan.socialworkreviewer.framework.linkopener.LinkOpener
 

@@ -18,7 +18,7 @@
 package com.eblan.socialworkreviewer.feature.about
 
 import com.eblan.socialworkreviewer.core.model.About
-import com.eblan.socialworkreviewer.core.testing.linkparser.FakeLinkOpener
+import com.eblan.socialworkreviewer.core.testing.linkopener.FakeLinkOpener
 import com.eblan.socialworkreviewer.core.testing.repository.FakeAboutRepository
 import com.eblan.socialworkreviewer.core.testing.util.MainDispatcherRule
 import kotlinx.coroutines.flow.collect
