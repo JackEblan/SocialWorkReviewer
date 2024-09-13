@@ -67,7 +67,7 @@ dependencies {
     implementation(projects.core.model)
 
     implementation(projects.feature.about)
-    implementation(projects.feature.announcement)
+    implementation(projects.feature.news)
     implementation(projects.feature.category)
     implementation(projects.feature.home)
     implementation(projects.feature.question)

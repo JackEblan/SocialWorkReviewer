@@ -2,6 +2,8 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="11">
+      <module name="SocialWorkReviewer.feature.announcement" target="17" />
+      <module name="SocialWorkReviewer.framework.link-parser" target="17" />
       <module name="SocialWorkReviewer.framework.media-player" target="17" />
       <module name="SocialWorkReviewer.framework.package-manager" target="17" />
     </bytecodeTargetLevel>

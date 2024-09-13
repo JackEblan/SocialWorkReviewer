@@ -29,5 +29,5 @@ internal interface NetworkMonitorModule {
 
     @Binds
     @Singleton
-    fun networkMonitor(impl: DefaultNetworkMonitor): NetworkMonitor
+    fun networkMonitor(impl: AndroidNetworkMonitor): NetworkMonitor
 }

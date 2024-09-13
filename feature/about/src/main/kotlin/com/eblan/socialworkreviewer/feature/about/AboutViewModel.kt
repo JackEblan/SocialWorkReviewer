@@ -20,7 +20,7 @@ package com.eblan.socialworkreviewer.feature.about
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.eblan.socialworkreviewer.core.data.repository.AboutRepository
-import com.eblan.socialworkreviewer.framework.linkparser.LinkParser
+import com.eblan.socialworkreviewer.framework.linkopener.LinkOpener
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -33,7 +33,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AboutViewModel @Inject constructor(
     aboutRepository: AboutRepository,
-    private val linkParser: LinkParser,
+    private val linkOpener: LinkOpener,
 ) : ViewModel() {
     val aboutUiState = aboutRepository.getAbouts().map(AboutUiState::Success).stateIn(
         scope = viewModelScope,
@@ -46,7 +46,7 @@ class AboutViewModel @Inject constructor(
 
     fun openLink(url: String) {
         _openLinkResult.update {
-            linkParser.openLink(url = url)
+            linkOpener.openLink(url = url)
         }
     }
 

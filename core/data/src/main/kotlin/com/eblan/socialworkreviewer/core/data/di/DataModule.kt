@@ -18,17 +18,17 @@
 package com.eblan.socialworkreviewer.core.data.di
 
 import com.eblan.socialworkreviewer.core.data.repository.AboutRepository
-import com.eblan.socialworkreviewer.core.data.repository.AnnouncementRepository
 import com.eblan.socialworkreviewer.core.data.repository.AverageRepository
 import com.eblan.socialworkreviewer.core.data.repository.CategoryRepository
 import com.eblan.socialworkreviewer.core.data.repository.ChoiceRepository
 import com.eblan.socialworkreviewer.core.data.repository.DefaultAboutRepository
-import com.eblan.socialworkreviewer.core.data.repository.DefaultAnnouncementRepository
 import com.eblan.socialworkreviewer.core.data.repository.DefaultAverageRepository
 import com.eblan.socialworkreviewer.core.data.repository.DefaultCategoryRepository
 import com.eblan.socialworkreviewer.core.data.repository.DefaultChoiceRepository
+import com.eblan.socialworkreviewer.core.data.repository.DefaultNewsRepository
 import com.eblan.socialworkreviewer.core.data.repository.DefaultQuestionRepository
 import com.eblan.socialworkreviewer.core.data.repository.DefaultUserDataRepository
+import com.eblan.socialworkreviewer.core.data.repository.NewsRepository
 import com.eblan.socialworkreviewer.core.data.repository.QuestionRepository
 import com.eblan.socialworkreviewer.core.data.repository.UserDataRepository
 import dagger.Binds
@@ -63,7 +63,7 @@ abstract class DataModule {
 
     @Binds
     @Singleton
-    internal abstract fun announcementRepository(impl: DefaultAnnouncementRepository): AnnouncementRepository
+    internal abstract fun newsRepository(impl: DefaultNewsRepository): NewsRepository
 
     @Binds
     @Singleton

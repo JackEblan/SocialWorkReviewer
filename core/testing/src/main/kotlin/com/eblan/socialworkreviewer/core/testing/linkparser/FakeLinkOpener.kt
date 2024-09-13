@@ -15,19 +15,18 @@
  *   limitations under the License.
  *
  */
-package com.eblan.socialworkreviewer.framework.countdowntimer
+package com.eblan.socialworkreviewer.core.testing.linkparser
 
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import com.eblan.socialworkreviewer.framework.linkopener.LinkOpener
 
-@Module
-@InstallIn(SingletonComponent::class)
-internal interface CountDownTimerModule {
+class FakeLinkOpener : LinkOpener {
+    private var _openLink = false
 
-    @Binds
-    @Singleton
-    fun countDownTimerWrapper(impl: AndroidCountDownTimerWrapper): CountDownTimerWrapper
+    override fun openLink(url: String): Boolean {
+        return _openLink
+    }
+
+    fun setOpenLInk(value: Boolean) {
+        _openLink = value
+    }
 }

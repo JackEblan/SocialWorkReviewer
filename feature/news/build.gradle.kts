@@ -24,12 +24,12 @@ plugins {
 }
 
 android {
-    namespace = "com.eblan.socialworkreviewer.feature.about"
+    namespace = "com.eblan.socialworkreviewer.feature.news"
 }
 
 dependencies {
     implementation(projects.core.data)
-    implementation(projects.framework.linkOpener)
+    implementation(projects.core.domain)
 
     testImplementation(libs.hilt.android.testing)
     testImplementation(libs.robolectric)

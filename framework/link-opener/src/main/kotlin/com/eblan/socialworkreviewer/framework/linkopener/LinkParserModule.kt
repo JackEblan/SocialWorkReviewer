@@ -15,7 +15,7 @@
  *   limitations under the License.
  *
  */
-package com.eblan.socialworkreviewer.framework.countdowntimer
+package com.eblan.socialworkreviewer.framework.linkopener
 
 import dagger.Binds
 import dagger.Module
@@ -25,9 +25,9 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal interface CountDownTimerModule {
+internal interface LinkParserModule {
 
     @Binds
     @Singleton
-    fun countDownTimerWrapper(impl: AndroidCountDownTimerWrapper): CountDownTimerWrapper
+    fun linkOpener(impl: AndroidLinkOpener): LinkOpener
 }
