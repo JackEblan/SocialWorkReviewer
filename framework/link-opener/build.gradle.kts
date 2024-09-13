@@ -23,7 +23,7 @@ plugins {
 }
 
 android {
-    namespace = "com.eblan.socialworkreviewer.framework.linkparser"
+    namespace = "com.eblan.socialworkreviewer.framework.linkopener"
 }
 
 dependencies {

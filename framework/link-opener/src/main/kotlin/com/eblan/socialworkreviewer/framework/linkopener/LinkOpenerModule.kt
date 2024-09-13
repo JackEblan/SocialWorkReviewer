@@ -25,7 +25,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal interface LinkParserModule {
+internal interface LinkOpenerModule {
 
     @Binds
     @Singleton
