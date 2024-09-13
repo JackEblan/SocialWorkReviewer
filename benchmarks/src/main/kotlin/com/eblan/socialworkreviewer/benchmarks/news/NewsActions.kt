@@ -15,19 +15,20 @@
  *   limitations under the License.
  *
  */
-package com.eblan.socialworkreviewer.framework.countdowntimer
+package com.eblan.socialworkreviewer.benchmarks.news
 
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import androidx.benchmark.macro.MacrobenchmarkScope
+import androidx.test.uiautomator.By
+import com.eblan.socialworkreviewer.benchmarks.flingElementDownUp
 
-@Module
-@InstallIn(SingletonComponent::class)
-internal interface CountDownTimerModule {
+fun MacrobenchmarkScope.newsScrollDownUp() {
+    val news = device.findObject(By.res("news:lazyVerticalStaggeredGrid"))
+    device.flingElementDownUp(news)
+}
 
-    @Binds
-    @Singleton
-    fun countDownTimerWrapper(impl: AndroidCountDownTimerWrapper): CountDownTimerWrapper
+fun MacrobenchmarkScope.navigateToNewsScreen() {
+    val newsSelector = By.text("News")
+    val newsButton = device.findObject(newsSelector)
+    newsButton.click()
+    device.waitForIdle()
 }

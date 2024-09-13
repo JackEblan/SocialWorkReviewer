@@ -18,7 +18,7 @@
 package com.eblan.socialworkreviewer.feature.about
 
 import com.eblan.socialworkreviewer.core.model.About
-import com.eblan.socialworkreviewer.core.testing.linkparser.FakeLinkParser
+import com.eblan.socialworkreviewer.core.testing.linkparser.FakeLinkOpener
 import com.eblan.socialworkreviewer.core.testing.repository.FakeAboutRepository
 import com.eblan.socialworkreviewer.core.testing.util.MainDispatcherRule
 import kotlinx.coroutines.flow.collect
@@ -38,7 +38,7 @@ class AboutViewModelTest {
 
     private lateinit var aboutRepository: FakeAboutRepository
 
-    private lateinit var linkParser: FakeLinkParser
+    private lateinit var linkOpener: FakeLinkOpener
 
     private lateinit var viewModel: AboutViewModel
 
@@ -46,9 +46,9 @@ class AboutViewModelTest {
     fun setup() {
         aboutRepository = FakeAboutRepository()
 
-        linkParser = FakeLinkParser()
+        linkOpener = FakeLinkOpener()
 
-        viewModel = AboutViewModel(aboutRepository = aboutRepository, linkParser = linkParser)
+        viewModel = AboutViewModel(aboutRepository = aboutRepository, linkOpener = linkOpener)
     }
 
     @Test
@@ -84,7 +84,7 @@ class AboutViewModelTest {
             viewModel.openLinkResult.collect()
         }
 
-        linkParser.setOpenLInk(true)
+        linkOpener.setOpenLInk(true)
 
         viewModel.openLink("")
 
@@ -97,7 +97,7 @@ class AboutViewModelTest {
             viewModel.openLinkResult.collect()
         }
 
-        linkParser.setOpenLInk(false)
+        linkOpener.setOpenLInk(false)
 
         viewModel.openLink("")
 

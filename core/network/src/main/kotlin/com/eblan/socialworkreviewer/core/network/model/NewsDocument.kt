@@ -15,19 +15,20 @@
  *   limitations under the License.
  *
  */
-package com.eblan.socialworkreviewer.framework.countdowntimer
+package com.eblan.socialworkreviewer.core.network.model
 
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import androidx.annotation.Keep
+import com.google.firebase.Timestamp
 
-@Module
-@InstallIn(SingletonComponent::class)
-internal interface CountDownTimerModule {
-
-    @Binds
-    @Singleton
-    fun countDownTimerWrapper(impl: AndroidCountDownTimerWrapper): CountDownTimerWrapper
+@NoArg
+@Keep
+data class NewsDocument(
+    val id: String?,
+    val date: Timestamp?,
+    val title: String?,
+    val message: String?,
+) {
+    companion object {
+        const val DATE = "date"
+    }
 }

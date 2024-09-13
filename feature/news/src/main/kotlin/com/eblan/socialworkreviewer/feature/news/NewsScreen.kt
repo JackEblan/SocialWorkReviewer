@@ -15,7 +15,7 @@
  *   limitations under the License.
  *
  */
-package com.eblan.socialworkreviewer.feature.category
+package com.eblan.socialworkreviewer.feature.news
 
 import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.layout.Arrangement
@@ -44,33 +44,29 @@ import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.eblan.socialworkreviewer.core.designsystem.component.ShimmerImage
 import com.eblan.socialworkreviewer.core.designsystem.component.SwrLoadingWheel
 import com.eblan.socialworkreviewer.core.designsystem.icon.Swr
-import com.eblan.socialworkreviewer.core.model.Category
+import com.eblan.socialworkreviewer.core.model.News
 
 @Composable
-internal fun CategoryRoute(
+internal fun NewsRoute(
     modifier: Modifier = Modifier,
-    viewModel: CategoryViewModel = hiltViewModel(),
-    onCategoryClick: (String) -> Unit,
+    viewModel: NewsViewModel = hiltViewModel(),
 ) {
-    val categoryUiState = viewModel.categoryUiState.collectAsStateWithLifecycle().value
+    val newsUiState = viewModel.newsUiState.collectAsStateWithLifecycle().value
 
-    CategoryScreen(
+    NewsScreen(
         modifier = modifier,
-        categoryUiState = categoryUiState,
-        onCategoryClick = onCategoryClick,
+        newsUiState = newsUiState,
     )
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
 @VisibleForTesting
 @Composable
-internal fun CategoryScreen(
+internal fun NewsScreen(
     modifier: Modifier = Modifier,
-    categoryUiState: CategoryUiState,
-    onCategoryClick: (String) -> Unit,
+    newsUiState: NewsUiState,
 ) {
     Box(
         modifier = modifier
@@ -80,20 +76,19 @@ internal fun CategoryScreen(
             }
             .testTag("category"),
     ) {
-        when (categoryUiState) {
-            CategoryUiState.Loading -> LoadingState(
+        when (newsUiState) {
+            NewsUiState.Loading -> LoadingState(
                 modifier = Modifier.align(Alignment.Center),
             )
 
-            is CategoryUiState.Success -> {
-                if (categoryUiState.categories.isNotEmpty()) {
+            is NewsUiState.Success -> {
+                if (newsUiState.news.isNotEmpty()) {
                     SuccessState(
                         modifier = modifier,
-                        categoryUiState = categoryUiState,
-                        onCategoryClick = onCategoryClick,
+                        newsUiState = newsUiState,
                     )
                 } else {
-                    EmptyState(text = "No Categories found!")
+                    EmptyState(text = "No News found!")
                 }
             }
         }
@@ -111,64 +106,51 @@ private fun LoadingState(modifier: Modifier = Modifier) {
 @Composable
 private fun SuccessState(
     modifier: Modifier = Modifier,
-    categoryUiState: CategoryUiState.Success,
-    onCategoryClick: (String) -> Unit,
+    newsUiState: NewsUiState.Success,
 ) {
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Adaptive(300.dp),
         modifier = modifier
             .fillMaxSize()
-            .testTag("category:lazyVerticalStaggeredGrid"),
+            .testTag("news:lazyVerticalStaggeredGrid"),
     ) {
         items(
-            categoryUiState.categories,
-            key = { category ->
-                category.id
+            newsUiState.news,
+            key = { news ->
+                news.id
             },
-        ) { category ->
-            CategoryItem(
-                modifier = Modifier.animateItem(),
-                category = category,
-                onCategoryClick = onCategoryClick,
-            )
+        ) { news ->
+            NewsItem(modifier = Modifier.animateItem(), news = news)
         }
     }
 }
 
 @Composable
-private fun CategoryItem(
+private fun NewsItem(
     modifier: Modifier = Modifier,
-    category: Category,
-    onCategoryClick: (String) -> Unit,
+    news: News,
 ) {
     OutlinedCard(
         modifier = modifier
             .fillMaxWidth()
-            .padding(10.dp)
-            .testTag("category:categoryItem"),
-        onClick = {
-            onCategoryClick(category.id)
-        },
+            .padding(10.dp),
     ) {
-        ShimmerImage(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(180.dp),
-            headerImageUrl = category.imageUrl,
-        )
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(10.dp),
         ) {
+            Text(
+                text = news.title,
+                style = MaterialTheme.typography.headlineSmall,
+            )
+
             Spacer(modifier = Modifier.height(10.dp))
 
-            Text(text = category.title, style = MaterialTheme.typography.headlineLarge)
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Text(text = category.description, style = MaterialTheme.typography.bodyLarge)
+            Text(
+                text = news.message,
+                style = MaterialTheme.typography.bodyLarge,
+            )
         }
     }
 }
@@ -181,7 +163,7 @@ private fun EmptyState(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .testTag("category:emptyListPlaceHolderScreen"),
+            .testTag("news:emptyListPlaceHolderScreen"),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {

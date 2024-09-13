@@ -18,12 +18,12 @@
 package com.eblan.socialworkreviewer.core.network.di
 
 import com.eblan.socialworkreviewer.core.network.firestore.AboutDataSource
-import com.eblan.socialworkreviewer.core.network.firestore.AnnouncementDataSource
 import com.eblan.socialworkreviewer.core.network.firestore.CategoryDataSource
 import com.eblan.socialworkreviewer.core.network.firestore.DefaultAboutDataSource
-import com.eblan.socialworkreviewer.core.network.firestore.DefaultAnnouncementDataSource
 import com.eblan.socialworkreviewer.core.network.firestore.DefaultCategoryDataSource
+import com.eblan.socialworkreviewer.core.network.firestore.DefaultNewsDataSource
 import com.eblan.socialworkreviewer.core.network.firestore.DefaultQuestionDataSource
+import com.eblan.socialworkreviewer.core.network.firestore.NewsDataSource
 import com.eblan.socialworkreviewer.core.network.firestore.QuestionDataSource
 import dagger.Binds
 import dagger.Module
@@ -45,7 +45,7 @@ internal interface NetworkModule {
 
     @Binds
     @Singleton
-    fun announcementDataSource(impl: DefaultAnnouncementDataSource): AnnouncementDataSource
+    fun newsDataSource(impl: DefaultNewsDataSource): NewsDataSource
 
     @Binds
     @Singleton

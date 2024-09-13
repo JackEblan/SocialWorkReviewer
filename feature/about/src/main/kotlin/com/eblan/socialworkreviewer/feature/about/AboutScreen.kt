@@ -17,12 +17,6 @@
  */
 package com.eblan.socialworkreviewer.feature.about
 
-import androidx.compose.animation.animateColor
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,20 +38,11 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.font.FontStyle
@@ -65,8 +50,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
+import com.eblan.socialworkreviewer.core.designsystem.component.ShimmerImage
 import com.eblan.socialworkreviewer.core.designsystem.component.SwrLoadingWheel
 import com.eblan.socialworkreviewer.core.designsystem.icon.Swr
 import com.eblan.socialworkreviewer.core.model.About
@@ -167,7 +151,12 @@ private fun AboutItem(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            AboutImage(headerImageUrl = about.imageUrl)
+            ShimmerImage(
+                modifier = Modifier
+                    .size(50.dp)
+                    .clip(CircleShape),
+                headerImageUrl = about.imageUrl,
+            )
 
             Spacer(modifier = Modifier.height(10.dp))
 
@@ -204,7 +193,7 @@ private fun WebLinks(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        links.forEach { link ->
+        links.take(3).forEach { link ->
             IconButton(
                 onClick = {
                     onLinkCLick(link)
@@ -216,62 +205,6 @@ private fun WebLinks(
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun AboutImage(
-    headerImageUrl: String?,
-) {
-    var isLoading by remember { mutableStateOf(true) }
-
-    var isError by remember { mutableStateOf(false) }
-
-    val imageLoader = rememberAsyncImagePainter(
-        model = headerImageUrl,
-        onState = { state ->
-            isLoading = state is AsyncImagePainter.State.Loading
-            isError = state is AsyncImagePainter.State.Error
-        },
-    )
-    val isLocalInspection = LocalInspectionMode.current
-
-    val transition = rememberInfiniteTransition(label = "Transition")
-
-    val lightGrayAnimation by transition.animateColor(
-        initialValue = Color.LightGray.copy(alpha = 0.2f),
-        targetValue = Color.LightGray,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 800),
-            repeatMode = RepeatMode.Reverse,
-        ),
-        label = "LightGrayAnimation",
-    )
-
-    Box(
-        modifier = Modifier
-            .size(50.dp)
-            .clip(CircleShape),
-        contentAlignment = Alignment.Center,
-    ) {
-        Image(
-            modifier = Modifier
-                .size(50.dp)
-                .clip(CircleShape)
-                .drawBehind {
-                    drawRect(
-                        color = if (isLoading) lightGrayAnimation else Color.Transparent,
-                        size = size,
-                    )
-                },
-            contentScale = ContentScale.Crop,
-            painter = if (isError.not() && isLocalInspection.not()) {
-                imageLoader
-            } else {
-                painterResource(com.eblan.socialworkreviewer.core.designsystem.R.drawable.ic_placeholder)
-            },
-            contentDescription = null,
-        )
     }
 }
 

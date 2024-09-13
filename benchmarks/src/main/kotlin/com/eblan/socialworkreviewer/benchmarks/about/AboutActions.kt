@@ -22,8 +22,8 @@ import androidx.test.uiautomator.By
 import com.eblan.socialworkreviewer.benchmarks.flingElementDownUp
 
 fun MacrobenchmarkScope.aboutScrollDownUp() {
-    val announcements = device.findObject(By.res("about:lazyVerticalStaggeredGrid"))
-    device.flingElementDownUp(announcements)
+    val abouts = device.findObject(By.res("about:lazyVerticalStaggeredGrid"))
+    device.flingElementDownUp(abouts)
 }
 
 fun MacrobenchmarkScope.navigateToAboutScreen() {

@@ -27,13 +27,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.eblan.socialworkreviewer.feature.about.navigation.aboutScreen
 import com.eblan.socialworkreviewer.feature.about.navigation.navigateToAboutScreen
-import com.eblan.socialworkreviewer.feature.announcement.navigation.announcementScreen
-import com.eblan.socialworkreviewer.feature.announcement.navigation.navigateToAnnouncementScreen
 import com.eblan.socialworkreviewer.feature.category.navigation.CategoryRouteData
 import com.eblan.socialworkreviewer.feature.category.navigation.categoryScreen
 import com.eblan.socialworkreviewer.feature.category.navigation.navigateToCategoryScreen
 import com.eblan.socialworkreviewer.feature.home.navigation.HomeRouteData
 import com.eblan.socialworkreviewer.feature.home.navigation.homeScreen
+import com.eblan.socialworkreviewer.feature.news.navigation.navigateToNewsScreen
+import com.eblan.socialworkreviewer.feature.news.navigation.newsScreen
 import com.eblan.socialworkreviewer.feature.question.navigation.navigateToQuestionScreen
 import com.eblan.socialworkreviewer.feature.question.navigation.questionScreen
 import com.eblan.socialworkreviewer.feature.settings.navigation.navigateToSettings
@@ -52,7 +52,7 @@ fun SwrNavHost(modifier: Modifier = Modifier) {
 
     val topLevelDestinations = listOf(
         CategoryDestination(),
-        AnnouncementDestination(),
+        NewsDestination(),
         SettingsDestination(),
         AboutDestination(),
     )
@@ -69,7 +69,7 @@ fun SwrNavHost(modifier: Modifier = Modifier) {
             onItemClick = { homeNavHostController, homeDestination ->
                 when (homeDestination) {
                     is CategoryDestination -> homeNavHostController.navigateToCategoryScreen()
-                    is AnnouncementDestination -> homeNavHostController.navigateToAnnouncementScreen()
+                    is NewsDestination -> homeNavHostController.navigateToNewsScreen()
                     is SettingsDestination -> homeNavHostController.navigateToSettings()
                     is AboutDestination -> homeNavHostController.navigateToAboutScreen()
                 }
@@ -86,7 +86,7 @@ fun SwrNavHost(modifier: Modifier = Modifier) {
             builder = {
                 categoryScreen(onCategoryClick = swrNavHostController::navigateToQuestionScreen)
 
-                announcementScreen()
+                newsScreen()
 
                 settingsScreen()
 

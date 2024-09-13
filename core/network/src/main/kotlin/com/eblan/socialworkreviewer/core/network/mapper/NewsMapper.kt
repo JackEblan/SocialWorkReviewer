@@ -15,19 +15,21 @@
  *   limitations under the License.
  *
  */
-package com.eblan.socialworkreviewer.framework.countdowntimer
+package com.eblan.socialworkreviewer.core.network.mapper
 
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import com.eblan.socialworkreviewer.core.model.News
+import com.eblan.socialworkreviewer.core.network.model.NewsDocument
 
-@Module
-@InstallIn(SingletonComponent::class)
-internal interface CountDownTimerModule {
+internal fun toNews(newsDocument: NewsDocument): News {
+    val id = newsDocument.id.toString()
 
-    @Binds
-    @Singleton
-    fun countDownTimerWrapper(impl: AndroidCountDownTimerWrapper): CountDownTimerWrapper
+    val title = newsDocument.title.toString()
+
+    val message = newsDocument.message.toString()
+
+    return News(
+        id = id,
+        title = title,
+        message = message,
+    )
 }

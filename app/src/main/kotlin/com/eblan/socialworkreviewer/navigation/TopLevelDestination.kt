@@ -21,9 +21,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.eblan.socialworkreviewer.R
 import com.eblan.socialworkreviewer.core.designsystem.icon.Swr
 import com.eblan.socialworkreviewer.feature.about.navigation.AboutRouteData
-import com.eblan.socialworkreviewer.feature.announcement.navigation.AnnouncementRouteData
 import com.eblan.socialworkreviewer.feature.category.navigation.CategoryRouteData
 import com.eblan.socialworkreviewer.feature.home.navigation.HomeDestination
+import com.eblan.socialworkreviewer.feature.news.navigation.NewsRouteData
 import com.eblan.socialworkreviewer.feature.settings.navigation.SettingsRouteData
 import kotlin.reflect.KClass
 
@@ -38,15 +38,15 @@ class CategoryDestination : HomeDestination {
         get() = CategoryRouteData::class
 }
 
-class AnnouncementDestination : HomeDestination {
+class NewsDestination : HomeDestination {
     override val label: Int
-        get() = R.string.announcement
+        get() = R.string.news
     override val icon: ImageVector
         get() = Swr.Campaign
     override val contentDescription: Int
-        get() = R.string.announcement
+        get() = R.string.news
     override val route: KClass<*>
-        get() = AnnouncementRouteData::class
+        get() = NewsRouteData::class
 }
 
 class SettingsDestination : HomeDestination {
