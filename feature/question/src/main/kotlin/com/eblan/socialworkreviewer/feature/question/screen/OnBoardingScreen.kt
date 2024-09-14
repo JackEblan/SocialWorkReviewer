@@ -208,7 +208,13 @@ private fun Statistics(
     totalNumberOfQuestions: Int,
 ) {
     Column(modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-        AverageCircularProgressIndicator(average = average)
+        AverageCircularProgressIndicator(modifier = Modifier.size(60.dp), average = average) {
+            Text(
+                modifier = Modifier.padding(5.dp),
+                text = "${average.roundToInt()}%",
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -229,15 +235,13 @@ private fun Statistics(
 }
 
 @Composable
-private fun AverageCircularProgressIndicator(modifier: Modifier = Modifier, average: Double) {
-    Box(modifier = modifier.size(60.dp)) {
-        Text(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .padding(5.dp),
-            text = "${average.roundToInt()}%",
-            style = MaterialTheme.typography.bodySmall,
-        )
+internal fun AverageCircularProgressIndicator(
+    modifier: Modifier = Modifier,
+    average: Double,
+    content: @Composable () -> Unit,
+) {
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+        content()
 
         CircularProgressIndicator(
             modifier = Modifier.fillMaxSize(),

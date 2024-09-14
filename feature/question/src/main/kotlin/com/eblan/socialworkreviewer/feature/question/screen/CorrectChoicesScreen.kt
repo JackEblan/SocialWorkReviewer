@@ -241,7 +241,7 @@ private fun CorrectChoicesSelection(
                 onClick = {},
                 modifier = Modifier.fillMaxWidth(),
                 border = BorderStroke(
-                    width = 2.dp,
+                    width = if (correctChoice || wrongChoice) 2.dp else 1.dp,
                     brush = choiceBrush,
                 ),
             ) {

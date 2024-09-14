@@ -48,6 +48,7 @@ import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -237,12 +238,16 @@ private fun QuickQuestionChoicesSelection(
 
     val isCurrentQuestion = question == currentQuestion
 
+    var lastSelectedChoiceIndex by remember {
+        mutableIntStateOf(-1)
+    }
+
     Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 10.dp),
     ) {
-        choices.forEach { choice ->
+        choices.forEachIndexed { index, choice ->
             val selectedChoice = isCurrentQuestion && choice in selectedChoices
 
             val selectedChoiceSizeLimit = selectedChoices.size == correctChoices.size
@@ -259,6 +264,8 @@ private fun QuickQuestionChoicesSelection(
                 greenGradientColors
             } else if (wrongChoice) {
                 redGradientColors
+            } else if (selectedChoice) {
+                greenGradientColors
             } else {
                 emptyList()
             }
@@ -274,6 +281,8 @@ private fun QuickQuestionChoicesSelection(
             OutlinedCard(
                 onClick = {
                     if (selectedChoice.not() && selectedChoices.size < correctChoices.size) {
+                        lastSelectedChoiceIndex = index
+
                         onUpdateChoice(
                             Choice(
                                 question = question,
@@ -307,13 +316,13 @@ private fun QuickQuestionChoicesSelection(
                     .graphicsLayer {
                         if (wrongChoice) {
                             translationX = wrongChoiceAnimation.value
-                        } else if (correctChoice) {
+                        } else if (correctChoice || lastSelectedChoiceIndex == index) {
                             scaleX = correctChoiceAnimation.value
                             scaleY = correctChoiceAnimation.value
                         }
                     },
                 border = BorderStroke(
-                    width = 2.dp,
+                    width = if (selectedChoice || correctChoice || wrongChoice) 2.dp else 1.dp,
                     brush = choiceBrush,
                 ),
             ) {
