@@ -65,6 +65,7 @@ import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -504,12 +505,16 @@ private fun QuestionChoicesSelection(
 
     val isCurrentQuestion = question == currentQuestion
 
+    var lastSelectedChoiceIndex by remember {
+        mutableIntStateOf(-1)
+    }
+
     Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 10.dp),
     ) {
-        choices.forEach { choice ->
+        choices.forEachIndexed { index, choice ->
             val selectedChoice = isCurrentQuestion && choice in selectedChoices
 
             val choiceBorderGradientColors = if (selectedChoice) {
@@ -528,6 +533,8 @@ private fun QuestionChoicesSelection(
 
             OutlinedCard(
                 onClick = {
+                    lastSelectedChoiceIndex = index
+
                     onUpdateChoice(
                         Choice(
                             question = currentQuestion,
@@ -548,13 +555,13 @@ private fun QuestionChoicesSelection(
                 modifier = Modifier
                     .fillMaxWidth()
                     .graphicsLayer {
-                        if (selectedChoice) {
+                        if (lastSelectedChoiceIndex == index) {
                             scaleX = choiceAnimation.value
                             scaleY = choiceAnimation.value
                         }
                     },
                 border = BorderStroke(
-                    width = 2.dp,
+                    width = if (lastSelectedChoiceIndex == index) 2.dp else 1.dp,
                     brush = choiceBrush,
                 ),
             ) {

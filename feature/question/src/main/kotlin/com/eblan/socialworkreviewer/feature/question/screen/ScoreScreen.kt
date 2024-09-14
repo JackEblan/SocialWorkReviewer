@@ -76,7 +76,7 @@ internal fun ScoreScreen(
                 },
             ) {
                 Icon(
-                    imageVector = Swr.Check,
+                    imageVector = Swr.Eye,
                     contentDescription = "",
                 )
             }
@@ -112,59 +112,14 @@ internal fun ScoreScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = "Correct",
-                            style = MaterialTheme.typography.bodyLarge,
-                        )
+                    InfoText(title = "Correct", subtitle = "$score")
 
-                        Spacer(modifier = Modifier.height(10.dp))
+                    InfoText(title = "Wrong", subtitle = "${questions.size - score}")
 
-                        Text(
-                            text = "$score",
-                            style = MaterialTheme.typography.headlineLarge.copy(
-                                brush = Brush.linearGradient(
-                                    colors = LocalGradientColors.current.topBarTitleColorsDefault,
-                                ),
-                            ),
-                        )
-                    }
-
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = "Wrong",
-                            style = MaterialTheme.typography.bodyLarge,
-                        )
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        Text(
-                            text = "${questions.size - score}",
-                            style = MaterialTheme.typography.headlineLarge.copy(
-                                brush = Brush.linearGradient(
-                                    colors = LocalGradientColors.current.topBarTitleColorsDefault,
-                                ),
-                            ),
-                        )
-                    }
-
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = "Time",
-                            style = MaterialTheme.typography.bodyLarge,
-                        )
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        Text(
-                            text = if (minutes.isNullOrBlank()) "Time's up!" else minutes,
-                            style = MaterialTheme.typography.headlineLarge.copy(
-                                brush = Brush.linearGradient(
-                                    colors = LocalGradientColors.current.topBarTitleColorsDefault,
-                                ),
-                            ),
-                        )
-                    }
+                    InfoText(
+                        title = "Time",
+                        subtitle = if (minutes.isNullOrBlank()) "Time's up!" else minutes,
+                    )
                 }
             }
         }
@@ -182,6 +137,30 @@ internal fun ScoreScreen(
             dialogTitle = "Quit Questions",
             dialogText = "Are you sure you want to quit?",
             icon = Swr.Question,
+        )
+    }
+}
+
+@Composable
+private fun InfoText(modifier: Modifier = Modifier, title: String, subtitle: String) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.bodyLarge,
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Text(
+            text = subtitle,
+            style = MaterialTheme.typography.headlineLarge.copy(
+                brush = Brush.linearGradient(
+                    colors = LocalGradientColors.current.topBarTitleColorsDefault,
+                ),
+            ),
         )
     }
 }

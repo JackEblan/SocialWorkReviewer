@@ -28,6 +28,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.RemoveRedEye
 
 object Swr {
     val Check = Icons.Default.Check
@@ -40,4 +41,5 @@ object Swr {
     val Close = Icons.Default.Close
     val Info = Icons.Default.Info
     val Link = Icons.Default.Link
+    val Eye = Icons.Outlined.RemoveRedEye
 }
