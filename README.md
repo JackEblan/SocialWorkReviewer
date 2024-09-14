@@ -1,11 +1,15 @@
 ﻿# Social Work Reviewer
+<a href="https://play.google.com/store/apps/details?id=com.eblan.socialworkreviewer"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" height="70"></a>
+
 The architecture and modularization of this project are inspired
-from [Now in Android](https://github.com/android/nowinandroid). **The development of this application is in progress 🚧**
+from [Now in Android](https://github.com/android/nowinandroid). **The development of this
+application is in progress 🚧**
 
 - Uses Firestore Database to store the questions.
 - Supports a single or multiple choices for each question.
 
 # Screenshots
+
 <div style="width:100%; display:flex; justify-content:space-between;">
 
 [<img src="docs/images/1.jpg" width=19% alt="1">](docs/images/1.jpg)
@@ -16,6 +20,7 @@ from [Now in Android](https://github.com/android/nowinandroid). **The developmen
 </div>
 
 # Firestore Database
+
 Refer to the images below to see how the database is structured.
 <div style="width:100%; display:flex; justify-content:space-between;">
 
