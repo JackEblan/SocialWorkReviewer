@@ -21,11 +21,14 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -44,6 +47,7 @@ import com.eblan.socialworkreviewer.core.designsystem.icon.Swr
 import com.eblan.socialworkreviewer.core.designsystem.theme.LocalGradientColors
 import com.eblan.socialworkreviewer.core.model.Question
 import com.eblan.socialworkreviewer.feature.question.dialog.quit.QuitAlertDialog
+import kotlin.math.roundToInt
 
 @Composable
 internal fun ScoreScreen(
@@ -61,6 +65,8 @@ internal fun ScoreScreen(
     BackHandler(enabled = true) {
         showQuitAlertDialog = true
     }
+
+    val average = (score.toDouble() / questions.size.toDouble()) * 100.0
 
     Scaffold(
         floatingActionButton = {
@@ -89,39 +95,77 @@ internal fun ScoreScreen(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(
-                    text = "Score",
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Text(
-                    text = "$score/${questions.size}",
-                    style = MaterialTheme.typography.headlineLarge.copy(
-                        brush = Brush.linearGradient(
-                            colors = LocalGradientColors.current.topBarTitleColorsDefault,
-                        ),
-                    ),
-                )
+                AverageCircularProgressIndicator(
+                    modifier = Modifier.size(100.dp),
+                    average = average,
+                ) {
+                    Text(
+                        modifier = Modifier.padding(5.dp),
+                        text = "${average.roundToInt()}%",
+                        style = MaterialTheme.typography.titleLarge,
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                Text(
-                    text = "Time",
-                    style = MaterialTheme.typography.bodyLarge,
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "Correct",
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
 
-                Spacer(modifier = Modifier.height(10.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
 
-                Text(
-                    text = if (minutes.isNullOrBlank()) "Time's up!" else minutes,
-                    style = MaterialTheme.typography.headlineLarge.copy(
-                        brush = Brush.linearGradient(
-                            colors = LocalGradientColors.current.topBarTitleColorsDefault,
-                        ),
-                    ),
-                )
+                        Text(
+                            text = "$score",
+                            style = MaterialTheme.typography.headlineLarge.copy(
+                                brush = Brush.linearGradient(
+                                    colors = LocalGradientColors.current.topBarTitleColorsDefault,
+                                ),
+                            ),
+                        )
+                    }
+
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "Wrong",
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        Text(
+                            text = "${questions.size - score}",
+                            style = MaterialTheme.typography.headlineLarge.copy(
+                                brush = Brush.linearGradient(
+                                    colors = LocalGradientColors.current.topBarTitleColorsDefault,
+                                ),
+                            ),
+                        )
+                    }
+
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "Time",
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        Text(
+                            text = if (minutes.isNullOrBlank()) "Time's up!" else minutes,
+                            style = MaterialTheme.typography.headlineLarge.copy(
+                                brush = Brush.linearGradient(
+                                    colors = LocalGradientColors.current.topBarTitleColorsDefault,
+                                ),
+                            ),
+                        )
+                    }
+                }
             }
         }
     }
