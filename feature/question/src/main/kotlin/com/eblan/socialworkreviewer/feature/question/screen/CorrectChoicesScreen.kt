@@ -177,9 +177,7 @@ private fun CorrectChoicesPage(
     ) {
         QuestionText(question = questions[page].question)
 
-        ChoicesTypeText(
-            numberOfChoices = questions[page].correctChoices.size,
-        )
+        Spacer(modifier = Modifier.height(10.dp))
 
         CorrectChoicesSelection(
             currentQuestion = questions[page],

@@ -21,17 +21,16 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import com.eblan.socialworkreviewer.core.designsystem.icon.Swr
 import com.eblan.socialworkreviewer.core.designsystem.theme.LocalGradientColors
@@ -96,31 +96,37 @@ internal fun ScoreScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 AverageCircularProgressIndicator(
-                    modifier = Modifier.size(100.dp),
-                    average = average,
+                    progress = { (average / 100).toFloat() },
+                    modifier = Modifier.size(150.dp),
+                    strokeWidth = 8.dp,
+                    strokeCap = StrokeCap.Round,
+                    trackColor = ProgressIndicatorDefaults.linearTrackColor,
                 ) {
                     Text(
                         modifier = Modifier.padding(5.dp),
                         text = "${average.roundToInt()}%",
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            brush = Brush.linearGradient(
+                                colors = LocalGradientColors.current.topBarTitleColorsDefault,
+                            ),
+                        ),
                     )
                 }
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    InfoText(title = "Correct", subtitle = "$score")
+                InfoText(title = "Correct", subtitle = "$score")
 
-                    InfoText(title = "Wrong", subtitle = "${questions.size - score}")
+                Spacer(modifier = Modifier.height(20.dp))
 
-                    InfoText(
-                        title = "Time",
-                        subtitle = if (minutes.isNullOrBlank()) "Time's up!" else minutes,
-                    )
-                }
+                InfoText(title = "Wrong", subtitle = "${questions.size - score}")
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                InfoText(
+                    title = "Time",
+                    subtitle = if (minutes.isNullOrBlank()) "Time's up!" else minutes,
+                )
             }
         }
     }

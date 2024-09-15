@@ -197,9 +197,7 @@ private fun QuickQuestionPage(
     ) {
         QuestionText(question = questions[page].question)
 
-        ChoicesTypeText(
-            numberOfChoices = questions[page].correctChoices.size,
-        )
+        Spacer(modifier = Modifier.height(10.dp))
 
         QuickQuestionChoicesSelection(
             currentQuestion = questions[page],

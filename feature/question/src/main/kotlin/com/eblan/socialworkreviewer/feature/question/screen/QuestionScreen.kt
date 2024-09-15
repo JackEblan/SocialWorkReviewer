@@ -21,7 +21,6 @@ import androidx.activity.compose.BackHandler
 import androidx.annotation.VisibleForTesting
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.keyframes
@@ -50,7 +49,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -430,9 +428,7 @@ private fun QuestionPage(
     ) {
         QuestionText(question = questions[page].question)
 
-        ChoicesTypeText(
-            numberOfChoices = questions[page].correctChoices.size,
-        )
+        Spacer(modifier = Modifier.height(10.dp))
 
         QuestionChoicesSelection(
             currentQuestion = questions[page],
@@ -453,30 +449,6 @@ internal fun QuestionText(modifier: Modifier = Modifier, question: String) {
         Text(
             text = AnnotatedString.fromHtml(question),
             style = MaterialTheme.typography.headlineSmall,
-        )
-    }
-
-    Spacer(modifier = Modifier.height(10.dp))
-}
-
-@Composable
-internal fun ChoicesTypeText(
-    modifier: Modifier = Modifier,
-    numberOfChoices: Int,
-) {
-    val choicesType = if (numberOfChoices > 1) "Multiple Choices" else "Single Choice"
-
-    Spacer(modifier = Modifier.height(10.dp))
-
-    ElevatedCard(
-        modifier = modifier
-            .padding(horizontal = 10.dp)
-            .animateContentSize(),
-    ) {
-        Text(
-            modifier = Modifier.padding(5.dp),
-            text = choicesType,
-            style = MaterialTheme.typography.bodySmall,
         )
     }
 
@@ -561,7 +533,7 @@ private fun QuestionChoicesSelection(
                         }
                     },
                 border = BorderStroke(
-                    width = if (lastSelectedChoiceIndex == index) 2.dp else 1.dp,
+                    width = if (selectedChoice) 2.dp else 1.dp,
                     brush = choiceBrush,
                 ),
             ) {

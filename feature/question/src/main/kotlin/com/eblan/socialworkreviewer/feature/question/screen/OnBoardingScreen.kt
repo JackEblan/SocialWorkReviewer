@@ -50,10 +50,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.eblan.socialworkreviewer.core.designsystem.component.SwrLargeTopAppBar
 import com.eblan.socialworkreviewer.core.designsystem.icon.Swr
@@ -208,7 +210,12 @@ private fun Statistics(
     totalNumberOfQuestions: Int,
 ) {
     Column(modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-        AverageCircularProgressIndicator(modifier = Modifier.size(60.dp), average = average) {
+        AverageCircularProgressIndicator(
+            progress = { (average / 100).toFloat() },
+            modifier = Modifier.size(60.dp),
+            strokeCap = StrokeCap.Round,
+            trackColor = ProgressIndicatorDefaults.linearTrackColor,
+        ) {
             Text(
                 modifier = Modifier.padding(5.dp),
                 text = "${average.roundToInt()}%",
@@ -234,20 +241,29 @@ private fun Statistics(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun AverageCircularProgressIndicator(
+    progress: () -> Float,
     modifier: Modifier = Modifier,
-    average: Double,
+    color: Color = ProgressIndicatorDefaults.circularColor,
+    strokeWidth: Dp = ProgressIndicatorDefaults.CircularStrokeWidth,
+    trackColor: Color = ProgressIndicatorDefaults.circularDeterminateTrackColor,
+    strokeCap: StrokeCap = ProgressIndicatorDefaults.CircularDeterminateStrokeCap,
+    gapSize: Dp = ProgressIndicatorDefaults.CircularIndicatorTrackGapSize,
     content: @Composable () -> Unit,
 ) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         content()
 
         CircularProgressIndicator(
+            progress = progress,
             modifier = Modifier.fillMaxSize(),
-            progress = { (average / 100).toFloat() },
-            strokeCap = StrokeCap.Round,
-            trackColor = ProgressIndicatorDefaults.linearTrackColor,
+            color = color,
+            strokeWidth = strokeWidth,
+            trackColor = trackColor,
+            strokeCap = strokeCap,
+            gapSize = gapSize,
         )
     }
 }
