@@ -94,21 +94,35 @@ internal fun ScoreScreen(
                 .padding(paddingValues),
         ) {
             if (windowSizeClass.windowHeightSizeClass != WindowHeightSizeClass.COMPACT) {
-                ColumnScoreScreen(
-                    modifier = modifier,
-                    average = average,
-                    score = score,
-                    questions = questions,
-                    minutes = minutes,
-                )
+                Column(
+                    modifier = modifier
+                        .fillMaxSize()
+                        .padding(10.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Statistics(
+                        average = average,
+                        score = score,
+                        questions = questions,
+                        minutes = minutes,
+                    )
+                }
             } else {
-                RowScoreScreen(
-                    modifier = modifier,
-                    average = average,
-                    score = score,
-                    questions = questions,
-                    minutes = minutes,
-                )
+                Row(
+                    modifier = modifier
+                        .fillMaxSize()
+                        .padding(10.dp),
+                    horizontalArrangement = Arrangement.SpaceAround,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Statistics(
+                        average = average,
+                        score = score,
+                        questions = questions,
+                        minutes = minutes,
+                    )
+                }
             }
         }
     }
@@ -130,107 +144,48 @@ internal fun ScoreScreen(
 }
 
 @Composable
-private fun ColumnScoreScreen(
-    modifier: Modifier,
+private fun Statistics(
     average: Double,
     score: Int,
     questions: List<Question>,
     minutes: String?,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(10.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
+    AverageCircularProgressIndicator(
+        progress = { (average / 100).toFloat() },
+        modifier = Modifier.size(150.dp),
+        strokeWidth = 8.dp,
+        strokeCap = StrokeCap.Round,
+        trackColor = ProgressIndicatorDefaults.linearTrackColor,
     ) {
-        AverageCircularProgressIndicator(
-            progress = { (average / 100).toFloat() },
-            modifier = Modifier.size(150.dp),
-            strokeWidth = 8.dp,
-            strokeCap = StrokeCap.Round,
-            trackColor = ProgressIndicatorDefaults.linearTrackColor,
-        ) {
-            Text(
-                modifier = Modifier.padding(5.dp),
-                text = "${average.roundToInt()}%",
-                style = MaterialTheme.typography.titleLarge.copy(
-                    brush = Brush.linearGradient(
-                        colors = LocalGradientColors.current.topBarTitleColorsDefault,
-                    ),
+        Text(
+            modifier = Modifier.padding(5.dp),
+            text = "${average.roundToInt()}%",
+            style = MaterialTheme.typography.titleLarge.copy(
+                brush = Brush.linearGradient(
+                    colors = LocalGradientColors.current.topBarTitleColorsDefault,
                 ),
-            )
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        InfoText(title = "Correct", subtitle = "$score")
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        InfoText(title = "Wrong", subtitle = "${questions.size - score}")
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        InfoText(
-            title = "Time",
-            subtitle = if (minutes.isNullOrBlank()) "Time's up!" else minutes,
+            ),
         )
     }
+
+    Spacer(modifier = Modifier.height(20.dp))
+
+    StatisticsText(title = "Correct", subtitle = "$score")
+
+    Spacer(modifier = Modifier.height(20.dp))
+
+    StatisticsText(title = "Wrong", subtitle = "${questions.size - score}")
+
+    Spacer(modifier = Modifier.height(20.dp))
+
+    StatisticsText(
+        title = "Time",
+        subtitle = if (minutes.isNullOrBlank()) "Time's up!" else minutes,
+    )
 }
 
 @Composable
-private fun RowScoreScreen(
-    modifier: Modifier,
-    average: Double,
-    score: Int,
-    questions: List<Question>,
-    minutes: String?,
-) {
-    Row(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(10.dp),
-        horizontalArrangement = Arrangement.SpaceAround,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        AverageCircularProgressIndicator(
-            progress = { (average / 100).toFloat() },
-            modifier = Modifier.size(150.dp),
-            strokeWidth = 8.dp,
-            strokeCap = StrokeCap.Round,
-            trackColor = ProgressIndicatorDefaults.linearTrackColor,
-        ) {
-            Text(
-                modifier = Modifier.padding(5.dp),
-                text = "${average.roundToInt()}%",
-                style = MaterialTheme.typography.titleLarge.copy(
-                    brush = Brush.linearGradient(
-                        colors = LocalGradientColors.current.topBarTitleColorsDefault,
-                    ),
-                ),
-            )
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        InfoText(title = "Correct", subtitle = "$score")
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        InfoText(title = "Wrong", subtitle = "${questions.size - score}")
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        InfoText(
-            title = "Time",
-            subtitle = if (minutes.isNullOrBlank()) "Time's up!" else minutes,
-        )
-    }
-}
-
-@Composable
-private fun InfoText(modifier: Modifier = Modifier, title: String, subtitle: String) {
+private fun StatisticsText(modifier: Modifier = Modifier, title: String, subtitle: String) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
