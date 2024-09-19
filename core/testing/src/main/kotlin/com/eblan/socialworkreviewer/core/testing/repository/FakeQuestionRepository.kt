@@ -21,13 +21,7 @@ import com.eblan.socialworkreviewer.core.data.repository.QuestionRepository
 import com.eblan.socialworkreviewer.core.model.Question
 
 class FakeQuestionRepository : QuestionRepository {
-    private var _questions = emptyList<Question>()
-
     override suspend fun getQuestions(id: String): List<Question> {
-        return _questions
-    }
-
-    fun setQuestions(value: List<Question>) {
-        _questions = value
+        return emptyList()
     }
 }

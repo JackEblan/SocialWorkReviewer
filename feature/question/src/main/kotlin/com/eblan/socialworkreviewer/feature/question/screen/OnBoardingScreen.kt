@@ -46,7 +46,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -64,18 +63,6 @@ import com.eblan.socialworkreviewer.core.model.Category
 import com.eblan.socialworkreviewer.core.model.QuestionSetting
 import com.eblan.socialworkreviewer.core.model.Statistics
 import kotlin.math.roundToInt
-
-@Composable
-internal fun LoadingOnBoardingScreen(
-    modifier: Modifier = Modifier,
-    onGetCategory: () -> Unit,
-) {
-    LaunchedEffect(key1 = true) {
-        onGetCategory()
-    }
-
-    LoadingScreen(modifier = modifier)
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -126,12 +113,16 @@ internal fun SuccessOnBoardingScreen(
             contentPadding = paddingValues,
         ) {
             item {
-                Statistics(
-                    modifier = modifier,
-                    average = statistics.totalAverage,
-                    totalScore = statistics.totalScore,
-                    totalNumberOfQuestions = statistics.totalNumberOfQuestions,
-                )
+                OutlinedCard(
+                    modifier = Modifier.padding(10.dp),
+                ) {
+                    Statistics(
+                        modifier = modifier,
+                        average = statistics.totalAverage,
+                        totalScore = statistics.totalScore,
+                        totalNumberOfQuestions = statistics.totalNumberOfQuestions,
+                    )
+                }
             }
 
             itemsIndexed(category.questionSettings) { index, questionSetting ->
@@ -209,7 +200,12 @@ private fun Statistics(
     totalScore: Int,
     totalNumberOfQuestions: Int,
 ) {
-    Column(modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(15.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
         AverageCircularProgressIndicator(
             progress = { (average / 100).toFloat() },
             modifier = Modifier.size(60.dp),

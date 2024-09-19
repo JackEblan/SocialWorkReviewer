@@ -150,7 +150,7 @@ class QuestionViewModelTest {
                 choices = listOf(),
             )
         }
-        questionRepository.setQuestions(questions)
+        choiceRepository.addQuestions(questions)
 
         viewModel.startQuestions(
             questionSettingIndex = 1,
@@ -179,7 +179,7 @@ class QuestionViewModelTest {
                 choices = listOf(),
             )
         }
-        questionRepository.setQuestions(questions)
+        choiceRepository.addQuestions(questions)
 
         viewModel.startQuickQuestions()
 
@@ -227,7 +227,7 @@ class QuestionViewModelTest {
                 choices = listOf(),
             )
         }
-        questionRepository.setQuestions(questions)
+        choiceRepository.addQuestions(questions)
 
         viewModel.showCorrectChoices(questions = questions)
 
@@ -248,7 +248,19 @@ class QuestionViewModelTest {
                 choices = listOf(),
             )
         }
-        questionRepository.setQuestions(questions)
+
+        val averages = List(10) { _ ->
+            Average(
+                questionSettingIndex = 1,
+                score = 10,
+                numberOfQuestions = 10,
+                categoryId = "id",
+            )
+        }
+
+        choiceRepository.addQuestions(questions)
+
+        averageRepository.setAverages(value = averages)
 
         viewModel.showScore(questionSettingIndex = 0, questions = questions)
 
