@@ -1,30 +1,30 @@
 [versions]
 accompanist = "0.34.0"
-androidDesugarJdkLibs = "2.0.4"
+androidDesugarJdkLibs = "2.1.2"
 # AGP and tools should be updated together
-androidGradlePlugin = "8.4.0"
-androidTools = "31.3.0"
-androidxActivity = "1.9.0"
-androidxComposeBom = "2024.09.00"
+androidGradlePlugin = "8.4.2"
+androidTools = "31.6.1"
+androidxActivity = "1.9.2"
+androidxComposeBom = "2024.09.02"
 androidxCoreKtx = "1.13.1"
 androidxCoreSplashscreen = "1.0.1"
-androidxDataStore = "1.0.0"
-androidxEspresso = "3.5.1"
+androidxDataStore = "1.1.1"
+androidxEspresso = "3.6.1"
 androidxHiltNavigationCompose = "1.2.0"
-androidxLifeCycle = "2.7.0"
-androidxLifecycleViewModelCompose = "2.7.0"
-androidxMacroBenchmark = "1.2.4"
-androidxNavigationCompose = "2.8.0-beta06"
-androidxProfileInstaller = "1.3.1"
-androidxTestCore = "1.5.0"
-androidxTestExt = "1.1.5"
-androidxTestRules = "1.5.0"
-androidxTestRunner = "1.5.2"
+androidxLifeCycle = "2.8.6"
+androidxLifecycleViewModelCompose = "2.8.6"
+androidxMacroBenchmark = "1.3.1"
+androidxNavigationCompose = "2.8.1"
+androidxProfileInstaller = "1.4.0"
+androidxTestCore = "1.6.1"
+androidxTestExt = "1.2.1"
+androidxTestRules = "1.6.1"
+androidxTestRunner = "1.6.2"
 androidxTracing = "1.3.0-alpha02"
 androidxUiAutomator = "2.3.0"
 coil = "2.6.0"
 dependencyGuard = "0.5.0"
-firebaseBom = "33.1.2"
+firebaseBom = "33.3.0"
 googleServices = "4.4.2"
 guavaAndroid = "33.0.0-android"
 hilt = "2.51.1"
@@ -137,15 +137,15 @@ roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
 room = { id = "androidx.room", version.ref = "room" }
 
 # Plugins defined by this project
-com-eblan-socialworkreviewer-application = { id = "com.eblan.socialworkreviewer.application", version = "unspecified" }
-com-eblan-socialworkreviewer-applicationCompose = { id = "com.eblan.socialworkreviewer.applicationCompose", version = "unspecified" }
-com-eblan-socialworkreviewer-applicationJacoco = { id = "com.eblan.socialworkreviewer.applicationJacoco", version = "unspecified" }
-com-eblan-socialworkreviewer-jvmLibrary = { id = "com.eblan.socialworkreviewer.jvmLibrary", version = "unspecified" }
-com-eblan-socialworkreviewer-library = { id = "com.eblan.socialworkreviewer.library", version = "unspecified" }
-com-eblan-socialworkreviewer-libraryCompose = { id = "com.eblan.socialworkreviewer.libraryCompose", version = "unspecified" }
-com-eblan-socialworkreviewer-libraryJacoco = { id = "com.eblan.socialworkreviewer.libraryJacoco", version = "unspecified" }
-com-eblan-socialworkreviewer-feature = { id = "com.eblan.socialworkreviewer.feature", version = "unspecified" }
-com-eblan-socialworkreviewer-hilt = { id = "com.eblan.socialworkreviewer.hilt", version = "unspecified" }
-com-eblan-socialworkreviewer-lint = { id = "com.eblan.socialworkreviewer.lint", version = "unspecified" }
-com-eblan-socialworkreviewer-room = { id = "com.eblan.socialworkreviewer.room", version = "unspecified" }
-com-eblan-socialworkreviewer-test = { id = "com.eblan.socialworkreviewer.test", version = "unspecified" }
+com-eblan-socialworkreviewer-application = { id = "com.eblan.socialworkreviewer.application"}
+com-eblan-socialworkreviewer-applicationCompose = { id = "com.eblan.socialworkreviewer.applicationCompose"}
+com-eblan-socialworkreviewer-applicationJacoco = { id = "com.eblan.socialworkreviewer.applicationJacoco"}
+com-eblan-socialworkreviewer-jvmLibrary = { id = "com.eblan.socialworkreviewer.jvmLibrary"}
+com-eblan-socialworkreviewer-library = { id = "com.eblan.socialworkreviewer.library"}
+com-eblan-socialworkreviewer-libraryCompose = { id = "com.eblan.socialworkreviewer.libraryCompose"}
+com-eblan-socialworkreviewer-libraryJacoco = { id = "com.eblan.socialworkreviewer.libraryJacoco"}
+com-eblan-socialworkreviewer-feature = { id = "com.eblan.socialworkreviewer.feature"}
+com-eblan-socialworkreviewer-hilt = { id = "com.eblan.socialworkreviewer.hilt"}
+com-eblan-socialworkreviewer-lint = { id = "com.eblan.socialworkreviewer.lint"}
+com-eblan-socialworkreviewer-room = { id = "com.eblan.socialworkreviewer.room"}
+com-eblan-socialworkreviewer-test = { id = "com.eblan.socialworkreviewer.test"}

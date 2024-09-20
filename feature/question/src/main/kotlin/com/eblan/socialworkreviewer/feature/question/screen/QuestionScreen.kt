@@ -121,7 +121,6 @@ internal fun QuestionRoute(
         questionUiState = questionUiState,
         currentQuestionData = currentQuestionData,
         countDownTime = countDownTime,
-        onGetCategory = viewModel::getCategory,
         onAddCurrentQuestion = viewModel::addCurrentQuestion,
         onUpdateChoice = viewModel::updateChoice,
         onShowCorrectChoices = viewModel::showCorrectChoices,
@@ -144,7 +143,6 @@ internal fun QuestionScreen(
     questionUiState: QuestionUiState?,
     currentQuestionData: QuestionData,
     countDownTime: CountDownTime?,
-    onGetCategory: () -> Unit,
     onAddCurrentQuestion: (Question) -> Unit,
     onUpdateChoice: (Choice) -> Unit,
     onShowCorrectChoices: (questions: List<Question>) -> Unit,
@@ -218,10 +216,6 @@ internal fun QuestionScreen(
                 }
             }
 
-            null -> {
-                LoadingOnBoardingScreen(onGetCategory = onGetCategory)
-            }
-
             is QuestionUiState.QuickQuestions -> {
                 if (state.questions.isNotEmpty()) {
                     QuickQuestionsScreen(
@@ -243,6 +237,10 @@ internal fun QuestionScreen(
                     onShowCorrectChoices = onShowCorrectChoices,
                     onQuitQuestions = onQuitQuestions,
                 )
+            }
+
+            null -> {
+                LoadingScreen()
             }
         }
     }
