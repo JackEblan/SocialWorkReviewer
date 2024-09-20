@@ -35,6 +35,8 @@ interface InMemoryChoiceDataSource {
 
     suspend fun deleteChoice(choice: Choice)
 
+    suspend fun replaceChoice(oldChoice: Choice, newChoice: Choice)
+
     fun clearCache()
 
     suspend fun addCurrentQuestion(question: Question)

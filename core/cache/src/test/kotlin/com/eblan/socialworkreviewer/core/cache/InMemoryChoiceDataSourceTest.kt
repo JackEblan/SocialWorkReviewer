@@ -83,6 +83,43 @@ class InMemoryChoiceDataSourceTest {
     }
 
     @Test
+    fun replaceChoice() = runTest {
+        val oldChoice = Choice(
+            question = Question(
+                question = "0",
+                correctChoices = listOf(),
+                wrongChoices = listOf(),
+                choices = listOf(""),
+            ),
+            choice = "",
+        )
+
+        val newChoice = Choice(
+            question = Question(
+                question = "1",
+                correctChoices = listOf(),
+                wrongChoices = listOf(),
+                choices = listOf(""),
+            ),
+            choice = "",
+        )
+
+        inMemoryChoiceDataSource.addChoice(choice = oldChoice)
+
+        inMemoryChoiceDataSource.replaceChoice(oldChoice = oldChoice, newChoice = newChoice)
+
+        assertTrue {
+            inMemoryChoiceDataSource.selectedChoices.contains(newChoice)
+        }
+
+        assertTrue {
+            inMemoryChoiceDataSource.selectedChoices.contains(oldChoice).not()
+        }
+
+        assertNotNull(inMemoryChoiceDataSource.currentQuestionData.replayCache.firstOrNull())
+    }
+
+    @Test
     fun clearCache() = runTest {
         val questions = List(10) { index ->
             Question(

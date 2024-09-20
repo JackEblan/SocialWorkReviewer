@@ -41,13 +41,13 @@ class UpdateChoiceUseCase @Inject constructor(
     }
 
     private suspend fun singleChoice(choice: Choice) {
-        choiceRepository.selectedChoices.find { previousSelectedChoice ->
-            choice.question == previousSelectedChoice.question && choice != previousSelectedChoice
-        }?.let { previousSelectedChoice ->
-            choiceRepository.deleteChoice(previousSelectedChoice)
+        val oldChoice = choiceRepository.selectedChoices.find { oldChoice ->
+            choice.question == oldChoice.question && choice != oldChoice
         }
 
-        if (choice !in choiceRepository.selectedChoices) {
+        if (oldChoice != null) {
+            choiceRepository.replaceChoice(oldChoice = oldChoice, newChoice = choice)
+        } else {
             choiceRepository.addChoice(choice)
         }
     }

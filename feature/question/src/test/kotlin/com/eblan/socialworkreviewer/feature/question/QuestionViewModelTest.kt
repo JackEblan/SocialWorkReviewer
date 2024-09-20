@@ -121,7 +121,6 @@ class QuestionViewModelTest {
                 ),
                 selectedChoices = emptyList(),
                 questionsWithSelectedChoices = emptyMap(),
-                answeredQuestions = emptyList(),
             ),
             actual = viewModel.currentQuestionData.value,
         )
@@ -227,27 +226,6 @@ class QuestionViewModelTest {
                 choices = listOf(),
             )
         }
-        choiceRepository.addQuestions(questions)
-
-        viewModel.showCorrectChoices(questions = questions)
-
-        assertIs<QuestionUiState.CorrectChoices>(viewModel.questionUiState.value)
-    }
-
-    @Test
-    fun showScore() = runTest {
-        backgroundScope.launch(UnconfinedTestDispatcher()) {
-            viewModel.questionUiState.collect()
-        }
-
-        val questions = List(10) { _ ->
-            Question(
-                question = "",
-                correctChoices = listOf(),
-                wrongChoices = listOf(),
-                choices = listOf(),
-            )
-        }
 
         val averages = List(10) { _ ->
             Average(
@@ -262,9 +240,9 @@ class QuestionViewModelTest {
 
         averageRepository.setAverages(value = averages)
 
-        viewModel.showScore(questionSettingIndex = 0, questions = questions)
+        viewModel.showCorrectChoices(questionSettingIndex = 0, questions = questions)
 
-        assertIs<QuestionUiState.Score>(viewModel.questionUiState.value)
+        assertIs<QuestionUiState.CorrectChoices>(viewModel.questionUiState.value)
     }
 
     @Test

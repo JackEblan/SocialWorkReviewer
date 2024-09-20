@@ -21,20 +21,24 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.ProgressIndicatorDefaults
@@ -48,17 +52,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.eblan.socialworkreviewer.core.designsystem.component.SwrLargeTopAppBar
 import com.eblan.socialworkreviewer.core.designsystem.component.SwrLinearProgressIndicator
 import com.eblan.socialworkreviewer.core.designsystem.icon.Swr
-import com.eblan.socialworkreviewer.core.designsystem.theme.LocalGradientColors
 import com.eblan.socialworkreviewer.core.model.Question
 import com.eblan.socialworkreviewer.core.model.QuestionData
 import com.eblan.socialworkreviewer.feature.question.dialog.quit.QuitAlertDialog
@@ -68,6 +71,8 @@ import com.eblan.socialworkreviewer.feature.question.dialog.quit.QuitAlertDialog
 internal fun CorrectChoicesScreen(
     modifier: Modifier = Modifier,
     questions: List<Question>,
+    score: Int,
+    lastCountDownTime: String?,
     currentQuestionData: QuestionData,
     onAddCurrentQuestion: (Question) -> Unit,
     onQuitQuestions: () -> Unit,
@@ -100,30 +105,19 @@ internal fun CorrectChoicesScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            SwrLargeTopAppBar(
-                title = {
-                    Text(
-                        text = "Correct Choices",
-                        style = MaterialTheme.typography.headlineSmall.copy(
-                            brush = Brush.linearGradient(
-                                colors = LocalGradientColors.current.topBarTitleColorsDefault,
-                            ),
-                        ),
-                    )
-                },
-                modifier = modifier.testTag("correctChoices:largeTopAppBar"),
-                scrollBehavior = scrollBehavior,
-            )
-        },
-    ) { paddingValues ->
+    Scaffold { paddingValues ->
         Column(
             modifier = modifier
                 .fillMaxSize()
                 .consumeWindowInsets(paddingValues)
                 .padding(paddingValues),
         ) {
+            CorrectChoicesTopBar(
+                wrongText = "${questions.size - score}",
+                correctText = "$score",
+                lastCountDownTime = lastCountDownTime,
+            )
+
             SwrLinearProgressIndicator(
                 progress = {
                     animatedProgress
@@ -159,6 +153,44 @@ internal fun CorrectChoicesScreen(
             dialogText = "Are you sure you want to quit?",
             icon = Swr.Question,
         )
+    }
+}
+
+@Composable
+private fun CorrectChoicesTopBar(
+    modifier: Modifier = Modifier,
+    wrongText: String,
+    correctText: String,
+    lastCountDownTime: String?,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(10.dp),
+        horizontalArrangement = Arrangement.End,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(imageVector = Swr.Close, contentDescription = "Wrong")
+
+        Spacer(modifier = Modifier.width(5.dp))
+
+        Text(text = wrongText, fontWeight = FontWeight.Bold)
+
+        Spacer(modifier = Modifier.width(20.dp))
+
+        Icon(imageVector = Swr.Check, contentDescription = "Correct")
+
+        Spacer(modifier = Modifier.width(5.dp))
+
+        Text(text = correctText, fontWeight = FontWeight.Bold)
+
+        Spacer(modifier = Modifier.width(20.dp))
+
+        Icon(imageVector = Swr.AccessTime, contentDescription = "Minutes")
+
+        Spacer(modifier = Modifier.width(5.dp))
+
+        Text(text = lastCountDownTime ?: "Time's Up!", fontWeight = FontWeight.Bold)
     }
 }
 

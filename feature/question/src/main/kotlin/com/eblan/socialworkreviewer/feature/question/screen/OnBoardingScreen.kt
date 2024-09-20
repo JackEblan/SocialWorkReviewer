@@ -33,6 +33,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.CircularProgressIndicator
@@ -112,12 +113,15 @@ internal fun SuccessOnBoardingScreen(
             columns = GridCells.Adaptive(300.dp),
             contentPadding = paddingValues,
         ) {
-            item {
+            item(
+                span = {
+                    GridItemSpan(maxLineSpan)
+                },
+            ) {
                 OutlinedCard(
                     modifier = Modifier.padding(10.dp),
                 ) {
                     Statistics(
-                        modifier = modifier,
                         average = statistics.totalAverage,
                         totalScore = statistics.totalScore,
                         totalNumberOfQuestions = statistics.totalNumberOfQuestions,
@@ -200,15 +204,16 @@ private fun Statistics(
     totalScore: Int,
     totalNumberOfQuestions: Int,
 ) {
-    Column(
+    Row(
         modifier = modifier
             .fillMaxWidth()
             .padding(15.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         AverageCircularProgressIndicator(
             progress = { (average / 100).toFloat() },
-            modifier = Modifier.size(60.dp),
+            modifier = Modifier.size(100.dp),
             strokeCap = StrokeCap.Round,
             trackColor = ProgressIndicatorDefaults.linearTrackColor,
         ) {
@@ -219,21 +224,23 @@ private fun Statistics(
             )
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(text = "Score", style = MaterialTheme.typography.bodySmall)
 
-        Text(text = "Total Score", style = MaterialTheme.typography.bodySmall)
+            Spacer(modifier = Modifier.height(10.dp))
 
-        Spacer(modifier = Modifier.height(10.dp))
+            Text(fontWeight = FontWeight.Bold, text = "$totalScore")
 
-        Text(fontWeight = FontWeight.Bold, text = "$totalScore")
+            Spacer(modifier = Modifier.height(10.dp))
 
-        Spacer(modifier = Modifier.height(10.dp))
+            Text(text = "Questions", style = MaterialTheme.typography.bodySmall)
 
-        Text(text = "Total Number Of Questions", style = MaterialTheme.typography.bodySmall)
+            Spacer(modifier = Modifier.height(10.dp))
 
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Text(fontWeight = FontWeight.Bold, text = "$totalNumberOfQuestions")
+            Text(fontWeight = FontWeight.Bold, text = "$totalNumberOfQuestions")
+        }
     }
 }
 
