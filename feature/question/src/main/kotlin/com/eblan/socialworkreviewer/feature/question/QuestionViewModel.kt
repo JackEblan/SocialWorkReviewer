@@ -37,6 +37,7 @@ import com.eblan.socialworkreviewer.framework.countdowntimer.CountDownTimerWrapp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -62,7 +63,7 @@ class QuestionViewModel @Inject constructor(
     private val _questionUiState = MutableStateFlow<QuestionUiState?>(null)
     val questionUiState = _questionUiState.onStart {
         getCategory()
-    }.stateIn(
+    }.onCompletion { clearCache() }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = null,
