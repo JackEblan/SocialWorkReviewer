@@ -80,7 +80,6 @@ class QuestionViewModel @Inject constructor(
             ),
             selectedChoices = emptyList(),
             questionsWithSelectedChoices = emptyMap(),
-            answeredQuestions = emptyList(),
         ),
     )
 
@@ -145,24 +144,14 @@ class QuestionViewModel @Inject constructor(
         }
     }
 
-    fun showCorrectChoices(questions: List<Question>) {
-        viewModelScope.launch {
-            _questionUiState.update {
-                QuestionUiState.CorrectChoices(
-                    questions = questions,
-                )
-            }
-        }
-    }
-
-    fun showScore(questionSettingIndex: Int, questions: List<Question>) {
+    fun showCorrectChoices(questionSettingIndex: Int, questions: List<Question>) {
         viewModelScope.launch {
             val score = choiceRepository.getScore()
 
             _questionUiState.update {
-                QuestionUiState.Score(
-                    score = score,
+                QuestionUiState.CorrectChoices(
                     questions = questions,
+                    score = score,
                     lastCountDownTime = countDownTime.value?.minutes,
                 )
             }

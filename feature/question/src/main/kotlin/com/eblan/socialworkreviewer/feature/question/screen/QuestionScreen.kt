@@ -37,6 +37,7 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,12 +45,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -59,7 +60,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -77,19 +77,17 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.eblan.socialworkreviewer.core.designsystem.component.SwrLargeTopAppBar
 import com.eblan.socialworkreviewer.core.designsystem.component.SwrLinearProgressIndicator
 import com.eblan.socialworkreviewer.core.designsystem.icon.Swr
-import com.eblan.socialworkreviewer.core.designsystem.theme.LocalGradientColors
 import com.eblan.socialworkreviewer.core.model.Choice
 import com.eblan.socialworkreviewer.core.model.CountDownTime
 import com.eblan.socialworkreviewer.core.model.Question
@@ -97,7 +95,6 @@ import com.eblan.socialworkreviewer.core.model.QuestionData
 import com.eblan.socialworkreviewer.core.model.QuestionSetting
 import com.eblan.socialworkreviewer.feature.question.QuestionUiState
 import com.eblan.socialworkreviewer.feature.question.QuestionViewModel
-import com.eblan.socialworkreviewer.feature.question.dialog.question.QuestionsDialog
 import com.eblan.socialworkreviewer.feature.question.dialog.quit.QuitAlertDialog
 import kotlinx.coroutines.launch
 
@@ -124,7 +121,6 @@ internal fun QuestionRoute(
         onAddCurrentQuestion = viewModel::addCurrentQuestion,
         onUpdateChoice = viewModel::updateChoice,
         onShowCorrectChoices = viewModel::showCorrectChoices,
-        onShowScore = viewModel::showScore,
         onStartQuestions = viewModel::startQuestions,
         onStartQuickQuestions = viewModel::startQuickQuestions,
         onQuitQuestions = {
@@ -145,8 +141,7 @@ internal fun QuestionScreen(
     countDownTime: CountDownTime?,
     onAddCurrentQuestion: (Question) -> Unit,
     onUpdateChoice: (Choice) -> Unit,
-    onShowCorrectChoices: (questions: List<Question>) -> Unit,
-    onShowScore: (questionSettingIndex: Int, questions: List<Question>) -> Unit,
+    onShowCorrectChoices: (questionSettingIndex: Int, questions: List<Question>) -> Unit,
     onStartQuestions: (Int, QuestionSetting) -> Unit,
     onStartQuickQuestions: () -> Unit,
     onQuitQuestions: () -> Unit,
@@ -157,7 +152,7 @@ internal fun QuestionScreen(
         label = "",
         transitionSpec = {
             when (targetState) {
-                is QuestionUiState.Score, is QuestionUiState.CorrectChoices, is QuestionUiState.Questions, is QuestionUiState.QuickQuestions -> {
+                is QuestionUiState.CorrectChoices, is QuestionUiState.Questions, is QuestionUiState.QuickQuestions -> {
                     (slideInVertically() + fadeIn()).togetherWith(
                         slideOutVertically() + fadeOut(),
                     )
@@ -182,21 +177,23 @@ internal fun QuestionScreen(
                         countDownTime = countDownTime,
                         onAddCurrentQuestion = onAddCurrentQuestion,
                         onUpdateChoice = onUpdateChoice,
-                        onShowScore = onShowScore,
+                        onShowCorrectChoices = onShowCorrectChoices,
                         onQuitQuestions = onQuitQuestions,
                     )
                 } else {
-                    EmptyState(text = "No Question found!")
+                    EmptyState(text = "No Questions found!")
                 }
             }
 
-            QuestionUiState.Loading -> {
+            QuestionUiState.Loading, null -> {
                 LoadingScreen()
             }
 
             is QuestionUiState.CorrectChoices -> {
                 CorrectChoicesScreen(
                     questions = state.questions,
+                    score = state.score,
+                    lastCountDownTime = state.lastCountDownTime,
                     currentQuestionData = currentQuestionData,
                     onAddCurrentQuestion = onAddCurrentQuestion,
                     onQuitQuestions = onQuitQuestions,
@@ -228,25 +225,10 @@ internal fun QuestionScreen(
                     )
                 }
             }
-
-            is QuestionUiState.Score -> {
-                ScoreScreen(
-                    questions = state.questions,
-                    score = state.score,
-                    minutes = state.lastCountDownTime,
-                    onShowCorrectChoices = onShowCorrectChoices,
-                    onQuitQuestions = onQuitQuestions,
-                )
-            }
-
-            null -> {
-                LoadingScreen()
-            }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Questions(
     modifier: Modifier = Modifier,
@@ -257,7 +239,7 @@ private fun Questions(
     countDownTime: CountDownTime?,
     onAddCurrentQuestion: (Question) -> Unit,
     onUpdateChoice: (Choice) -> Unit,
-    onShowScore: (questionSettingIndex: Int, questions: List<Question>) -> Unit,
+    onShowCorrectChoices: (questionSettingIndex: Int, questions: List<Question>) -> Unit,
     onQuitQuestions: () -> Unit,
 ) {
     val pagerState = rememberPagerState(
@@ -265,10 +247,6 @@ private fun Questions(
             questions.size
         },
     )
-
-    val scope = rememberCoroutineScope()
-
-    val scrollBehavior = enterAlwaysScrollBehavior()
 
     val animatedProgress by animateFloatAsState(
         targetValue = (pagerState.currentPage + 1f) / questions.size,
@@ -280,17 +258,13 @@ private fun Questions(
         mutableStateOf(false)
     }
 
-    var showQuestionsDialog by rememberSaveable {
-        mutableStateOf(false)
-    }
-
     BackHandler(enabled = true) {
         showQuitAlertDialog = true
     }
 
     LaunchedEffect(key1 = countDownTime) {
         if (countDownTime != null && countDownTime.isFinished) {
-            onShowScore(questionSettingIndex, questions)
+            onShowCorrectChoices(questionSettingIndex, questions)
         }
     }
 
@@ -301,38 +275,18 @@ private fun Questions(
     }
 
     Scaffold(
-        topBar = {
-            SwrLargeTopAppBar(
-                title = {
-                    Text(
-                        text = "Questions",
-                        style = MaterialTheme.typography.headlineSmall.copy(
-                            brush = Brush.linearGradient(
-                                colors = LocalGradientColors.current.topBarTitleColorsDefault,
-                            ),
-                        ),
-                    )
-                },
-                modifier = modifier.testTag("question:largeTopAppBar"),
-                scrollBehavior = scrollBehavior,
-            )
-        },
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
         },
         floatingActionButton = {
             AnimatedVisibility(
-                visible = scrollBehavior.state.collapsedFraction == 0.0f,
+                visible = currentQuestionData.questionsWithSelectedChoices.size == questions.size,
                 enter = fadeIn() + scaleIn(),
                 exit = fadeOut() + scaleOut(),
             ) {
                 FloatingActionButton(
                     onClick = {
-                        if (currentQuestionData.questionsWithSelectedChoices.size < questions.size) {
-                            showQuestionsDialog = true
-                        } else {
-                            onShowScore(questionSettingIndex, questions)
-                        }
+                        onShowCorrectChoices(questionSettingIndex, questions)
                     },
                 ) {
                     Icon(
@@ -349,6 +303,11 @@ private fun Questions(
                 .consumeWindowInsets(paddingValues)
                 .padding(paddingValues),
         ) {
+            QuestionScreenTopBar(
+                questionsWithSelectedChoicesSize = currentQuestionData.questionsWithSelectedChoices.size,
+                countDownTime = countDownTime,
+            )
+
             SwrLinearProgressIndicator(
                 progress = {
                     animatedProgress
@@ -365,7 +324,6 @@ private fun Questions(
                 state = pagerState,
             ) { page ->
                 QuestionPage(
-                    modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                     page = page,
                     questions = questions,
                     currentQuestionData = currentQuestionData,
@@ -389,24 +347,36 @@ private fun Questions(
             icon = Swr.Question,
         )
     }
+}
 
-    if (showQuestionsDialog) {
-        QuestionsDialog(
-            modifier = modifier,
-            minutes = countDownTime?.minutes,
-            questionsSize = questions.size,
-            answeredQuestions = currentQuestionData.answeredQuestions,
-            onQuestionClick = { index ->
-                scope.launch {
-                    showQuestionsDialog = false
-                    pagerState.animateScrollToPage(index)
-                }
-            },
-            onOkayClick = {
-                showQuestionsDialog = false
-            },
-            contentDescription = "",
-        )
+@Composable
+private fun QuestionScreenTopBar(
+    modifier: Modifier = Modifier,
+    questionsWithSelectedChoicesSize: Int,
+    countDownTime: CountDownTime?,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(10.dp),
+        horizontalArrangement = Arrangement.End,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(imageVector = Swr.Check, contentDescription = "Questions With Selected Choices")
+
+        Spacer(modifier = Modifier.width(5.dp))
+
+        Text(text = "$questionsWithSelectedChoicesSize", fontWeight = FontWeight.Bold)
+
+        if (countDownTime != null && countDownTime.isFinished.not()) {
+            Spacer(modifier = Modifier.width(20.dp))
+
+            Icon(imageVector = Swr.AccessTime, contentDescription = "Minutes")
+
+            Spacer(modifier = Modifier.width(5.dp))
+
+            Text(text = countDownTime.minutes, fontWeight = FontWeight.Bold)
+        }
     }
 }
 

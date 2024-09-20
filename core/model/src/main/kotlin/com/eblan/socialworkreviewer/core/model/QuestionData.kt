@@ -21,7 +21,4 @@ data class QuestionData(
     val question: Question,
     val selectedChoices: List<String>,
     val questionsWithSelectedChoices: Map<Question, List<String>>,
-    val answeredQuestions: List<AnsweredQuestion>,
 )
-
-data class AnsweredQuestion(val question: Question, val isAnswered: Boolean)

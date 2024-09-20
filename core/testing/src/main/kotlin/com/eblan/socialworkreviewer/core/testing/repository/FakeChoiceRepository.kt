@@ -18,7 +18,6 @@
 package com.eblan.socialworkreviewer.core.testing.repository
 
 import com.eblan.socialworkreviewer.core.data.repository.ChoiceRepository
-import com.eblan.socialworkreviewer.core.model.AnsweredQuestion
 import com.eblan.socialworkreviewer.core.model.Choice
 import com.eblan.socialworkreviewer.core.model.Question
 import com.eblan.socialworkreviewer.core.model.QuestionData
@@ -60,7 +59,6 @@ class FakeChoiceRepository : ChoiceRepository {
                     defaultValue = emptyList(),
                 ),
                 questionsWithSelectedChoices = getQuestionsWithSelectedChoices(),
-                answeredQuestions = getAnsweredQuestions(),
             ),
         )
     }
@@ -76,9 +74,27 @@ class FakeChoiceRepository : ChoiceRepository {
                     defaultValue = emptyList(),
                 ),
                 questionsWithSelectedChoices = getQuestionsWithSelectedChoices(),
-                answeredQuestions = getAnsweredQuestions(),
             ),
         )
+    }
+
+    override suspend fun replaceChoice(oldChoice: Choice, newChoice: Choice) {
+        val oldChoiceIndex = _selectedChoices.indexOf(oldChoice)
+
+        if (oldChoiceIndex != -1) {
+            _selectedChoices[oldChoiceIndex] = newChoice
+
+            _currentQuestionData.emit(
+                QuestionData(
+                    question = newChoice.question,
+                    selectedChoices = getQuestionsWithSelectedChoices().getOrDefault(
+                        key = newChoice.question,
+                        defaultValue = emptyList(),
+                    ),
+                    questionsWithSelectedChoices = getQuestionsWithSelectedChoices(),
+                ),
+            )
+        }
     }
 
     override fun clearCache() {
@@ -96,7 +112,6 @@ class FakeChoiceRepository : ChoiceRepository {
                     defaultValue = emptyList(),
                 ),
                 questionsWithSelectedChoices = getQuestionsWithSelectedChoices(),
-                answeredQuestions = getAnsweredQuestions(),
             ),
         )
     }
@@ -109,14 +124,5 @@ class FakeChoiceRepository : ChoiceRepository {
 
     private fun getQuestionsWithSelectedChoices(): Map<Question, List<String>> {
         return _selectedChoices.groupBy({ it.question }, { it.choice })
-    }
-
-    private fun getAnsweredQuestions(): List<AnsweredQuestion> {
-        return _questions.map { question ->
-            AnsweredQuestion(
-                question = question,
-                isAnswered = question in getQuestionsWithSelectedChoices(),
-            )
-        }
     }
 }
