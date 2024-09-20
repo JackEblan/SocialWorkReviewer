@@ -214,13 +214,14 @@ private fun Statistics(
         AverageCircularProgressIndicator(
             progress = { (average / 100).toFloat() },
             modifier = Modifier.size(100.dp),
+            strokeWidth = 4.dp,
             strokeCap = StrokeCap.Round,
             trackColor = ProgressIndicatorDefaults.linearTrackColor,
         ) {
             Text(
                 modifier = Modifier.padding(5.dp),
                 text = "${average.roundToInt()}%",
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.titleLarge,
             )
         }
 
