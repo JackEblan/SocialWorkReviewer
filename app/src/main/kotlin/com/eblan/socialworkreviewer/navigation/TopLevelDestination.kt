@@ -59,5 +59,5 @@ enum class TopLevelDestination(
         icon = Swr.Info,
         contentDescription = R.string.about,
         route = AboutRouteData::class,
-    )
+    ),
 }
