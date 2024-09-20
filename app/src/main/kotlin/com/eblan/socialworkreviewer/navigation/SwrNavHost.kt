@@ -38,6 +38,10 @@ import com.eblan.socialworkreviewer.feature.question.navigation.navigateToQuesti
 import com.eblan.socialworkreviewer.feature.question.navigation.questionScreen
 import com.eblan.socialworkreviewer.feature.settings.navigation.navigateToSettings
 import com.eblan.socialworkreviewer.feature.settings.navigation.settingsScreen
+import com.eblan.socialworkreviewer.navigation.TopLevelDestination.ABOUT
+import com.eblan.socialworkreviewer.navigation.TopLevelDestination.CATEGORY
+import com.eblan.socialworkreviewer.navigation.TopLevelDestination.NEWS
+import com.eblan.socialworkreviewer.navigation.TopLevelDestination.SETTINGS
 import kotlinx.coroutines.launch
 
 @Composable
@@ -50,13 +54,6 @@ fun SwrNavHost(modifier: Modifier = Modifier) {
 
     val scope = rememberCoroutineScope()
 
-    val topLevelDestinations = listOf(
-        CategoryDestination(),
-        NewsDestination(),
-        SettingsDestination(),
-        AboutDestination(),
-    )
-
     NavHost(
         modifier = modifier,
         navController = swrNavHostController,
@@ -64,21 +61,20 @@ fun SwrNavHost(modifier: Modifier = Modifier) {
     ) {
         homeScreen(
             snackbarHostState = snackbarHostState,
-            topLevelDestinations = topLevelDestinations,
+            topLevelDestinations = TopLevelDestination.entries,
             startDestination = CategoryRouteData::class,
             onItemClick = { homeNavHostController, homeDestination ->
                 when (homeDestination) {
-                    is CategoryDestination -> homeNavHostController.navigateToCategoryScreen()
-                    is NewsDestination -> homeNavHostController.navigateToNewsScreen()
-                    is SettingsDestination -> homeNavHostController.navigateToSettings()
-                    is AboutDestination -> homeNavHostController.navigateToAboutScreen()
+                    CATEGORY -> homeNavHostController.navigateToCategoryScreen()
+                    NEWS -> homeNavHostController.navigateToNewsScreen()
+                    SETTINGS -> homeNavHostController.navigateToSettings()
+                    ABOUT -> homeNavHostController.navigateToAboutScreen()
                 }
             },
             onShowSnackBar = { message ->
                 scope.launch {
                     snackbarHostState.showSnackbar(
                         message = message,
-                        withDismissAction = true,
                         duration = SnackbarDuration.Indefinite,
                     )
                 }

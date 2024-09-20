@@ -27,46 +27,37 @@ import com.eblan.socialworkreviewer.feature.news.navigation.NewsRouteData
 import com.eblan.socialworkreviewer.feature.settings.navigation.SettingsRouteData
 import kotlin.reflect.KClass
 
-class CategoryDestination : HomeDestination {
-    override val label: Int
-        get() = R.string.category
-    override val icon: ImageVector
-        get() = Swr.Category
-    override val contentDescription: Int
-        get() = R.string.category
-    override val route: KClass<*>
-        get() = CategoryRouteData::class
-}
+enum class TopLevelDestination(
+    override val label: Int,
+    override val icon: ImageVector,
+    override val contentDescription: Int,
+    override val route: KClass<*>,
+) : HomeDestination {
+    CATEGORY(
+        label = R.string.category,
+        icon = Swr.Category,
+        contentDescription = R.string.category,
+        route = CategoryRouteData::class,
+    ),
 
-class NewsDestination : HomeDestination {
-    override val label: Int
-        get() = R.string.news
-    override val icon: ImageVector
-        get() = Swr.Campaign
-    override val contentDescription: Int
-        get() = R.string.news
-    override val route: KClass<*>
-        get() = NewsRouteData::class
-}
+    NEWS(
+        label = R.string.news,
+        icon = Swr.Campaign,
+        contentDescription = R.string.news,
+        route = NewsRouteData::class,
+    ),
 
-class SettingsDestination : HomeDestination {
-    override val label: Int
-        get() = R.string.settings
-    override val icon: ImageVector
-        get() = Swr.Settings
-    override val contentDescription: Int
-        get() = R.string.settings
-    override val route: KClass<*>
-        get() = SettingsRouteData::class
-}
+    SETTINGS(
+        label = R.string.settings,
+        icon = Swr.Settings,
+        contentDescription = R.string.settings,
+        route = SettingsRouteData::class,
+    ),
 
-class AboutDestination : HomeDestination {
-    override val label: Int
-        get() = R.string.about
-    override val icon: ImageVector
-        get() = Swr.Info
-    override val contentDescription: Int
-        get() = R.string.about
-    override val route: KClass<*>
-        get() = AboutRouteData::class
+    ABOUT(
+        label = R.string.about,
+        icon = Swr.Info,
+        contentDescription = R.string.about,
+        route = AboutRouteData::class,
+    )
 }

@@ -214,7 +214,7 @@ private fun Statistics(
         AverageCircularProgressIndicator(
             progress = { (average / 100).toFloat() },
             modifier = Modifier.size(100.dp),
-            strokeWidth = 4.dp,
+            strokeWidth = 5.dp,
             strokeCap = StrokeCap.Round,
             trackColor = ProgressIndicatorDefaults.linearTrackColor,
         ) {

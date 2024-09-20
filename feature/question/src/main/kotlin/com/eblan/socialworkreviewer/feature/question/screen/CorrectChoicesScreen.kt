@@ -190,7 +190,10 @@ private fun CorrectChoicesTopBar(
 
         Spacer(modifier = Modifier.width(5.dp))
 
-        Text(text = lastCountDownTime ?: "Time's Up!", fontWeight = FontWeight.Bold)
+        Text(
+            text = if (lastCountDownTime.isNullOrBlank()) "Time's up!" else lastCountDownTime,
+            fontWeight = FontWeight.Bold,
+        )
     }
 }
 
