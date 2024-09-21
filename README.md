@@ -1,5 +1,5 @@
 ﻿# Social Work Reviewer
-<a href="https://play.google.com/store/apps/details?id=com.eblan.socialworkreviewer"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.webp" height="70"></a>
+<a href="https://play.google.com/store/apps/details?id=com.eblan.socialworkreviewer"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" height="70"></a>
 
 The architecture and modularization of this project are inspired
 from [Now in Android](https://github.com/android/nowinandroid). **The development of this
