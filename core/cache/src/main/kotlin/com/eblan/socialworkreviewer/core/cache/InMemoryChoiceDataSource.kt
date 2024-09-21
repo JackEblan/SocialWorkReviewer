@@ -40,6 +40,4 @@ interface InMemoryChoiceDataSource {
     fun clearCache()
 
     suspend fun addCurrentQuestion(question: Question)
-
-    suspend fun getScore(): Int
 }

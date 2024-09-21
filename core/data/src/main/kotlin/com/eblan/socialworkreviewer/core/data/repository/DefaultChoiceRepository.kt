@@ -56,8 +56,4 @@ internal class DefaultChoiceRepository @Inject constructor(
     override suspend fun addCurrentQuestion(question: Question) {
         inMemoryChoiceDataSource.addCurrentQuestion(question)
     }
-
-    override suspend fun getScore(): Int {
-        return inMemoryChoiceDataSource.getScore()
-    }
 }

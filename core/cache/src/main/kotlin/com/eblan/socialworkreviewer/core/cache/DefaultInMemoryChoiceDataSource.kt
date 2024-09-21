@@ -121,14 +121,6 @@ internal class DefaultInMemoryChoiceDataSource @Inject constructor(
         )
     }
 
-    override suspend fun getScore(): Int {
-        return withContext(defaultDispatcher) {
-            getQuestionsWithSelectedChoices().count {
-                it.value.toSet() == it.key.correctChoices.toSet()
-            }
-        }
-    }
-
     private suspend fun getQuestionsWithSelectedChoices(): Map<Question, List<String>> {
         return withContext(defaultDispatcher) {
             _selectedChoices.groupBy({ it.question }, { it.choice })

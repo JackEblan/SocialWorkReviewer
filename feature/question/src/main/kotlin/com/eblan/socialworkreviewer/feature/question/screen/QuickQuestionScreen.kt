@@ -18,25 +18,33 @@
 package com.eblan.socialworkreviewer.feature.question.screen
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.ProgressIndicatorDefaults
@@ -55,18 +63,17 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.eblan.socialworkreviewer.core.designsystem.component.SwrLargeTopAppBar
 import com.eblan.socialworkreviewer.core.designsystem.component.SwrLinearProgressIndicator
 import com.eblan.socialworkreviewer.core.designsystem.icon.Swr
-import com.eblan.socialworkreviewer.core.designsystem.theme.LocalGradientColors
 import com.eblan.socialworkreviewer.core.model.Choice
 import com.eblan.socialworkreviewer.core.model.Question
 import com.eblan.socialworkreviewer.core.model.QuestionData
@@ -102,6 +109,14 @@ internal fun QuickQuestionsScreen(
         mutableStateOf(false)
     }
 
+    var correctScoreCount by rememberSaveable {
+        mutableIntStateOf(0)
+    }
+
+    var wrongScoreCount by rememberSaveable {
+        mutableIntStateOf(0)
+    }
+
     BackHandler(enabled = true) {
         showQuitAlertDialog = true
     }
@@ -113,22 +128,6 @@ internal fun QuickQuestionsScreen(
     }
 
     Scaffold(
-        topBar = {
-            SwrLargeTopAppBar(
-                title = {
-                    Text(
-                        text = "Quick Questions",
-                        style = MaterialTheme.typography.headlineSmall.copy(
-                            brush = Brush.linearGradient(
-                                colors = LocalGradientColors.current.topBarTitleColorsDefault,
-                            ),
-                        ),
-                    )
-                },
-                modifier = modifier.testTag("quickQuestion:largeTopAppBar"),
-                scrollBehavior = scrollBehavior,
-            )
-        },
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
         },
@@ -139,6 +138,11 @@ internal fun QuickQuestionsScreen(
                 .consumeWindowInsets(paddingValues)
                 .padding(paddingValues),
         ) {
+            QuickQuestionTopBar(
+                wrongScoreCount = wrongScoreCount,
+                correctScoreCount = correctScoreCount,
+            )
+
             SwrLinearProgressIndicator(
                 progress = {
                     animatedProgress
@@ -159,7 +163,15 @@ internal fun QuickQuestionsScreen(
                     page = page,
                     questions = questions,
                     currentQuestionData = currentQuestionData,
-                    onUpdateChoice = onUpdateChoice,
+                    onUpdateChoice = { choice, isCorrect ->
+                        if (isCorrect) {
+                            correctScoreCount++
+                        } else {
+                            wrongScoreCount++
+                        }
+
+                        onUpdateChoice(choice)
+                    },
                 )
             }
         }
@@ -182,13 +194,58 @@ internal fun QuickQuestionsScreen(
 }
 
 @Composable
+private fun QuickQuestionTopBar(
+    modifier: Modifier = Modifier,
+    wrongScoreCount: Int,
+    correctScoreCount: Int,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(10.dp),
+        horizontalArrangement = Arrangement.End,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(imageVector = Swr.Close, contentDescription = "Wrong")
+
+        Spacer(modifier = Modifier.width(5.dp))
+
+        AnimatedContent(
+            targetState = wrongScoreCount,
+            transitionSpec = {
+                slideInVertically { it } togetherWith slideOutVertically { -it }
+            },
+            label = "",
+        ) { state ->
+            Text(text = "$state", fontWeight = FontWeight.Bold)
+        }
+
+        Spacer(modifier = Modifier.width(20.dp))
+
+        Icon(imageVector = Swr.Check, contentDescription = "Correct")
+
+        Spacer(modifier = Modifier.width(5.dp))
+
+        AnimatedContent(
+            targetState = correctScoreCount,
+            transitionSpec = {
+                slideInVertically { it } togetherWith slideOutVertically { -it }
+            },
+            label = "",
+        ) { state ->
+            Text(text = "$state", fontWeight = FontWeight.Bold)
+        }
+    }
+}
+
+@Composable
 private fun QuickQuestionPage(
     modifier: Modifier = Modifier,
     scrollState: ScrollState = rememberScrollState(),
     page: Int,
     questions: List<Question>,
     currentQuestionData: QuestionData,
-    onUpdateChoice: (Choice) -> Unit,
+    onUpdateChoice: (Choice, Boolean) -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -216,7 +273,7 @@ private fun QuickQuestionChoicesSelection(
     choices: List<String>,
     correctChoices: List<String>,
     currentQuestionData: QuestionData,
-    onUpdateChoice: (Choice) -> Unit,
+    onUpdateChoice: (Choice, Boolean) -> Unit,
 ) {
     val greenGradientColors = listOf(
         Color(0xFF43A047),
@@ -256,6 +313,8 @@ private fun QuickQuestionChoicesSelection(
             val wrongChoice =
                 isCurrentQuestion && selectedChoiceSizeLimit && choice !in correctChoices && choice in selectedChoices
 
+            val canSelect = selectedChoice.not() && selectedChoices.size < correctChoices.size
+
             val choiceBorderGradientColors = if (selectedChoice && correctChoice) {
                 greenGradientColors
             } else if (correctChoice) {
@@ -278,7 +337,7 @@ private fun QuickQuestionChoicesSelection(
 
             OutlinedCard(
                 onClick = {
-                    if (selectedChoice.not() && selectedChoices.size < correctChoices.size) {
+                    if (canSelect) {
                         lastSelectedChoiceIndex = index
 
                         onUpdateChoice(
@@ -286,6 +345,7 @@ private fun QuickQuestionChoicesSelection(
                                 question = question,
                                 choice = choice,
                             ),
+                            choice in correctChoices,
                         )
 
                         scope.launch {
@@ -312,11 +372,11 @@ private fun QuickQuestionChoicesSelection(
                 modifier = Modifier
                     .fillMaxWidth()
                     .graphicsLayer {
-                        if (wrongChoice) {
-                            translationX = wrongChoiceAnimation.value
-                        } else if (correctChoice || lastSelectedChoiceIndex == index) {
+                        if (correctChoice || lastSelectedChoiceIndex == index) {
                             scaleX = correctChoiceAnimation.value
                             scaleY = correctChoiceAnimation.value
+                        } else if (wrongChoice) {
+                            translationX = wrongChoiceAnimation.value
                         }
                     },
                 border = BorderStroke(
