@@ -141,7 +141,7 @@ internal fun QuestionScreen(
     countDownTime: CountDownTime?,
     onAddCurrentQuestion: (Question) -> Unit,
     onUpdateChoice: (Choice) -> Unit,
-    onShowCorrectChoices: (questionSettingIndex: Int, questions: List<Question>) -> Unit,
+    onShowCorrectChoices: (questionSettingIndex: Int, questions: List<Question>, score: Int) -> Unit,
     onStartQuestions: (Int, QuestionSetting) -> Unit,
     onStartQuickQuestions: () -> Unit,
     onQuitQuestions: () -> Unit,
@@ -239,7 +239,7 @@ private fun Questions(
     countDownTime: CountDownTime?,
     onAddCurrentQuestion: (Question) -> Unit,
     onUpdateChoice: (Choice) -> Unit,
-    onShowCorrectChoices: (questionSettingIndex: Int, questions: List<Question>) -> Unit,
+    onShowCorrectChoices: (questionSettingIndex: Int, questions: List<Question>, score: Int) -> Unit,
     onQuitQuestions: () -> Unit,
 ) {
     val pagerState = rememberPagerState(
@@ -258,13 +258,17 @@ private fun Questions(
         mutableStateOf(false)
     }
 
+    var correctScoreCount by rememberSaveable {
+        mutableIntStateOf(0)
+    }
+
     BackHandler(enabled = true) {
         showQuitAlertDialog = true
     }
 
     LaunchedEffect(key1 = countDownTime) {
         if (countDownTime != null && countDownTime.isFinished) {
-            onShowCorrectChoices(questionSettingIndex, questions)
+            onShowCorrectChoices(questionSettingIndex, questions, correctScoreCount)
         }
     }
 
@@ -286,7 +290,7 @@ private fun Questions(
             ) {
                 FloatingActionButton(
                     onClick = {
-                        onShowCorrectChoices(questionSettingIndex, questions)
+                        onShowCorrectChoices(questionSettingIndex, questions, correctScoreCount)
                     },
                 ) {
                     Icon(
@@ -303,7 +307,7 @@ private fun Questions(
                 .consumeWindowInsets(paddingValues)
                 .padding(paddingValues),
         ) {
-            QuestionScreenTopBar(
+            QuestionTopBar(
                 questionsWithSelectedChoicesSize = currentQuestionData.questionsWithSelectedChoices.size,
                 countDownTime = countDownTime,
             )
@@ -327,7 +331,11 @@ private fun Questions(
                     page = page,
                     questions = questions,
                     currentQuestionData = currentQuestionData,
-                    onUpdateChoice = onUpdateChoice,
+                    onUpdateChoice = { choice, isCorrect ->
+                        if (isCorrect) correctScoreCount++
+
+                        onUpdateChoice(choice)
+                    },
                 )
             }
         }
@@ -350,7 +358,7 @@ private fun Questions(
 }
 
 @Composable
-private fun QuestionScreenTopBar(
+private fun QuestionTopBar(
     modifier: Modifier = Modifier,
     questionsWithSelectedChoicesSize: Int,
     countDownTime: CountDownTime?,
@@ -366,15 +374,7 @@ private fun QuestionScreenTopBar(
 
         Spacer(modifier = Modifier.width(5.dp))
 
-        AnimatedContent(
-            targetState = questionsWithSelectedChoicesSize,
-            transitionSpec = {
-                slideInVertically { it } togetherWith slideOutVertically { -it }
-            },
-            label = "",
-        ) { state ->
-            Text(text = "$state", fontWeight = FontWeight.Bold)
-        }
+        SlideDownToUpText(text = "$questionsWithSelectedChoicesSize", fontWeight = FontWeight.Bold)
 
         if (countDownTime != null && countDownTime.isFinished.not()) {
             Spacer(modifier = Modifier.width(20.dp))
@@ -383,7 +383,7 @@ private fun QuestionScreenTopBar(
 
             Spacer(modifier = Modifier.width(5.dp))
 
-            AnimatedCountDownTimerText(text = countDownTime.minutes, fontWeight = FontWeight.Bold)
+            SlideDownToUpText(text = countDownTime.minutes, fontWeight = FontWeight.Bold)
         }
     }
 }
@@ -395,7 +395,7 @@ private fun QuestionPage(
     page: Int,
     questions: List<Question>,
     currentQuestionData: QuestionData,
-    onUpdateChoice: (Choice) -> Unit,
+    onUpdateChoice: (Choice, Boolean) -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -409,6 +409,7 @@ private fun QuestionPage(
         QuestionChoicesSelection(
             currentQuestion = questions[page],
             choices = questions[page].choices,
+            correctChoices = questions[page].correctChoices,
             currentQuestionData = currentQuestionData,
             onUpdateChoice = onUpdateChoice,
         )
@@ -436,8 +437,9 @@ private fun QuestionChoicesSelection(
     modifier: Modifier = Modifier,
     currentQuestion: Question,
     choices: List<String>,
+    correctChoices: List<String>,
     currentQuestionData: QuestionData,
-    onUpdateChoice: (Choice) -> Unit,
+    onUpdateChoice: (Choice, Boolean) -> Unit,
 ) {
     val greenGradientColors = listOf(
         Color(0xFF43A047),
@@ -488,6 +490,7 @@ private fun QuestionChoicesSelection(
                             question = currentQuestion,
                             choice = choice,
                         ),
+                        choice in correctChoices,
                     )
                     scope.launch {
                         choiceAnimation.animateTo(
@@ -531,7 +534,7 @@ private fun QuestionChoicesSelection(
 }
 
 @Composable
-private fun AnimatedCountDownTimerText(
+internal fun SlideDownToUpText(
     modifier: Modifier = Modifier,
     text: String,
     fontWeight: FontWeight? = null,

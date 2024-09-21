@@ -35,6 +35,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -58,8 +59,8 @@ import com.eblan.socialworkreviewer.core.model.About
 @Composable
 internal fun AboutRoute(
     modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState,
     viewModel: AboutViewModel = hiltViewModel(),
-    onShowSnackBar: (String) -> Unit,
 ) {
     val aboutUiState = viewModel.aboutUiState.collectAsStateWithLifecycle().value
 
@@ -67,7 +68,7 @@ internal fun AboutRoute(
 
     LaunchedEffect(key1 = openLinkResult) {
         if (openLinkResult != null && openLinkResult.not()) {
-            onShowSnackBar("Invalid link")
+            snackbarHostState.showSnackbar(message = "Invalid link")
             viewModel.resetOpenLinkResult()
         }
     }

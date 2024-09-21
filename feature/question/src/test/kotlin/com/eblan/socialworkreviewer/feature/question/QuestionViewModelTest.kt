@@ -240,7 +240,7 @@ class QuestionViewModelTest {
 
         averageRepository.setAverages(value = averages)
 
-        viewModel.showCorrectChoices(questionSettingIndex = 0, questions = questions)
+        viewModel.showCorrectChoices(questionSettingIndex = 0, questions = questions, score = 10)
 
         assertIs<QuestionUiState.CorrectChoices>(viewModel.questionUiState.value)
     }

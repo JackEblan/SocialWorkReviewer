@@ -23,7 +23,6 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -178,26 +177,5 @@ class InMemoryChoiceDataSourceTest {
         inMemoryChoiceDataSource.addCurrentQuestion(question = question)
 
         assertNotNull(inMemoryChoiceDataSource.currentQuestionData.replayCache.firstOrNull())
-    }
-
-    @Test
-    fun getScore() = runTest {
-        val question = Question(
-            question = "Question",
-            correctChoices = listOf(""),
-            wrongChoices = listOf(),
-            choices = listOf(""),
-        )
-
-        val choice = Choice(
-            question = question,
-            choice = "",
-        )
-
-        inMemoryChoiceDataSource.addChoice(choice = choice)
-
-        inMemoryChoiceDataSource.addCurrentQuestion(question = question)
-
-        assertEquals(expected = 1, actual = inMemoryChoiceDataSource.getScore())
     }
 }

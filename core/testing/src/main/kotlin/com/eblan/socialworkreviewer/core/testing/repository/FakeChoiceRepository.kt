@@ -116,12 +116,6 @@ class FakeChoiceRepository : ChoiceRepository {
         )
     }
 
-    override suspend fun getScore(): Int {
-        return getQuestionsWithSelectedChoices().count {
-            it.value.toSet() == it.key.correctChoices.toSet()
-        }
-    }
-
     private fun getQuestionsWithSelectedChoices(): Map<Question, List<String>> {
         return _selectedChoices.groupBy({ it.question }, { it.choice })
     }
