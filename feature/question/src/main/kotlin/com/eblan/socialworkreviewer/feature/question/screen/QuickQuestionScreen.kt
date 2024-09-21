@@ -18,13 +18,9 @@
 package com.eblan.socialworkreviewer.feature.question.screen
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.keyframes
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
@@ -210,15 +206,7 @@ private fun QuickQuestionTopBar(
 
         Spacer(modifier = Modifier.width(5.dp))
 
-        AnimatedContent(
-            targetState = wrongScoreCount,
-            transitionSpec = {
-                slideInVertically { it } togetherWith slideOutVertically { -it }
-            },
-            label = "",
-        ) { state ->
-            Text(text = "$state", fontWeight = FontWeight.Bold)
-        }
+        SlideDownToUpText(text = "$wrongScoreCount", fontWeight = FontWeight.Bold)
 
         Spacer(modifier = Modifier.width(20.dp))
 
@@ -226,15 +214,7 @@ private fun QuickQuestionTopBar(
 
         Spacer(modifier = Modifier.width(5.dp))
 
-        AnimatedContent(
-            targetState = correctScoreCount,
-            transitionSpec = {
-                slideInVertically { it } togetherWith slideOutVertically { -it }
-            },
-            label = "",
-        ) { state ->
-            Text(text = "$state", fontWeight = FontWeight.Bold)
-        }
+        SlideDownToUpText(text = "$correctScoreCount", fontWeight = FontWeight.Bold)
     }
 }
 
@@ -372,11 +352,11 @@ private fun QuickQuestionChoicesSelection(
                 modifier = Modifier
                     .fillMaxWidth()
                     .graphicsLayer {
-                        if (correctChoice || lastSelectedChoiceIndex == index) {
+                        if (wrongChoice) {
+                            translationX = wrongChoiceAnimation.value
+                        } else if (correctChoice || lastSelectedChoiceIndex == index) {
                             scaleX = correctChoiceAnimation.value
                             scaleY = correctChoiceAnimation.value
-                        } else if (wrongChoice) {
-                            translationX = wrongChoiceAnimation.value
                         }
                     },
                 border = BorderStroke(

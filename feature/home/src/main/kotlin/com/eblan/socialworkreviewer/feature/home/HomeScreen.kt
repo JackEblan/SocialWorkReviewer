@@ -23,6 +23,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -60,7 +61,6 @@ internal fun HomeRoute(
     topLevelDestinations: List<HomeDestination>,
     startDestination: KClass<*>,
     onItemClick: (NavHostController, HomeDestination) -> Unit,
-    onShowSnackBar: (String) -> Unit,
     builder: NavGraphBuilder.() -> Unit,
 ) {
     val isOnline = viewModel.isOnline.collectAsStateWithLifecycle().value
@@ -73,7 +73,6 @@ internal fun HomeRoute(
         startDestination = startDestination,
         isOnline = isOnline,
         onItemClick = onItemClick,
-        onShowSnackBar = onShowSnackBar,
         builder = builder,
     )
 }
@@ -88,7 +87,6 @@ internal fun HomeScreen(
     startDestination: KClass<*>,
     isOnline: Boolean?,
     onItemClick: (NavHostController, HomeDestination) -> Unit,
-    onShowSnackBar: (String) -> Unit,
     builder: NavGraphBuilder.() -> Unit,
 ) {
     val topAppBarScrollBehavior = enterAlwaysScrollBehavior()
@@ -101,7 +99,12 @@ internal fun HomeScreen(
 
     LaunchedEffect(key1 = isOnline) {
         if (isOnline != null && isOnline.not()) {
-            onShowSnackBar("No internet connection")
+            snackbarHostState.showSnackbar(
+                message = "No internet connection",
+                duration = SnackbarDuration.Indefinite,
+            )
+        } else {
+            snackbarHostState.currentSnackbarData?.dismiss()
         }
     }
 

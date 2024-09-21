@@ -17,11 +17,9 @@
  */
 package com.eblan.socialworkreviewer.navigation
 
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
@@ -42,7 +40,6 @@ import com.eblan.socialworkreviewer.navigation.TopLevelDestination.ABOUT
 import com.eblan.socialworkreviewer.navigation.TopLevelDestination.CATEGORY
 import com.eblan.socialworkreviewer.navigation.TopLevelDestination.NEWS
 import com.eblan.socialworkreviewer.navigation.TopLevelDestination.SETTINGS
-import kotlinx.coroutines.launch
 
 @Composable
 fun SwrNavHost(modifier: Modifier = Modifier) {
@@ -51,8 +48,6 @@ fun SwrNavHost(modifier: Modifier = Modifier) {
     val snackbarHostState = remember {
         SnackbarHostState()
     }
-
-    val scope = rememberCoroutineScope()
 
     NavHost(
         modifier = modifier,
@@ -71,14 +66,6 @@ fun SwrNavHost(modifier: Modifier = Modifier) {
                     ABOUT -> homeNavHostController.navigateToAboutScreen()
                 }
             },
-            onShowSnackBar = { message ->
-                scope.launch {
-                    snackbarHostState.showSnackbar(
-                        message = message,
-                        duration = SnackbarDuration.Indefinite,
-                    )
-                }
-            },
             builder = {
                 categoryScreen(onCategoryClick = swrNavHostController::navigateToQuestionScreen)
 
@@ -86,13 +73,7 @@ fun SwrNavHost(modifier: Modifier = Modifier) {
 
                 settingsScreen()
 
-                aboutScreen(
-                    onShowSnackBar = { message ->
-                        scope.launch {
-                            snackbarHostState.showSnackbar(message = message)
-                        }
-                    },
-                )
+                aboutScreen(snackbarHostState = snackbarHostState)
             },
         )
 

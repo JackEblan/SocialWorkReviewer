@@ -374,15 +374,7 @@ private fun QuestionTopBar(
 
         Spacer(modifier = Modifier.width(5.dp))
 
-        AnimatedContent(
-            targetState = questionsWithSelectedChoicesSize,
-            transitionSpec = {
-                slideInVertically { it } togetherWith slideOutVertically { -it }
-            },
-            label = "",
-        ) { state ->
-            Text(text = "$state", fontWeight = FontWeight.Bold)
-        }
+        SlideDownToUpText(text = "$questionsWithSelectedChoicesSize", fontWeight = FontWeight.Bold)
 
         if (countDownTime != null && countDownTime.isFinished.not()) {
             Spacer(modifier = Modifier.width(20.dp))
@@ -391,7 +383,7 @@ private fun QuestionTopBar(
 
             Spacer(modifier = Modifier.width(5.dp))
 
-            AnimatedCountDownTimerText(text = countDownTime.minutes, fontWeight = FontWeight.Bold)
+            SlideDownToUpText(text = countDownTime.minutes, fontWeight = FontWeight.Bold)
         }
     }
 }
@@ -542,7 +534,7 @@ private fun QuestionChoicesSelection(
 }
 
 @Composable
-private fun AnimatedCountDownTimerText(
+internal fun SlideDownToUpText(
     modifier: Modifier = Modifier,
     text: String,
     fontWeight: FontWeight? = null,

@@ -17,6 +17,7 @@
  */
 package com.eblan.socialworkreviewer.feature.about.navigation
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
@@ -33,8 +34,8 @@ fun NavController.navigateToAboutScreen() {
     }
 }
 
-fun NavGraphBuilder.aboutScreen(onShowSnackBar: (String) -> Unit) {
+fun NavGraphBuilder.aboutScreen(snackbarHostState: SnackbarHostState) {
     composable<AboutRouteData> {
-        AboutRoute(onShowSnackBar = onShowSnackBar)
+        AboutRoute(snackbarHostState = snackbarHostState)
     }
 }
