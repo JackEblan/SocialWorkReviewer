@@ -2,7 +2,7 @@ name: NightlyBaselineProfiles
 
 on:
   schedule:
-    - cron:  '42 4 * * *'
+    - cron: '42 4 * * *'
 
 jobs:
   baseline_profiles:
@@ -17,6 +17,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Grant execute permission to Gradle wrapper
+        run: chmod +x ./gradlew
 
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v1
