@@ -33,7 +33,7 @@ import com.eblan.socialworkreviewer.core.designsystem.component.SwrLargeTopAppBa
 import com.eblan.socialworkreviewer.core.designsystem.theme.LocalGradientColors
 import com.eblan.socialworkreviewer.core.designsystem.theme.SwrTheme
 import com.eblan.socialworkreviewer.core.screenshottesting.util.DefaultRoborazziOptions
-import com.eblan.socialworkreviewer.core.screenshottesting.util.captureMultiTheme
+import com.eblan.socialworkreviewer.core.screenshottesting.util.captureScreenMultiTheme
 import com.github.takahirom.roborazzi.captureRoboImage
 import dagger.hilt.android.testing.HiltTestApplication
 import org.junit.Rule
@@ -56,7 +56,7 @@ class TopAppBarScreenshotTests {
 
     @Test
     fun largeTopAppBar_multipleThemes() {
-        composeTestRule.captureMultiTheme("LargeTopAppBar") {
+        composeTestRule.captureScreenMultiTheme("LargeTopAppBar") {
             SwrLargeTopAppBarExample()
         }
     }

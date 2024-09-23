@@ -27,24 +27,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
+import com.eblan.socialworkreviewer.core.designsystem.component.DialogContainer
 import com.eblan.socialworkreviewer.core.model.DarkThemeConfig
 import com.eblan.socialworkreviewer.feature.settings.R
 
@@ -58,7 +53,7 @@ internal fun DarkDialog(
     onChangeClick: () -> Unit,
     contentDescription: String,
 ) {
-    DarkDialogContainer(
+    DialogContainer(
         modifier = modifier
             .height(IntrinsicSize.Min)
             .padding(16.dp)
@@ -81,26 +76,6 @@ internal fun DarkDialog(
                 onChangeClick = onChangeClick,
             )
         }
-    }
-}
-
-@Composable
-private fun DarkDialogContainer(
-    modifier: Modifier = Modifier,
-    shape: Shape = AlertDialogDefaults.shape,
-    containerColor: Color = AlertDialogDefaults.containerColor,
-    tonalElevation: Dp = AlertDialogDefaults.TonalElevation,
-    onDismissRequest: () -> Unit,
-    content: @Composable () -> Unit,
-) {
-    Dialog(onDismissRequest = onDismissRequest) {
-        Surface(
-            modifier = modifier,
-            shape = shape,
-            color = containerColor,
-            tonalElevation = tonalElevation,
-            content = content,
-        )
     }
 }
 

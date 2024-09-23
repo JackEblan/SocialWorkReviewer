@@ -25,7 +25,7 @@ import com.eblan.socialworkreviewer.core.designsystem.component.SwrLoadingWheel
 import com.eblan.socialworkreviewer.core.designsystem.component.SwrOverlayLoadingWheel
 import com.eblan.socialworkreviewer.core.designsystem.theme.SwrTheme
 import com.eblan.socialworkreviewer.core.screenshottesting.util.DefaultRoborazziOptions
-import com.eblan.socialworkreviewer.core.screenshottesting.util.captureMultiTheme
+import com.eblan.socialworkreviewer.core.screenshottesting.util.captureScreenMultiTheme
 import com.github.takahirom.roborazzi.captureRoboImage
 import dagger.hilt.android.testing.HiltTestApplication
 import org.junit.Rule
@@ -47,7 +47,7 @@ class SwrLoadingWheelScreenshotTests {
 
     @Test
     fun swrLoadingWheel_multipleThemes() {
-        composeTestRule.captureMultiTheme("LoadingWheel") {
+        composeTestRule.captureScreenMultiTheme("LoadingWheel") {
             Surface {
                 SwrLoadingWheel(contentDescription = "test")
             }
@@ -56,7 +56,7 @@ class SwrLoadingWheelScreenshotTests {
 
     @Test
     fun swrOverlayLoadingWheel_multipleThemes() {
-        composeTestRule.captureMultiTheme("LoadingWheel", "OverlayLoadingWheel") {
+        composeTestRule.captureScreenMultiTheme("LoadingWheel", "OverlayLoadingWheel") {
             Surface {
                 SwrOverlayLoadingWheel(contentDescription = "test")
             }
