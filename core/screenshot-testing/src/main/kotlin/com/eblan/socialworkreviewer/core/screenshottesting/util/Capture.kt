@@ -69,11 +69,11 @@ internal fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule
         roborazziOptions: RoborazziOptions,
     ) -> Unit,
 ) {
-    var greenTheme by mutableStateOf(true)
+    var greenTheme by mutableStateOf(false)
 
-    var purpleTheme by mutableStateOf(true)
+    var purpleTheme by mutableStateOf(false)
 
-    var darkTheme by mutableStateOf(true)
+    var darkTheme by mutableStateOf(false)
 
     var dynamicTheme by mutableStateOf(false)
 
@@ -94,14 +94,14 @@ internal fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule
         }
     }
 
-    swrMultiThemes.forEach { swrMultiTheme ->
-        greenTheme = swrMultiTheme.greenTheme
-        purpleTheme = swrMultiTheme.purpleTheme
-        darkTheme = swrMultiTheme.darkTheme
-        dynamicTheme = swrMultiTheme.dynamicTheme
+    swrMultiThemes.forEach { (swrGreenTheme, swrPurpleTheme, swrDarkTheme, swrDynamicTheme, description) ->
+        greenTheme = swrGreenTheme
+        purpleTheme = swrPurpleTheme
+        darkTheme = swrDarkTheme
+        dynamicTheme = swrDynamicTheme
 
         onCapture(
-            "src/test/screenshots/" + "$name/${overrideFileName ?: name}" + swrMultiTheme.description + ".png",
+            "src/test/screenshots/" + "$name/${overrideFileName ?: name}" + description + ".png",
             roborazziOptions,
         )
     }

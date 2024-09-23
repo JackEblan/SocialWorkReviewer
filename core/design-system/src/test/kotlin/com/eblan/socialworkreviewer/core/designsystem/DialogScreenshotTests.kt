@@ -19,6 +19,7 @@ package com.eblan.socialworkreviewer.core.designsystem
 
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -51,7 +52,11 @@ class DialogScreenshotTests {
         composeTestRule.captureDialogMultiTheme("DialogContainer") {
             DialogContainer(onDismissRequest = {}) {
                 Box(modifier = Modifier.size(100.dp), contentAlignment = Alignment.Center) {
-                    Text(text = "Social Work Reviewer", style = MaterialTheme.typography.titleLarge)
+                    Text(
+                        modifier = Modifier.padding(10.dp),
+                        text = "Social Work Reviewer",
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
                 }
             }
         }
