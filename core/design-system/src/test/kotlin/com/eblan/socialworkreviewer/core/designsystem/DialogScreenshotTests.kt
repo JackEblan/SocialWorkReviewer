@@ -27,7 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.unit.dp
 import com.eblan.socialworkreviewer.core.designsystem.component.DialogContainer
-import com.eblan.socialworkreviewer.core.screenshottesting.util.captureMultiTheme
+import com.eblan.socialworkreviewer.core.screenshottesting.util.captureDialogMultiTheme
 import dagger.hilt.android.testing.HiltTestApplication
 import org.junit.Rule
 import org.junit.Test
@@ -48,7 +48,7 @@ class DialogScreenshotTests {
 
     @Test
     fun dialogContainer_multipleThemes() {
-        composeTestRule.captureMultiTheme("DialogContainer") {
+        composeTestRule.captureDialogMultiTheme("DialogContainer") {
             DialogContainer(onDismissRequest = {}) {
                 Box(modifier = Modifier.size(100.dp), contentAlignment = Alignment.Center) {
                     Text(text = "Social Work Reviewer", style = MaterialTheme.typography.titleLarge)

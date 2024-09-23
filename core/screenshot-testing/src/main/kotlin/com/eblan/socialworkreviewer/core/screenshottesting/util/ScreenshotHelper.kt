@@ -85,12 +85,12 @@ fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.c
  * Takes six screenshots combining light/dark and default/Android themes and whether dynamic color
  * is enabled.
  */
-fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.captureMultiTheme(
+fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.captureScreenMultiTheme(
     name: String,
     overrideFileName: String? = null,
     content: @Composable () -> Unit,
 ) {
-    captureMultiTheme(
+    captureScreenMultiTheme(
         name = name,
         overrideFileName = overrideFileName,
         content = content,

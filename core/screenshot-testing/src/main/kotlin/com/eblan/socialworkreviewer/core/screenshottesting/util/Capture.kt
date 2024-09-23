@@ -59,7 +59,7 @@ internal fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule
     onCapture("src/test/screenshots/${fileName}_$deviceName.png", roborazziOptions)
 }
 
-internal fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.captureMultiTheme(
+internal fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.captureScreenMultiTheme(
     name: String,
     overrideFileName: String? = null,
     roborazziOptions: RoborazziOptions = DefaultRoborazziOptions,
