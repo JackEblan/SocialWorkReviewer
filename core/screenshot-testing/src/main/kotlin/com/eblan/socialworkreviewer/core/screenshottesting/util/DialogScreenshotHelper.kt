@@ -50,26 +50,3 @@ fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.c
         },
     )
 }
-
-/**
- * Takes six dialog screenshots combining light/dark and default/Android themes and whether dynamic color
- * is enabled.
- */
-@OptIn(ExperimentalRoborazziApi::class)
-fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.captureDialogMultiTheme(
-    name: String,
-    overrideFileName: String? = null,
-    content: @Composable () -> Unit,
-) {
-    captureScreenMultiTheme(
-        name = name,
-        overrideFileName = overrideFileName,
-        content = content,
-        onCapture = { filePath, roborazziOptions ->
-            captureScreenRoboImage(
-                filePath = filePath,
-                roborazziOptions = roborazziOptions,
-            )
-        },
-    )
-}

@@ -45,20 +45,6 @@ enum class DefaultTestDevices(val description: String, val spec: String) {
     TABLET("tablet", "spec:shape=Normal,width=1280,height=800,unit=dp,dpi=480"),
 }
 
-fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.captureScreenForMultiDevice(
-    fileName: String,
-    body: @Composable () -> Unit,
-) {
-    DefaultTestDevices.entries.forEach {
-        captureScreenForDevice(
-            deviceName = it.description,
-            deviceSpec = it.spec,
-            fileName = fileName,
-            body = body,
-        )
-    }
-}
-
 fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.captureScreenForDevice(
     fileName: String,
     deviceName: String,
