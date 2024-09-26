@@ -19,8 +19,8 @@
 import com.android.build.api.dsl.ManagedVirtualDevice
 
 plugins {
-    alias(libs.plugins.com.eblan.socialworkreviewer.test)
     alias(libs.plugins.baselineprofile)
+    alias(libs.plugins.com.eblan.socialworkreviewer.test)
 }
 
 android {
