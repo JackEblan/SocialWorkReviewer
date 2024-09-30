@@ -39,7 +39,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -48,7 +47,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -65,7 +63,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.eblan.socialworkreviewer.core.designsystem.component.SwrLinearProgressIndicator
@@ -76,7 +73,6 @@ import com.eblan.socialworkreviewer.core.model.QuestionData
 import com.eblan.socialworkreviewer.feature.question.dialog.quit.QuitAlertDialog
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun QuickQuestionsScreen(
     modifier: Modifier = Modifier,
@@ -92,8 +88,6 @@ internal fun QuickQuestionsScreen(
             questions.size
         },
     )
-
-    val scrollBehavior = enterAlwaysScrollBehavior()
 
     val animatedProgress by animateFloatAsState(
         targetValue = (pagerState.currentPage + 1f) / questions.size,
@@ -155,7 +149,6 @@ internal fun QuickQuestionsScreen(
                 state = pagerState,
             ) { page ->
                 QuickQuestionPage(
-                    modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                     page = page,
                     questions = questions,
                     currentQuestionData = currentQuestionData,
