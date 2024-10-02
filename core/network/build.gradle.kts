@@ -35,7 +35,6 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestore)
 
-    implementation(projects.core.common)
     implementation(projects.core.model)
 
     testImplementation(projects.core.testing)
