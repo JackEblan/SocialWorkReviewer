@@ -17,8 +17,6 @@
  */
 package com.eblan.socialworkreviewer.core.network.firestore
 
-import com.eblan.socialworkreviewer.core.common.Dispatcher
-import com.eblan.socialworkreviewer.core.common.SwrDispatchers.IO
 import com.eblan.socialworkreviewer.core.model.Category
 import com.eblan.socialworkreviewer.core.network.firestore.CategoryDataSource.Companion.CATEGORIES_COLLECTION
 import com.eblan.socialworkreviewer.core.network.mapper.toCategory
@@ -28,17 +26,14 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.snapshots
 import com.google.firebase.firestore.toObject
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 internal class DefaultCategoryDataSource @Inject constructor(
     private val firestore: FirebaseFirestore,
-    @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
 ) : CategoryDataSource {
     override fun getCategoryDocuments(): Flow<List<Category>> {
         return firestore.collection(CATEGORIES_COLLECTION).orderBy(DATE, Query.Direction.ASCENDING)
@@ -54,16 +49,13 @@ internal class DefaultCategoryDataSource @Inject constructor(
     }
 
     override suspend fun getCategoryDocument(categoryDocumentId: String): Category? {
-        return withContext(ioDispatcher) {
-            val documentSnapshot =
-                firestore.collection(CATEGORIES_COLLECTION).document(categoryDocumentId).get()
-                    .await()
+        val documentSnapshot =
+            firestore.collection(CATEGORIES_COLLECTION).document(categoryDocumentId).get().await()
 
-            try {
-                toCategory(categoryDocument = documentSnapshot.toObject<CategoryDocument>())
-            } catch (e: RuntimeException) {
-                null
-            }
+        return try {
+            toCategory(categoryDocument = documentSnapshot.toObject<CategoryDocument>())
+        } catch (e: RuntimeException) {
+            null
         }
     }
 }
