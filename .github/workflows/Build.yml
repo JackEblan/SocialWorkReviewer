@@ -175,13 +175,11 @@ jobs:
         run: ./gradlew :app:checkReleaseBadging
 
   androidTest:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     timeout-minutes: 55
     strategy:
       matrix:
         api-level: [ 26, 30 ]
-    permissions:
-      pull-requests: write
 
     steps:
       - name: Delete unnecessary tools 🔧
