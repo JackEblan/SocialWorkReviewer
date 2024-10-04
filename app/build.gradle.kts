@@ -32,8 +32,8 @@ android {
 
     defaultConfig {
         applicationId = "com.eblan.socialworkreviewer"
-        versionCode = 105
-        versionName = "1.0.5"
+        versionCode = 106
+        versionName = "1.0.6"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
