@@ -1,4 +1,4 @@
-package: name='com.eblan.socialworkreviewer' versionCode='105' versionName='1.0.5' platformBuildVersionName='14' platformBuildVersionCode='34' compileSdkVersion='34' compileSdkVersionCodename='14'
+package: name='com.eblan.socialworkreviewer' versionCode='106' versionName='1.0.6' platformBuildVersionName='14' platformBuildVersionCode='34' compileSdkVersion='34' compileSdkVersionCodename='14'
 sdkVersion:'21'
 targetSdkVersion:'34'
 uses-permission: name='android.permission.ACCESS_NETWORK_STATE'
