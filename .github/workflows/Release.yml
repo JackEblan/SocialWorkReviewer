@@ -57,7 +57,7 @@ jobs:
       - name: Google Services JSON file
         env:
           DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
-        run: echo $DATA | base64 --decode > /home/runner/work/SocialWorkReviewer/SocialWorkReviewer/app/google-services.json
+        run: echo $DATA | base64 -di > app/google-services.json
 
       - name: Build release variant including baseline profile generation
         run: ./gradlew :app:assembleRelease :app:bundleRelease
