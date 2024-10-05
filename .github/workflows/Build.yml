@@ -219,7 +219,6 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           validate-wrappers: true
-          gradle-home-cache-cleanup: true
 
       - name: Google Services JSON file
         env:
