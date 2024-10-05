@@ -50,12 +50,9 @@ jobs:
         run: ./gradlew check -p build-logic
 
       - name: Google Services JSON file
-        if: always()
         env:
           DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
-        run: |
-          cat /home/runner/work/SocialWorkReviewer/SocialWorkReviewer/app/google-services.json | base64
-          echo $DATA > /home/runner/work/SocialWorkReviewer/SocialWorkReviewer/app/google-services.json      
+        run: echo $DATA | base64 -di > app/google-services.json
 
       - name: Setup GMD
         run: ./gradlew :benchmarks:pixel6Api33Setup
