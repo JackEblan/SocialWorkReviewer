@@ -44,12 +44,10 @@ import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -60,27 +58,25 @@ import androidx.compose.ui.unit.dp
 import com.eblan.socialworkreviewer.core.designsystem.component.SwrLinearProgressIndicator
 import com.eblan.socialworkreviewer.core.designsystem.icon.Swr
 import com.eblan.socialworkreviewer.core.model.Question
-import com.eblan.socialworkreviewer.core.model.QuestionData
 import com.eblan.socialworkreviewer.feature.question.dialog.quit.QuitAlertDialog
 
 @Composable
 internal fun CorrectChoicesScreen(
     modifier: Modifier = Modifier,
     questions: List<Question>,
-    score: Int,
+    answeredQuestions: Map<Question, List<String>>,
     lastCountDownTime: String?,
-    currentQuestionData: QuestionData,
-    onAddCurrentQuestion: (Question) -> Unit,
+    score: Int,
     onQuitQuestions: () -> Unit,
 ) {
     val pagerState = rememberPagerState(
         pageCount = {
-            questions.size
+            answeredQuestions.size
         },
     )
 
     val animatedProgress by animateFloatAsState(
-        targetValue = (pagerState.currentPage + 1f) / questions.size,
+        targetValue = (pagerState.currentPage + 1f) / answeredQuestions.size,
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
         label = "animatedProgress",
     )
@@ -93,12 +89,6 @@ internal fun CorrectChoicesScreen(
         showQuitAlertDialog = true
     }
 
-    LaunchedEffect(key1 = pagerState) {
-        snapshotFlow { pagerState.currentPage }.collect { page ->
-            onAddCurrentQuestion(questions[page])
-        }
-    }
-
     Scaffold { paddingValues ->
         Column(
             modifier = modifier
@@ -107,7 +97,7 @@ internal fun CorrectChoicesScreen(
                 .padding(paddingValues),
         ) {
             CorrectChoicesTopBar(
-                wrongText = "${questions.size - score}",
+                wrongText = "${answeredQuestions.size - score}",
                 correctText = "$score",
                 lastCountDownTime = lastCountDownTime,
             )
@@ -127,7 +117,7 @@ internal fun CorrectChoicesScreen(
                 CorrectChoicesPage(
                     page = page,
                     questions = questions,
-                    currentQuestionData = currentQuestionData,
+                    answeredQuestions = answeredQuestions,
                 )
             }
         }
@@ -196,7 +186,7 @@ private fun CorrectChoicesPage(
     scrollState: ScrollState = rememberScrollState(),
     page: Int,
     questions: List<Question>,
-    currentQuestionData: QuestionData,
+    answeredQuestions: Map<Question, List<String>>,
 ) {
     Column(
         modifier = modifier
@@ -208,10 +198,9 @@ private fun CorrectChoicesPage(
         Spacer(modifier = Modifier.height(10.dp))
 
         CorrectChoicesSelection(
-            currentQuestion = questions[page],
             choices = questions[page].choices,
             correctChoices = questions[page].correctChoices,
-            currentQuestionData = currentQuestionData,
+            selectedChoices = answeredQuestions[questions[page]],
         )
     }
 }
@@ -219,10 +208,9 @@ private fun CorrectChoicesPage(
 @Composable
 private fun CorrectChoicesSelection(
     modifier: Modifier = Modifier,
-    currentQuestion: Question,
     choices: List<String>,
     correctChoices: List<String>,
-    currentQuestionData: QuestionData,
+    selectedChoices: List<String>?,
 ) {
     val greenGradientColors = listOf(
         Color(0xFF43A047),
@@ -232,20 +220,15 @@ private fun CorrectChoicesSelection(
 
     val redGradientColors = listOf(Color.Red, Color.Blue, Color.Red)
 
-    val (question, selectedChoices) = currentQuestionData
-
-    val isCurrentQuestion = question == currentQuestion
-
     Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 10.dp),
     ) {
         choices.forEach { choice ->
-            val correctChoice = isCurrentQuestion && choice in correctChoices
+            val correctChoice = choice in correctChoices
 
-            val wrongChoice =
-                isCurrentQuestion && choice !in correctChoices && choice in selectedChoices
+            val wrongChoice = choice !in correctChoices && selectedChoices?.contains(choice) == true
 
             val choiceBorderGradientColors = if (correctChoice) {
                 greenGradientColors

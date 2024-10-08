@@ -27,7 +27,7 @@ class FakeQuestionRepository : QuestionRepository {
         return _questions
     }
 
-    fun setQuestions(value: List<Question>) {
+    fun addQuestions(value: List<Question>) {
         _questions.addAll(value)
     }
 }

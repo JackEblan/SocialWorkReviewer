@@ -15,20 +15,9 @@
  *   limitations under the License.
  *
  */
-package com.eblan.socialworkreviewer.core.data.repository
+package com.eblan.socialworkreviewer.core.model
 
-import com.eblan.socialworkreviewer.core.model.Choice
-import com.eblan.socialworkreviewer.core.model.AnsweredQuestion
-import com.eblan.socialworkreviewer.core.model.Question
-import com.eblan.socialworkreviewer.core.model.QuestionData
-import kotlinx.coroutines.flow.SharedFlow
-
-interface ChoiceRepository {
-    val answeredQuestionsFlow: SharedFlow<Map<Question, List<String>>>
-
-    fun multipleChoices(question: Question, choice: String)
-
-    fun singleChoice(question: Question, choice: String)
-
-    fun clearCache()
-}
+data class AnsweredQuestion(
+    val question: Question,
+    val selectedChoices: List<Choice>,
+)

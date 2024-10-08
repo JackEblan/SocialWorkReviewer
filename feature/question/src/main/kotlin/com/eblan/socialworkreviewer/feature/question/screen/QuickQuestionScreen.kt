@@ -48,7 +48,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -56,7 +55,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -67,9 +65,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.eblan.socialworkreviewer.core.designsystem.component.SwrLinearProgressIndicator
 import com.eblan.socialworkreviewer.core.designsystem.icon.Swr
-import com.eblan.socialworkreviewer.core.model.Choice
 import com.eblan.socialworkreviewer.core.model.Question
-import com.eblan.socialworkreviewer.core.model.QuestionData
 import com.eblan.socialworkreviewer.feature.question.dialog.quit.QuitAlertDialog
 import kotlinx.coroutines.launch
 
@@ -78,9 +74,8 @@ internal fun QuickQuestionsScreen(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
     questions: List<Question>,
-    currentQuestionData: QuestionData,
-    onAddCurrentQuestion: (Question) -> Unit,
-    onUpdateChoice: (Choice) -> Unit,
+    answeredQuestions: Map<Question, List<String>>,
+    onUpdateChoice: (question: Question, choice: String) -> Unit,
     onQuitQuestions: () -> Unit,
 ) {
     val pagerState = rememberPagerState(
@@ -109,12 +104,6 @@ internal fun QuickQuestionsScreen(
 
     BackHandler(enabled = true) {
         showQuitAlertDialog = true
-    }
-
-    LaunchedEffect(key1 = pagerState) {
-        snapshotFlow { pagerState.currentPage }.collect { page ->
-            onAddCurrentQuestion(questions[page])
-        }
     }
 
     Scaffold(
@@ -151,15 +140,15 @@ internal fun QuickQuestionsScreen(
                 QuickQuestionPage(
                     page = page,
                     questions = questions,
-                    currentQuestionData = currentQuestionData,
-                    onUpdateChoice = { choice, isCorrect ->
+                    answeredQuestions = answeredQuestions,
+                    onUpdateChoice = { question, choice, isCorrect ->
                         if (isCorrect) {
                             correctScoreCount++
                         } else {
                             wrongScoreCount++
                         }
 
-                        onUpdateChoice(choice)
+                        onUpdateChoice(question, choice)
                     },
                 )
             }
@@ -217,8 +206,8 @@ private fun QuickQuestionPage(
     scrollState: ScrollState = rememberScrollState(),
     page: Int,
     questions: List<Question>,
-    currentQuestionData: QuestionData,
-    onUpdateChoice: (Choice, Boolean) -> Unit,
+    answeredQuestions: Map<Question, List<String>>,
+    onUpdateChoice: (question: Question, choice: String, isCorrect: Boolean) -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -230,10 +219,10 @@ private fun QuickQuestionPage(
         Spacer(modifier = Modifier.height(10.dp))
 
         QuickQuestionChoicesSelection(
-            currentQuestion = questions[page],
+            question = questions[page],
             choices = questions[page].choices,
             correctChoices = questions[page].correctChoices,
-            currentQuestionData = currentQuestionData,
+            selectedChoices = answeredQuestions[questions[page]] ?: emptyList(),
             onUpdateChoice = onUpdateChoice,
         )
     }
@@ -242,11 +231,11 @@ private fun QuickQuestionPage(
 @Composable
 private fun QuickQuestionChoicesSelection(
     modifier: Modifier = Modifier,
-    currentQuestion: Question,
+    question: Question,
     choices: List<String>,
     correctChoices: List<String>,
-    currentQuestionData: QuestionData,
-    onUpdateChoice: (Choice, Boolean) -> Unit,
+    selectedChoices: List<String>,
+    onUpdateChoice: (question: Question, choice: String, isCorrect: Boolean) -> Unit,
 ) {
     val greenGradientColors = listOf(
         Color(0xFF43A047),
@@ -262,10 +251,6 @@ private fun QuickQuestionChoicesSelection(
 
     val scope = rememberCoroutineScope()
 
-    val (question, selectedChoices) = currentQuestionData
-
-    val isCurrentQuestion = question == currentQuestion
-
     var lastSelectedChoiceIndex by remember {
         mutableIntStateOf(-1)
     }
@@ -276,15 +261,14 @@ private fun QuickQuestionChoicesSelection(
             .padding(horizontal = 10.dp),
     ) {
         choices.forEachIndexed { index, choice ->
-            val selectedChoice = isCurrentQuestion && choice in selectedChoices
+            val selectedChoice = choice in selectedChoices
 
             val selectedChoiceSizeLimit = selectedChoices.size == correctChoices.size
 
-            val correctChoice =
-                isCurrentQuestion && selectedChoiceSizeLimit && choice in correctChoices
+            val correctChoice = selectedChoiceSizeLimit && choice in correctChoices
 
             val wrongChoice =
-                isCurrentQuestion && selectedChoiceSizeLimit && choice !in correctChoices && choice in selectedChoices
+                selectedChoiceSizeLimit && choice !in correctChoices && choice in selectedChoices
 
             val canSelect = selectedChoice.not() && selectedChoices.size < correctChoices.size
 
@@ -314,10 +298,8 @@ private fun QuickQuestionChoicesSelection(
                         lastSelectedChoiceIndex = index
 
                         onUpdateChoice(
-                            Choice(
-                                question = question,
-                                choice = choice,
-                            ),
+                            question,
+                            choice,
                             choice in correctChoices,
                         )
 

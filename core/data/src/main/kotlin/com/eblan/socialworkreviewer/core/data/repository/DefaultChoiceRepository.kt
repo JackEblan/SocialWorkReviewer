@@ -18,42 +18,25 @@
 package com.eblan.socialworkreviewer.core.data.repository
 
 import com.eblan.socialworkreviewer.core.cache.InMemoryChoiceDataSource
-import com.eblan.socialworkreviewer.core.model.Choice
 import com.eblan.socialworkreviewer.core.model.Question
-import com.eblan.socialworkreviewer.core.model.QuestionData
 import kotlinx.coroutines.flow.SharedFlow
 import javax.inject.Inject
 
 internal class DefaultChoiceRepository @Inject constructor(
     private val inMemoryChoiceDataSource: InMemoryChoiceDataSource,
 ) : ChoiceRepository {
+    override val answeredQuestionsFlow: SharedFlow<Map<Question, List<String>>>
+        get() = inMemoryChoiceDataSource.answeredQuestionsFlow
 
-    override val selectedChoices get() = inMemoryChoiceDataSource.selectedChoices
-
-    override val currentQuestionData: SharedFlow<QuestionData>
-        get() = inMemoryChoiceDataSource.currentQuestionData
-
-    override fun addQuestions(questions: List<Question>) {
-        inMemoryChoiceDataSource.addQuestions(questions = questions)
+    override fun multipleChoices(question: Question, choice: String) {
+        inMemoryChoiceDataSource.multipleChoices(question = question, choice = choice)
     }
 
-    override suspend fun addChoice(choice: Choice) {
-        inMemoryChoiceDataSource.addChoice(choice)
-    }
-
-    override suspend fun deleteChoice(choice: Choice) {
-        inMemoryChoiceDataSource.deleteChoice(choice)
-    }
-
-    override suspend fun replaceChoice(oldChoice: Choice, newChoice: Choice) {
-        inMemoryChoiceDataSource.replaceChoice(oldChoice = oldChoice, newChoice = newChoice)
+    override fun singleChoice(question: Question, choice: String) {
+        inMemoryChoiceDataSource.singleChoice(question = question, choice = choice)
     }
 
     override fun clearCache() {
         inMemoryChoiceDataSource.clearCache()
-    }
-
-    override suspend fun addCurrentQuestion(question: Question) {
-        inMemoryChoiceDataSource.addCurrentQuestion(question)
     }
 }

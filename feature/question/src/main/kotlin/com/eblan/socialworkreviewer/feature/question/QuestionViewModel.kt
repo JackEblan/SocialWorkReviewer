@@ -28,9 +28,7 @@ import com.eblan.socialworkreviewer.core.domain.GetQuestionsUseCase
 import com.eblan.socialworkreviewer.core.domain.GetStatisticsUseCase
 import com.eblan.socialworkreviewer.core.domain.UpdateChoiceUseCase
 import com.eblan.socialworkreviewer.core.model.Average
-import com.eblan.socialworkreviewer.core.model.Choice
 import com.eblan.socialworkreviewer.core.model.Question
-import com.eblan.socialworkreviewer.core.model.QuestionData
 import com.eblan.socialworkreviewer.core.model.QuestionSetting
 import com.eblan.socialworkreviewer.feature.question.navigation.QuestionRouteData
 import com.eblan.socialworkreviewer.framework.countdowntimer.CountDownTimerWrapper
@@ -61,6 +59,7 @@ class QuestionViewModel @Inject constructor(
     private val id = questionRouteData.id
 
     private val _questionUiState = MutableStateFlow<QuestionUiState?>(null)
+
     val questionUiState = _questionUiState.onStart {
         getCategory()
     }.onCompletion { clearCache() }.stateIn(
@@ -69,19 +68,10 @@ class QuestionViewModel @Inject constructor(
         initialValue = null,
     )
 
-    val currentQuestionData = choiceRepository.currentQuestionData.stateIn(
+    val answeredQuestionsFlow = choiceRepository.answeredQuestionsFlow.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = QuestionData(
-            question = Question(
-                question = "",
-                correctChoices = emptyList(),
-                wrongChoices = emptyList(),
-                choices = emptyList(),
-            ),
-            selectedChoices = emptyList(),
-            questionsWithSelectedChoices = emptyMap(),
-        ),
+        initialValue = emptyMap(),
     )
 
     val countDownTime = countDownTimerWrapper.countDownTimeFlow.stateIn(
@@ -113,8 +103,6 @@ class QuestionViewModel @Inject constructor(
                 )
             }
 
-            choiceRepository.addQuestions(questions = questions)
-
             countDownTimerWrapper.start()
         }
     }
@@ -133,15 +121,9 @@ class QuestionViewModel @Inject constructor(
         }
     }
 
-    fun updateChoice(choice: Choice) {
+    fun updateChoice(question: Question, choice: String) {
         viewModelScope.launch {
-            updateChoiceUseCase(choice = choice)
-        }
-    }
-
-    fun addCurrentQuestion(question: Question) {
-        viewModelScope.launch {
-            choiceRepository.addCurrentQuestion(question)
+            updateChoiceUseCase(question = question, choice = choice)
         }
     }
 

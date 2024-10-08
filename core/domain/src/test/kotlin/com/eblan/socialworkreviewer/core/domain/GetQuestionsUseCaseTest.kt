@@ -40,7 +40,7 @@ class GetQuestionsUseCaseTest {
     fun takeNumberOfQuestions() = runTest {
         val numberOfQuestionsToTake = 10
 
-        questionRepository.setQuestions(
+        questionRepository.addQuestions(
             List(20) { _ ->
                 Question(
                     question = "",
@@ -61,7 +61,7 @@ class GetQuestionsUseCaseTest {
 
     @Test
     fun getQuestions() = runTest {
-        questionRepository.setQuestions(
+        questionRepository.addQuestions(
             List(20) { _ ->
                 Question(
                     question = "",

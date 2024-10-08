@@ -17,149 +17,22 @@
  */
 package com.eblan.socialworkreviewer.core.cache
 
-import com.eblan.socialworkreviewer.core.model.Choice
 import com.eblan.socialworkreviewer.core.model.Question
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class InMemoryChoiceDataSourceTest {
-    private val testDispatcher = UnconfinedTestDispatcher()
-
     private lateinit var inMemoryChoiceDataSource: InMemoryChoiceDataSource
 
     @Before
     fun setup() {
-        inMemoryChoiceDataSource =
-            DefaultInMemoryChoiceDataSource(defaultDispatcher = testDispatcher)
+        inMemoryChoiceDataSource = DefaultInMemoryChoiceDataSource()
     }
 
     @Test
-    fun addChoice() = runTest {
-        val choice = Choice(
-            question = Question(
-                question = "",
-                correctChoices = listOf(),
-                wrongChoices = listOf(),
-                choices = listOf(""),
-            ),
-            choice = "",
-        )
-
-        inMemoryChoiceDataSource.addChoice(choice = choice)
-
-        assertTrue {
-            inMemoryChoiceDataSource.selectedChoices.contains(choice)
-        }
-
-        assertNotNull(inMemoryChoiceDataSource.currentQuestionData.replayCache.firstOrNull())
-    }
-
-    @Test
-    fun deleteChoice() = runTest {
-        val choice = Choice(
-            question = Question(
-                question = "",
-                correctChoices = listOf(),
-                wrongChoices = listOf(),
-                choices = listOf(""),
-            ),
-            choice = "",
-        )
-
-        inMemoryChoiceDataSource.addChoice(choice = choice)
-
-        inMemoryChoiceDataSource.deleteChoice(choice = choice)
-
-        assertTrue {
-            inMemoryChoiceDataSource.selectedChoices.contains(choice).not()
-        }
-
-        assertNotNull(inMemoryChoiceDataSource.currentQuestionData.replayCache.firstOrNull())
-    }
-
-    @Test
-    fun replaceChoice() = runTest {
-        val oldChoice = Choice(
-            question = Question(
-                question = "0",
-                correctChoices = listOf(),
-                wrongChoices = listOf(),
-                choices = listOf(""),
-            ),
-            choice = "",
-        )
-
-        val newChoice = Choice(
-            question = Question(
-                question = "1",
-                correctChoices = listOf(),
-                wrongChoices = listOf(),
-                choices = listOf(""),
-            ),
-            choice = "",
-        )
-
-        inMemoryChoiceDataSource.addChoice(choice = oldChoice)
-
-        inMemoryChoiceDataSource.replaceChoice(oldChoice = oldChoice, newChoice = newChoice)
-
-        assertTrue {
-            inMemoryChoiceDataSource.selectedChoices.contains(newChoice)
-        }
-
-        assertTrue {
-            inMemoryChoiceDataSource.selectedChoices.contains(oldChoice).not()
-        }
-
-        assertNotNull(inMemoryChoiceDataSource.currentQuestionData.replayCache.firstOrNull())
-    }
-
-    @Test
-    fun clearCache() = runTest {
-        val questions = List(10) { index ->
-            Question(
-                question = "",
-                correctChoices = listOf(),
-                wrongChoices = listOf(),
-                choices = listOf(),
-            )
-        }
-
-        val choice = Choice(
-            question = Question(
-                question = "",
-                correctChoices = listOf(),
-                wrongChoices = listOf(),
-                choices = listOf(""),
-            ),
-            choice = "",
-        )
-
-        inMemoryChoiceDataSource.addQuestions(questions = questions)
-
-        inMemoryChoiceDataSource.addChoice(choice = choice)
-
-        inMemoryChoiceDataSource.clearCache()
-
-        assertTrue {
-            inMemoryChoiceDataSource.questions.isEmpty()
-        }
-
-        assertTrue {
-            inMemoryChoiceDataSource.selectedChoices.isEmpty()
-        }
-
-        assertTrue {
-            inMemoryChoiceDataSource.currentQuestionData.replayCache.isEmpty()
-        }
-    }
-
-    @Test
-    fun addQuestion() = runTest {
+    fun multipleChoices() = runTest {
         val question = Question(
             question = "",
             correctChoices = listOf(),
@@ -167,15 +40,52 @@ class InMemoryChoiceDataSourceTest {
             choices = listOf(""),
         )
 
-        val choice = Choice(
-            question = question,
-            choice = "",
+        repeat(2) { index ->
+            inMemoryChoiceDataSource.multipleChoices(question = question, choice = "$index")
+        }
+
+        val answeredQuestion = inMemoryChoiceDataSource.answeredQuestionsFlow.replayCache.first()
+
+        assertTrue {
+            answeredQuestion[question]?.size == 2
+        }
+    }
+
+    @Test
+    fun singleChoice() = runTest {
+        val question = Question(
+            question = "",
+            correctChoices = listOf(),
+            wrongChoices = listOf(),
+            choices = listOf(""),
         )
 
-        inMemoryChoiceDataSource.addChoice(choice = choice)
+        inMemoryChoiceDataSource.singleChoice(question = question, choice = "")
 
-        inMemoryChoiceDataSource.addCurrentQuestion(question = question)
+        val answeredQuestion = inMemoryChoiceDataSource.answeredQuestionsFlow.replayCache.first()
 
-        assertNotNull(inMemoryChoiceDataSource.currentQuestionData.replayCache.firstOrNull())
+        assertTrue {
+            answeredQuestion[question]?.size == 1
+        }
+    }
+
+    @Test
+    fun clearCache() = runTest {
+        repeat(10) { index ->
+            val question = Question(
+                question = "$index",
+                correctChoices = listOf(),
+                wrongChoices = listOf(),
+                choices = listOf(""),
+            )
+
+            inMemoryChoiceDataSource.singleChoice(question = question, choice = "$index")
+        }
+
+        inMemoryChoiceDataSource.clearCache()
+
+        assertTrue {
+            inMemoryChoiceDataSource.answeredQuestionsFlow.replayCache.isEmpty()
+        }
     }
 }

@@ -24,9 +24,7 @@ import com.eblan.socialworkreviewer.core.domain.GetStatisticsUseCase
 import com.eblan.socialworkreviewer.core.domain.UpdateChoiceUseCase
 import com.eblan.socialworkreviewer.core.model.Average
 import com.eblan.socialworkreviewer.core.model.Category
-import com.eblan.socialworkreviewer.core.model.Choice
 import com.eblan.socialworkreviewer.core.model.Question
-import com.eblan.socialworkreviewer.core.model.QuestionData
 import com.eblan.socialworkreviewer.core.model.QuestionSetting
 import com.eblan.socialworkreviewer.core.testing.countdowntimer.FakeCountDownTimer
 import com.eblan.socialworkreviewer.core.testing.repository.FakeAverageRepository
@@ -42,7 +40,6 @@ import org.junit.Before
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -110,23 +107,6 @@ class QuestionViewModelTest {
     }
 
     @Test
-    fun currentQuestionData_isEmpty_whenStarted() = runTest {
-        assertEquals(
-            expected = QuestionData(
-                question = Question(
-                    question = "",
-                    correctChoices = emptyList(),
-                    wrongChoices = emptyList(),
-                    choices = emptyList(),
-                ),
-                selectedChoices = emptyList(),
-                questionsWithSelectedChoices = emptyMap(),
-            ),
-            actual = viewModel.currentQuestionData.value,
-        )
-    }
-
-    @Test
     fun countDownTime_isNull_whenStarted() = runTest {
         assertNull(viewModel.countDownTime.value)
     }
@@ -149,7 +129,8 @@ class QuestionViewModelTest {
                 choices = listOf(),
             )
         }
-        choiceRepository.addQuestions(questions)
+
+        questionRepository.addQuestions(questions)
 
         viewModel.startQuestions(
             questionSettingIndex = 1,
@@ -178,7 +159,8 @@ class QuestionViewModelTest {
                 choices = listOf(),
             )
         }
-        choiceRepository.addQuestions(questions)
+
+        questionRepository.addQuestions(questions)
 
         viewModel.startQuickQuestions()
 
@@ -186,30 +168,26 @@ class QuestionViewModelTest {
     }
 
     @Test
-    fun addCurrentQuestion() = runTest {
+    fun updateChoice() = runTest {
         backgroundScope.launch(UnconfinedTestDispatcher()) {
-            viewModel.currentQuestionData.collect()
+            viewModel.answeredQuestionsFlow.collect()
         }
 
         val question = Question(
             question = "",
             correctChoices = listOf(""),
-            wrongChoices = listOf(""),
-            choices = listOf(""),
+            wrongChoices = listOf(),
+            choices = listOf(),
         )
 
-        val choice = Choice(
+        viewModel.updateChoice(
             question = question,
             choice = "",
         )
 
-        viewModel.addCurrentQuestion(question = question)
-
-        viewModel.updateChoice(choice = choice)
-
-        assertTrue(viewModel.currentQuestionData.value.selectedChoices.isNotEmpty())
-
-        assertTrue(viewModel.currentQuestionData.value.questionsWithSelectedChoices.isNotEmpty())
+        assertTrue {
+            viewModel.answeredQuestionsFlow.value.isNotEmpty()
+        }
     }
 
     @Test
@@ -236,7 +214,7 @@ class QuestionViewModelTest {
             )
         }
 
-        choiceRepository.addQuestions(questions)
+        questionRepository.addQuestions(questions)
 
         averageRepository.setAverages(value = averages)
 

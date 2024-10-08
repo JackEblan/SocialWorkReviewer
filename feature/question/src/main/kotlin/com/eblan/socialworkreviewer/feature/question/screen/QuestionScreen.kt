@@ -69,7 +69,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -88,10 +87,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eblan.socialworkreviewer.core.designsystem.component.SwrLinearProgressIndicator
 import com.eblan.socialworkreviewer.core.designsystem.icon.Swr
-import com.eblan.socialworkreviewer.core.model.Choice
 import com.eblan.socialworkreviewer.core.model.CountDownTime
 import com.eblan.socialworkreviewer.core.model.Question
-import com.eblan.socialworkreviewer.core.model.QuestionData
 import com.eblan.socialworkreviewer.core.model.QuestionSetting
 import com.eblan.socialworkreviewer.feature.question.QuestionUiState
 import com.eblan.socialworkreviewer.feature.question.QuestionViewModel
@@ -106,9 +103,9 @@ internal fun QuestionRoute(
 ) {
     val questionUiState = viewModel.questionUiState.collectAsStateWithLifecycle().value
 
-    val currentQuestionData = viewModel.currentQuestionData.collectAsStateWithLifecycle().value
-
     val countDownTime = viewModel.countDownTime.collectAsStateWithLifecycle().value
+
+    val answeredQuestions = viewModel.answeredQuestionsFlow.collectAsStateWithLifecycle().value
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -116,9 +113,8 @@ internal fun QuestionRoute(
         modifier = modifier,
         snackbarHostState = snackbarHostState,
         questionUiState = questionUiState,
-        currentQuestionData = currentQuestionData,
         countDownTime = countDownTime,
-        onAddCurrentQuestion = viewModel::addCurrentQuestion,
+        answeredQuestions = answeredQuestions,
         onUpdateChoice = viewModel::updateChoice,
         onShowCorrectChoices = viewModel::showCorrectChoices,
         onStartQuestions = viewModel::startQuestions,
@@ -137,10 +133,9 @@ internal fun QuestionScreen(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
     questionUiState: QuestionUiState?,
-    currentQuestionData: QuestionData,
+    answeredQuestions: Map<Question, List<String>>,
     countDownTime: CountDownTime?,
-    onAddCurrentQuestion: (Question) -> Unit,
-    onUpdateChoice: (Choice) -> Unit,
+    onUpdateChoice: (question: Question, choice: String) -> Unit,
     onShowCorrectChoices: (questionSettingIndex: Int, questions: List<Question>, score: Int) -> Unit,
     onStartQuestions: (Int, QuestionSetting) -> Unit,
     onStartQuickQuestions: () -> Unit,
@@ -171,11 +166,10 @@ internal fun QuestionScreen(
                 if (state.questions.isNotEmpty()) {
                     Questions(
                         snackbarHostState = snackbarHostState,
-                        currentQuestionData = currentQuestionData,
+                        answeredQuestions = answeredQuestions,
                         questionSettingIndex = state.questionSettingIndex,
                         questions = state.questions,
                         countDownTime = countDownTime,
-                        onAddCurrentQuestion = onAddCurrentQuestion,
                         onUpdateChoice = onUpdateChoice,
                         onShowCorrectChoices = onShowCorrectChoices,
                         onQuitQuestions = onQuitQuestions,
@@ -191,11 +185,10 @@ internal fun QuestionScreen(
 
             is QuestionUiState.CorrectChoices -> {
                 CorrectChoicesScreen(
-                    questions = state.questions,
                     score = state.score,
+                    questions = state.questions,
+                    answeredQuestions = answeredQuestions,
                     lastCountDownTime = state.lastCountDownTime,
-                    currentQuestionData = currentQuestionData,
-                    onAddCurrentQuestion = onAddCurrentQuestion,
                     onQuitQuestions = onQuitQuestions,
                 )
             }
@@ -218,8 +211,7 @@ internal fun QuestionScreen(
                     QuickQuestionsScreen(
                         snackbarHostState = snackbarHostState,
                         questions = state.questions,
-                        currentQuestionData = currentQuestionData,
-                        onAddCurrentQuestion = onAddCurrentQuestion,
+                        answeredQuestions = answeredQuestions,
                         onUpdateChoice = onUpdateChoice,
                         onQuitQuestions = onQuitQuestions,
                     )
@@ -233,12 +225,11 @@ internal fun QuestionScreen(
 private fun Questions(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
-    currentQuestionData: QuestionData,
+    answeredQuestions: Map<Question, List<String>>,
     questionSettingIndex: Int,
     questions: List<Question>,
     countDownTime: CountDownTime?,
-    onAddCurrentQuestion: (Question) -> Unit,
-    onUpdateChoice: (Choice) -> Unit,
+    onUpdateChoice: (question: Question, choice: String) -> Unit,
     onShowCorrectChoices: (questionSettingIndex: Int, questions: List<Question>, score: Int) -> Unit,
     onQuitQuestions: () -> Unit,
 ) {
@@ -272,19 +263,13 @@ private fun Questions(
         }
     }
 
-    LaunchedEffect(key1 = pagerState) {
-        snapshotFlow { pagerState.currentPage }.collect { page ->
-            onAddCurrentQuestion(questions[page])
-        }
-    }
-
     Scaffold(
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
         },
         floatingActionButton = {
             AnimatedVisibility(
-                visible = currentQuestionData.questionsWithSelectedChoices.size == questions.size,
+                visible = answeredQuestions.size == questions.size,
                 enter = fadeIn() + scaleIn(),
                 exit = fadeOut() + scaleOut(),
             ) {
@@ -308,7 +293,7 @@ private fun Questions(
                 .padding(paddingValues),
         ) {
             QuestionTopBar(
-                questionsWithSelectedChoicesSize = currentQuestionData.questionsWithSelectedChoices.size,
+                answeredQuestionSize = answeredQuestions.size,
                 countDownTime = countDownTime,
             )
 
@@ -330,11 +315,13 @@ private fun Questions(
                 QuestionPage(
                     page = page,
                     questions = questions,
-                    currentQuestionData = currentQuestionData,
-                    onUpdateChoice = { choice, isCorrect ->
-                        if (isCorrect) correctScoreCount++
+                    selectedChoices = answeredQuestions[questions[page]] ?: emptyList(),
+                    onUpdateChoice = { question, choice, isCorrect ->
+                        if (isCorrect) {
+                            correctScoreCount++
+                        }
 
-                        onUpdateChoice(choice)
+                        onUpdateChoice(question, choice)
                     },
                 )
             }
@@ -351,7 +338,7 @@ private fun Questions(
                 onQuitQuestions()
             },
             dialogTitle = "Quit Questions",
-            dialogText = "You have answered ${currentQuestionData.questionsWithSelectedChoices.size} out of ${questions.size} questions. Are you sure you want to quit?",
+            dialogText = "You have answered ${answeredQuestions.size} out of ${questions.size} questions. Are you sure you want to quit?",
             icon = Swr.Question,
         )
     }
@@ -360,7 +347,7 @@ private fun Questions(
 @Composable
 private fun QuestionTopBar(
     modifier: Modifier = Modifier,
-    questionsWithSelectedChoicesSize: Int,
+    answeredQuestionSize: Int,
     countDownTime: CountDownTime?,
 ) {
     Row(
@@ -374,7 +361,7 @@ private fun QuestionTopBar(
 
         Spacer(modifier = Modifier.width(5.dp))
 
-        SlideDownToUpText(text = "$questionsWithSelectedChoicesSize", fontWeight = FontWeight.Bold)
+        SlideDownToUpText(text = "$answeredQuestionSize", fontWeight = FontWeight.Bold)
 
         if (countDownTime != null && countDownTime.isFinished.not()) {
             Spacer(modifier = Modifier.width(20.dp))
@@ -394,8 +381,8 @@ private fun QuestionPage(
     scrollState: ScrollState = rememberScrollState(),
     page: Int,
     questions: List<Question>,
-    currentQuestionData: QuestionData,
-    onUpdateChoice: (Choice, Boolean) -> Unit,
+    selectedChoices: List<String>,
+    onUpdateChoice: (question: Question, choice: String, isCorrect: Boolean) -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -410,7 +397,7 @@ private fun QuestionPage(
             currentQuestion = questions[page],
             choices = questions[page].choices,
             correctChoices = questions[page].correctChoices,
-            currentQuestionData = currentQuestionData,
+            selectedChoices = selectedChoices,
             onUpdateChoice = onUpdateChoice,
         )
     }
@@ -438,8 +425,8 @@ private fun QuestionChoicesSelection(
     currentQuestion: Question,
     choices: List<String>,
     correctChoices: List<String>,
-    currentQuestionData: QuestionData,
-    onUpdateChoice: (Choice, Boolean) -> Unit,
+    selectedChoices: List<String>,
+    onUpdateChoice: (question: Question, choice: String, isCorrect: Boolean) -> Unit,
 ) {
     val greenGradientColors = listOf(
         Color(0xFF43A047),
@@ -451,10 +438,6 @@ private fun QuestionChoicesSelection(
 
     val scope = rememberCoroutineScope()
 
-    val (question, selectedChoices) = currentQuestionData
-
-    val isCurrentQuestion = question == currentQuestion
-
     var lastSelectedChoiceIndex by remember {
         mutableIntStateOf(-1)
     }
@@ -465,7 +448,7 @@ private fun QuestionChoicesSelection(
             .padding(horizontal = 10.dp),
     ) {
         choices.forEachIndexed { index, choice ->
-            val selectedChoice = isCurrentQuestion && choice in selectedChoices
+            val selectedChoice = choice in selectedChoices
 
             val choiceBorderGradientColors = if (selectedChoice) {
                 greenGradientColors
@@ -486,12 +469,11 @@ private fun QuestionChoicesSelection(
                     lastSelectedChoiceIndex = index
 
                     onUpdateChoice(
-                        Choice(
-                            question = currentQuestion,
-                            choice = choice,
-                        ),
+                        currentQuestion,
+                        choice,
                         choice in correctChoices,
                     )
+
                     scope.launch {
                         choiceAnimation.animateTo(
                             targetValue = 1f,
