@@ -17,10 +17,7 @@
  */
 package com.eblan.socialworkreviewer.core.data.repository
 
-import com.eblan.socialworkreviewer.core.model.Choice
-import com.eblan.socialworkreviewer.core.model.AnsweredQuestion
 import com.eblan.socialworkreviewer.core.model.Question
-import com.eblan.socialworkreviewer.core.model.QuestionData
 import kotlinx.coroutines.flow.SharedFlow
 
 interface ChoiceRepository {

@@ -24,6 +24,6 @@ interface NewsDataSource {
     fun getNewsDocuments(): Flow<List<News>>
 
     companion object {
-        const val NEWS_COLLECTION = "announcements"
+        const val NEWS_COLLECTION = "news"
     }
 }
