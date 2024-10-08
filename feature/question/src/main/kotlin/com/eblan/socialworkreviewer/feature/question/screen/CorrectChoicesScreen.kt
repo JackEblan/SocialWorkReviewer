@@ -97,7 +97,7 @@ internal fun CorrectChoicesScreen(
                 .padding(paddingValues),
         ) {
             CorrectChoicesTopBar(
-                wrongText = "${answeredQuestions.size - score}",
+                wrongText = "${questions.size - score}",
                 correctText = "$score",
                 lastCountDownTime = lastCountDownTime,
             )

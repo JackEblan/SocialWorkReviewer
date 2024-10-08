@@ -36,9 +36,9 @@ class FakeChoiceRepository : ChoiceRepository {
     override fun multipleChoices(question: Question, choice: String) {
         _answeredQuestions[question] = _answeredQuestions[question]?.let { selectedChoices ->
             if (choice in selectedChoices) {
-                selectedChoices - choice
+                selectedChoices.minus(choice)
             } else {
-                selectedChoices + choice
+                selectedChoices.plus(choice).distinct()
             }
         } ?: listOf(choice)
 

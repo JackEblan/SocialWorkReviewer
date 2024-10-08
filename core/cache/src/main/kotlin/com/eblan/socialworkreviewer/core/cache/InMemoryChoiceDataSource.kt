@@ -27,5 +27,7 @@ interface InMemoryChoiceDataSource {
 
     fun singleChoice(question: Question, choice: String)
 
+    suspend fun getScore(): Int
+
     fun clearCache()
 }

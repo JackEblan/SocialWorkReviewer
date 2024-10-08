@@ -18,17 +18,21 @@
 package com.eblan.socialworkreviewer.core.cache
 
 import com.eblan.socialworkreviewer.core.model.Question
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertTrue
 
 class InMemoryChoiceDataSourceTest {
+    private val testDispatcher = UnconfinedTestDispatcher()
+
     private lateinit var inMemoryChoiceDataSource: InMemoryChoiceDataSource
 
     @Before
     fun setup() {
-        inMemoryChoiceDataSource = DefaultInMemoryChoiceDataSource()
+        inMemoryChoiceDataSource =
+            DefaultInMemoryChoiceDataSource(defaultDispatcher = testDispatcher)
     }
 
     @Test
@@ -66,6 +70,27 @@ class InMemoryChoiceDataSourceTest {
 
         assertTrue {
             answeredQuestion[question]?.size == 1
+        }
+    }
+
+    @Test
+    fun getScore() = runTest {
+        repeat(10) { index ->
+            inMemoryChoiceDataSource.singleChoice(
+                question = Question(
+                    question = "$index",
+                    correctChoices = listOf(),
+                    wrongChoices = listOf(),
+                    choices = listOf(""),
+                ),
+                choice = "",
+            )
+        }
+
+        println( inMemoryChoiceDataSource.getScore())
+
+        assertTrue {
+            inMemoryChoiceDataSource.getScore() == 10
         }
     }
 

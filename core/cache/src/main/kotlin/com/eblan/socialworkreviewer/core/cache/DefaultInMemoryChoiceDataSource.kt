@@ -17,13 +17,18 @@
  */
 package com.eblan.socialworkreviewer.core.cache
 
+import com.eblan.socialworkreviewer.core.common.Dispatcher
+import com.eblan.socialworkreviewer.core.common.SwrDispatchers.Default
 import com.eblan.socialworkreviewer.core.model.Question
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-internal class DefaultInMemoryChoiceDataSource @Inject constructor() : InMemoryChoiceDataSource {
+internal class DefaultInMemoryChoiceDataSource @Inject constructor(@Dispatcher(Default) private val defaultDispatcher: CoroutineDispatcher) :
+    InMemoryChoiceDataSource {
     private val _answeredQuestions = mutableMapOf<Question, List<String>>()
 
     private val _answeredQuestionsFlow = MutableSharedFlow<Map<Question, List<String>>>(
@@ -36,9 +41,9 @@ internal class DefaultInMemoryChoiceDataSource @Inject constructor() : InMemoryC
     override fun multipleChoices(question: Question, choice: String) {
         _answeredQuestions[question] = _answeredQuestions[question]?.let { selectedChoices ->
             if (choice in selectedChoices) {
-                selectedChoices - choice
+                selectedChoices.minus(choice)
             } else {
-                selectedChoices + choice
+                selectedChoices.plus(choice).distinct()
             }
         } ?: listOf(choice)
 
@@ -49,6 +54,14 @@ internal class DefaultInMemoryChoiceDataSource @Inject constructor() : InMemoryC
         _answeredQuestions[question] = listOf(choice)
 
         _answeredQuestionsFlow.tryEmit(_answeredQuestions.toMap())
+    }
+
+    override suspend fun getScore(): Int {
+        return withContext(defaultDispatcher) {
+            _answeredQuestions.count {
+                it.key.correctChoices == it.value
+            }
+        }
     }
 
     override fun clearCache() {

@@ -168,14 +168,39 @@ class QuestionViewModelTest {
     }
 
     @Test
-    fun updateChoice() = runTest {
+    fun updateMultipleChoices() = runTest {
         backgroundScope.launch(UnconfinedTestDispatcher()) {
             viewModel.answeredQuestionsFlow.collect()
         }
 
         val question = Question(
             question = "",
-            correctChoices = listOf(""),
+            correctChoices = listOf("", ""),
+            wrongChoices = listOf(),
+            choices = listOf(),
+        )
+
+        repeat(2) {
+            viewModel.updateChoice(
+                question = question,
+                choice = "$it",
+            )
+        }
+
+        assertTrue {
+            viewModel.answeredQuestionsFlow.value[question]?.size == 2
+        }
+    }
+
+    @Test
+    fun updateSingleChoice() = runTest {
+        backgroundScope.launch(UnconfinedTestDispatcher()) {
+            viewModel.answeredQuestionsFlow.collect()
+        }
+
+        val question = Question(
+            question = "",
+            correctChoices = listOf("", ""),
             wrongChoices = listOf(),
             choices = listOf(),
         )
@@ -186,7 +211,7 @@ class QuestionViewModelTest {
         )
 
         assertTrue {
-            viewModel.answeredQuestionsFlow.value.isNotEmpty()
+            viewModel.answeredQuestionsFlow.value[question]?.size == 1
         }
     }
 
@@ -218,7 +243,7 @@ class QuestionViewModelTest {
 
         averageRepository.setAverages(value = averages)
 
-        viewModel.showCorrectChoices(questionSettingIndex = 0, questions = questions, score = 10)
+        viewModel.showCorrectChoices(questionSettingIndex = 0, questions = questions)
 
         assertIs<QuestionUiState.CorrectChoices>(viewModel.questionUiState.value)
     }

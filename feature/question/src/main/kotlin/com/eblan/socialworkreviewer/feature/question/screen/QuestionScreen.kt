@@ -136,7 +136,7 @@ internal fun QuestionScreen(
     answeredQuestions: Map<Question, List<String>>,
     countDownTime: CountDownTime?,
     onUpdateChoice: (question: Question, choice: String) -> Unit,
-    onShowCorrectChoices: (questionSettingIndex: Int, questions: List<Question>, score: Int) -> Unit,
+    onShowCorrectChoices: (questionSettingIndex: Int, questions: List<Question>) -> Unit,
     onStartQuestions: (Int, QuestionSetting) -> Unit,
     onStartQuickQuestions: () -> Unit,
     onQuitQuestions: () -> Unit,
@@ -230,7 +230,7 @@ private fun Questions(
     questions: List<Question>,
     countDownTime: CountDownTime?,
     onUpdateChoice: (question: Question, choice: String) -> Unit,
-    onShowCorrectChoices: (questionSettingIndex: Int, questions: List<Question>, score: Int) -> Unit,
+    onShowCorrectChoices: (questionSettingIndex: Int, questions: List<Question>) -> Unit,
     onQuitQuestions: () -> Unit,
 ) {
     val pagerState = rememberPagerState(
@@ -259,7 +259,7 @@ private fun Questions(
 
     LaunchedEffect(key1 = countDownTime) {
         if (countDownTime != null && countDownTime.isFinished) {
-            onShowCorrectChoices(questionSettingIndex, questions, correctScoreCount)
+            onShowCorrectChoices(questionSettingIndex, questions)
         }
     }
 
@@ -269,13 +269,14 @@ private fun Questions(
         },
         floatingActionButton = {
             AnimatedVisibility(
-                visible = answeredQuestions.size == questions.size,
+                visible = answeredQuestions.values.all { it.isNotEmpty() } && answeredQuestions.size == questions.size,
                 enter = fadeIn() + scaleIn(),
                 exit = fadeOut() + scaleOut(),
             ) {
                 FloatingActionButton(
                     onClick = {
-                        onShowCorrectChoices(questionSettingIndex, questions, correctScoreCount)
+
+                        onShowCorrectChoices(questionSettingIndex, questions)
                     },
                 ) {
                     Icon(
@@ -293,7 +294,7 @@ private fun Questions(
                 .padding(paddingValues),
         ) {
             QuestionTopBar(
-                answeredQuestionSize = answeredQuestions.size,
+                answeredQuestionSize = answeredQuestions.values.count { it.isNotEmpty() },
                 countDownTime = countDownTime,
             )
 
