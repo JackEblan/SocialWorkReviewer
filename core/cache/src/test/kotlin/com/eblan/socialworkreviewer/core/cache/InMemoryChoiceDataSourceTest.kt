@@ -79,15 +79,13 @@ class InMemoryChoiceDataSourceTest {
             inMemoryChoiceDataSource.singleChoice(
                 question = Question(
                     question = "$index",
-                    correctChoices = listOf(),
+                    correctChoices = listOf(""),
                     wrongChoices = listOf(),
                     choices = listOf(""),
                 ),
                 choice = "",
             )
         }
-
-        println( inMemoryChoiceDataSource.getScore())
 
         assertTrue {
             inMemoryChoiceDataSource.getScore() == 10

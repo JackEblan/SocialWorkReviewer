@@ -36,6 +36,10 @@ internal class DefaultChoiceRepository @Inject constructor(
         inMemoryChoiceDataSource.singleChoice(question = question, choice = choice)
     }
 
+    override suspend fun getScore(): Int {
+        return inMemoryChoiceDataSource.getScore()
+    }
+
     override fun clearCache() {
         inMemoryChoiceDataSource.clearCache()
     }

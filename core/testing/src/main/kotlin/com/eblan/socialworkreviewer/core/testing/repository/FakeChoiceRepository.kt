@@ -51,6 +51,12 @@ class FakeChoiceRepository : ChoiceRepository {
         _answeredQuestionsFlow.tryEmit(_answeredQuestions.toMap())
     }
 
+    override suspend fun getScore(): Int {
+        return _answeredQuestions.count {
+            it.key.correctChoices == it.value
+        }
+    }
+
     override fun clearCache() {
         _answeredQuestions.clear()
 

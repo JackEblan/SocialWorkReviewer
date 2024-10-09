@@ -129,9 +129,7 @@ class QuestionViewModel @Inject constructor(
 
     fun showCorrectChoices(questionSettingIndex: Int, questions: List<Question>) {
         viewModelScope.launch {
-            val score = answeredQuestionsFlow.value.count {
-                it.key.correctChoices == it.value
-            }
+            val score = choiceRepository.getScore()
 
             _questionUiState.update {
                 QuestionUiState.CorrectChoices(

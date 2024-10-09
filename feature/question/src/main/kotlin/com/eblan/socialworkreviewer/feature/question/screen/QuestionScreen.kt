@@ -275,7 +275,6 @@ private fun Questions(
             ) {
                 FloatingActionButton(
                     onClick = {
-
                         onShowCorrectChoices(questionSettingIndex, questions)
                     },
                 ) {
