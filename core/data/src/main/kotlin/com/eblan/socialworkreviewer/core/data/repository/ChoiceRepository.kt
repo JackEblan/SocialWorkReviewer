@@ -17,25 +17,17 @@
  */
 package com.eblan.socialworkreviewer.core.data.repository
 
-import com.eblan.socialworkreviewer.core.model.Choice
 import com.eblan.socialworkreviewer.core.model.Question
-import com.eblan.socialworkreviewer.core.model.QuestionData
 import kotlinx.coroutines.flow.SharedFlow
 
 interface ChoiceRepository {
-    val selectedChoices: List<Choice>
+    val answeredQuestionsFlow: SharedFlow<Map<Question, List<String>>>
 
-    val currentQuestionData: SharedFlow<QuestionData>
+    fun multipleChoices(question: Question, choice: String)
 
-    fun addQuestions(questions: List<Question>)
+    fun singleChoice(question: Question, choice: String)
 
-    suspend fun addChoice(choice: Choice)
-
-    suspend fun deleteChoice(choice: Choice)
-
-    suspend fun replaceChoice(oldChoice: Choice, newChoice: Choice)
+    suspend fun getScore(): Int
 
     fun clearCache()
-
-    suspend fun addCurrentQuestion(question: Question)
 }

@@ -18,105 +18,48 @@
 package com.eblan.socialworkreviewer.core.testing.repository
 
 import com.eblan.socialworkreviewer.core.data.repository.ChoiceRepository
-import com.eblan.socialworkreviewer.core.model.Choice
 import com.eblan.socialworkreviewer.core.model.Question
-import com.eblan.socialworkreviewer.core.model.QuestionData
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
 class FakeChoiceRepository : ChoiceRepository {
-    private val _questions = mutableListOf<Question>()
+    private val _answeredQuestions = mutableMapOf<Question, List<String>>()
 
-    private val _selectedChoices = mutableListOf<Choice>()
-
-    private val _questionsWithSelectedChoicesFlow = MutableSharedFlow<Map<Question, List<String>>>(
+    private val _answeredQuestionsFlow = MutableSharedFlow<Map<Question, List<String>>>(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
 
-    private val _currentQuestionData = MutableSharedFlow<QuestionData>(
-        replay = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST,
-    )
+    override val answeredQuestionsFlow get() = _answeredQuestionsFlow.asSharedFlow()
 
-    override val selectedChoices get() = _selectedChoices.toList()
+    override fun multipleChoices(question: Question, choice: String) {
+        _answeredQuestions[question] = _answeredQuestions[question]?.let { selectedChoices ->
+            if (choice in selectedChoices) {
+                selectedChoices.minus(choice)
+            } else {
+                selectedChoices.plus(choice).distinct()
+            }
+        } ?: listOf(choice)
 
-    override val currentQuestionData = _currentQuestionData.asSharedFlow()
-
-    override fun addQuestions(questions: List<Question>) {
-        _questions.addAll(questions)
+        _answeredQuestionsFlow.tryEmit(_answeredQuestions.toMap())
     }
 
-    override suspend fun addChoice(choice: Choice) {
-        _selectedChoices.add(choice)
+    override fun singleChoice(question: Question, choice: String) {
+        _answeredQuestions[question] = listOf(choice)
 
-        _currentQuestionData.emit(
-            QuestionData(
-                question = choice.question,
-                selectedChoices = getQuestionsWithSelectedChoices().getOrDefault(
-                    key = choice.question,
-                    defaultValue = emptyList(),
-                ),
-                questionsWithSelectedChoices = getQuestionsWithSelectedChoices(),
-            ),
-        )
+        _answeredQuestionsFlow.tryEmit(_answeredQuestions.toMap())
     }
 
-    override suspend fun deleteChoice(choice: Choice) {
-        _selectedChoices.remove(choice)
-
-        _currentQuestionData.emit(
-            QuestionData(
-                question = choice.question,
-                selectedChoices = getQuestionsWithSelectedChoices().getOrDefault(
-                    key = choice.question,
-                    defaultValue = emptyList(),
-                ),
-                questionsWithSelectedChoices = getQuestionsWithSelectedChoices(),
-            ),
-        )
-    }
-
-    override suspend fun replaceChoice(oldChoice: Choice, newChoice: Choice) {
-        val oldChoiceIndex = _selectedChoices.indexOf(oldChoice)
-
-        if (oldChoiceIndex != -1) {
-            _selectedChoices[oldChoiceIndex] = newChoice
-
-            _currentQuestionData.emit(
-                QuestionData(
-                    question = newChoice.question,
-                    selectedChoices = getQuestionsWithSelectedChoices().getOrDefault(
-                        key = newChoice.question,
-                        defaultValue = emptyList(),
-                    ),
-                    questionsWithSelectedChoices = getQuestionsWithSelectedChoices(),
-                ),
-            )
+    override suspend fun getScore(): Int {
+        return _answeredQuestions.count {
+            it.key.correctChoices == it.value
         }
     }
 
     override fun clearCache() {
-        _selectedChoices.clear()
+        _answeredQuestions.clear()
 
-        _questionsWithSelectedChoicesFlow.resetReplayCache()
-    }
-
-    override suspend fun addCurrentQuestion(question: Question) {
-        _currentQuestionData.emit(
-            QuestionData(
-                question = question,
-                selectedChoices = getQuestionsWithSelectedChoices().getOrDefault(
-                    key = question,
-                    defaultValue = emptyList(),
-                ),
-                questionsWithSelectedChoices = getQuestionsWithSelectedChoices(),
-            ),
-        )
-    }
-
-    private fun getQuestionsWithSelectedChoices(): Map<Question, List<String>> {
-        return _selectedChoices.groupBy({ it.question }, { it.choice })
+        _answeredQuestionsFlow.resetReplayCache()
     }
 }

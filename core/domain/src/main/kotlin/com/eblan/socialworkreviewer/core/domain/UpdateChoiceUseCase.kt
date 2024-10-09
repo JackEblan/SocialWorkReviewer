@@ -18,37 +18,17 @@
 package com.eblan.socialworkreviewer.core.domain
 
 import com.eblan.socialworkreviewer.core.data.repository.ChoiceRepository
-import com.eblan.socialworkreviewer.core.model.Choice
+import com.eblan.socialworkreviewer.core.model.Question
 import javax.inject.Inject
 
 class UpdateChoiceUseCase @Inject constructor(
     private val choiceRepository: ChoiceRepository,
 ) {
-    suspend operator fun invoke(choice: Choice) {
-        if (choice.question.correctChoices.size > 1) {
-            multipleChoices(choice = choice)
+    operator fun invoke(question: Question, choice: String) {
+        if (question.correctChoices.size > 1) {
+            choiceRepository.multipleChoices(question = question, choice = choice)
         } else {
-            singleChoice(choice = choice)
-        }
-    }
-
-    private suspend fun multipleChoices(choice: Choice) {
-        if (choice in choiceRepository.selectedChoices) {
-            choiceRepository.deleteChoice(choice)
-        } else {
-            choiceRepository.addChoice(choice)
-        }
-    }
-
-    private suspend fun singleChoice(choice: Choice) {
-        choiceRepository.selectedChoices.find { oldChoice ->
-            choice.question == oldChoice.question && choice != oldChoice
-        }?.let { oldChoice ->
-            choiceRepository.replaceChoice(oldChoice = oldChoice, newChoice = choice)
-        }
-
-        if (choice !in choiceRepository.selectedChoices) {
-            choiceRepository.addChoice(choice)
+            choiceRepository.singleChoice(question = question, choice = choice)
         }
     }
 }
