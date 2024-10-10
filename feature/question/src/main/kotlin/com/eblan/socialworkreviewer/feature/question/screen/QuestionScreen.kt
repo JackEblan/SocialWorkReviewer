@@ -135,7 +135,7 @@ internal fun QuestionScreen(
     questionUiState: QuestionUiState?,
     answeredQuestions: Map<Question, List<String>>,
     countDownTime: CountDownTime?,
-    onUpdateChoice: (question: Question, choice: String) -> Unit,
+    onUpdateChoice: (Question, String) -> Unit,
     onShowCorrectChoices: (questionSettingIndex: Int, questions: List<Question>) -> Unit,
     onStartQuestions: (Int, QuestionSetting) -> Unit,
     onStartQuickQuestions: () -> Unit,
@@ -229,7 +229,7 @@ private fun Questions(
     questionSettingIndex: Int,
     questions: List<Question>,
     countDownTime: CountDownTime?,
-    onUpdateChoice: (question: Question, choice: String) -> Unit,
+    onUpdateChoice: (Question, String) -> Unit,
     onShowCorrectChoices: (questionSettingIndex: Int, questions: List<Question>) -> Unit,
     onQuitQuestions: () -> Unit,
 ) {
@@ -247,10 +247,6 @@ private fun Questions(
 
     var showQuitAlertDialog by rememberSaveable {
         mutableStateOf(false)
-    }
-
-    var correctScoreCount by rememberSaveable {
-        mutableIntStateOf(0)
     }
 
     BackHandler(enabled = true) {
@@ -313,15 +309,10 @@ private fun Questions(
                 state = pagerState,
             ) { page ->
                 QuestionPage(
-                    page = page,
-                    questions = questions,
+                    question = questions[page],
                     selectedChoices = answeredQuestions[questions[page]] ?: emptyList(),
-                    onUpdateChoice = { question, choice, isCorrect ->
-                        if (isCorrect) {
-                            correctScoreCount++
-                        }
-
-                        onUpdateChoice(question, choice)
+                    onUpdateChoice = { choice ->
+                        onUpdateChoice(questions[page], choice)
                     },
                 )
             }
@@ -379,24 +370,21 @@ private fun QuestionTopBar(
 private fun QuestionPage(
     modifier: Modifier = Modifier,
     scrollState: ScrollState = rememberScrollState(),
-    page: Int,
-    questions: List<Question>,
+    question: Question,
     selectedChoices: List<String>,
-    onUpdateChoice: (question: Question, choice: String, isCorrect: Boolean) -> Unit,
+    onUpdateChoice: (String) -> Unit,
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState),
     ) {
-        QuestionText(question = questions[page].question)
+        QuestionText(question = question.question)
 
         Spacer(modifier = Modifier.height(10.dp))
 
         QuestionChoicesSelection(
-            currentQuestion = questions[page],
-            choices = questions[page].choices,
-            correctChoices = questions[page].correctChoices,
+            choices = question.choices,
             selectedChoices = selectedChoices,
             onUpdateChoice = onUpdateChoice,
         )
@@ -422,11 +410,9 @@ internal fun QuestionText(modifier: Modifier = Modifier, question: String) {
 @Composable
 private fun QuestionChoicesSelection(
     modifier: Modifier = Modifier,
-    currentQuestion: Question,
     choices: List<String>,
-    correctChoices: List<String>,
     selectedChoices: List<String>,
-    onUpdateChoice: (question: Question, choice: String, isCorrect: Boolean) -> Unit,
+    onUpdateChoice: (String) -> Unit,
 ) {
     val greenGradientColors = listOf(
         Color(0xFF43A047),
@@ -468,11 +454,7 @@ private fun QuestionChoicesSelection(
                 onClick = {
                     lastSelectedChoiceIndex = index
 
-                    onUpdateChoice(
-                        currentQuestion,
-                        choice,
-                        choice in correctChoices,
-                    )
+                    onUpdateChoice(choice)
 
                     scope.launch {
                         choiceAnimation.animateTo(
