@@ -265,7 +265,7 @@ private fun Questions(
         },
         floatingActionButton = {
             AnimatedVisibility(
-                visible = answeredQuestions.values.all { it.isNotEmpty() } && answeredQuestions.size == questions.size,
+                visible = answeredQuestions.size == questions.size,
                 enter = fadeIn() + scaleIn(),
                 exit = fadeOut() + scaleOut(),
             ) {

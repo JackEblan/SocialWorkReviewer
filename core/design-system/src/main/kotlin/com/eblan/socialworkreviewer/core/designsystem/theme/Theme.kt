@@ -27,8 +27,6 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 @VisibleForTesting
@@ -187,30 +185,6 @@ val DarkPurpleColorScheme = darkColorScheme(
     surfaceContainerHighest = Purple.surfaceContainerHighestDark,
 )
 
-val dynamicGradientColors = GradientColors(
-    topBarTitleColorsDefault = listOf(
-        Color(0xFF00BCD4),
-        Color(0xFF03A9F4),
-        Color(0xFF9C27B0),
-    ),
-)
-
-val greenGradientColors = GradientColors(
-    topBarTitleColorsDefault = listOf(
-        Color(0xFF43A047),
-        Color(0xFF7CB342),
-        Color(0xFF039BE5),
-    ),
-)
-
-val purpleGradientColors = GradientColors(
-    topBarTitleColorsDefault = listOf(
-        Color(0xFF8E24AA),
-        Color(0xFFD81B60),
-        Color(0xFF039BE5),
-    ),
-)
-
 @Composable
 fun SwrTheme(
     greenTheme: Boolean = false,
@@ -232,25 +206,10 @@ fun SwrTheme(
         else -> if (darkTheme) DarkGreenColorScheme else LightGreenColorScheme
     }
 
-    val topBarTitleGradientColors = when {
-        supportsDynamicTheming() && dynamicTheme -> dynamicGradientColors
-
-        greenTheme -> greenGradientColors
-
-        purpleTheme -> purpleGradientColors
-
-        else -> greenGradientColors
-    }
-
-    CompositionLocalProvider(
-        LocalGradientColors provides topBarTitleGradientColors,
-    ) {
-        MaterialTheme(
-            colorScheme = colorScheme,
-            typography = SwrTypography,
-            content = content,
-        )
-    }
+    MaterialTheme(
+        colorScheme = colorScheme,
+        content = content,
+    )
 }
 
 @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.S)

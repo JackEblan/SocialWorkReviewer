@@ -28,7 +28,7 @@ internal class DefaultChoiceRepository @Inject constructor(
     override val answeredQuestionsFlow: SharedFlow<Map<Question, List<String>>>
         get() = inMemoryChoiceDataSource.answeredQuestionsFlow
 
-    override fun multipleChoices(question: Question, choice: String) {
+    override suspend fun multipleChoices(question: Question, choice: String) {
         inMemoryChoiceDataSource.multipleChoices(question = question, choice = choice)
     }
 

@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.SharedFlow
 interface ChoiceRepository {
     val answeredQuestionsFlow: SharedFlow<Map<Question, List<String>>>
 
-    fun multipleChoices(question: Question, choice: String)
+    suspend fun multipleChoices(question: Question, choice: String)
 
     fun singleChoice(question: Question, choice: String)
 
