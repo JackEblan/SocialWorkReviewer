@@ -24,7 +24,7 @@ import javax.inject.Inject
 class UpdateChoiceUseCase @Inject constructor(
     private val choiceRepository: ChoiceRepository,
 ) {
-    operator fun invoke(question: Question, choice: String) {
+    suspend operator fun invoke(question: Question, choice: String) {
         if (question.correctChoices.size > 1) {
             choiceRepository.multipleChoices(question = question, choice = choice)
         } else {

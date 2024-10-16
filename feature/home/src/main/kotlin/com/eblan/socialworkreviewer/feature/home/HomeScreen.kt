@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -33,7 +34,6 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -47,8 +47,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.eblan.socialworkreviewer.core.designsystem.component.SwrLargeTopAppBar
-import com.eblan.socialworkreviewer.core.designsystem.theme.LocalGradientColors
 import com.eblan.socialworkreviewer.feature.home.navigation.HomeDestination
 import kotlin.reflect.KClass
 
@@ -130,15 +128,10 @@ internal fun HomeScreen(
     ) {
         Scaffold(
             topBar = {
-                SwrLargeTopAppBar(
+                LargeTopAppBar(
                     title = {
                         Text(
                             text = stringResource(id = topBarTitleStringResource),
-                            style = MaterialTheme.typography.headlineSmall.copy(
-                                brush = Brush.linearGradient(
-                                    colors = LocalGradientColors.current.topBarTitleColorsDefault,
-                                ),
-                            ),
                         )
                     },
                     modifier = modifier.testTag("home:largeTopAppBar"),

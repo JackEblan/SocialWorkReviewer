@@ -19,7 +19,6 @@ package com.eblan.socialworkreviewer
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -78,16 +77,7 @@ class MainActivity : ComponentActivity() {
             val dynamicTheme = shouldUseDynamicTheme(mainActivityUiState)
 
             DisposableEffect(darkTheme) {
-                enableEdgeToEdge(
-                    statusBarStyle = SystemBarStyle.auto(
-                        android.graphics.Color.TRANSPARENT,
-                        android.graphics.Color.TRANSPARENT,
-                    ) { darkTheme },
-                    navigationBarStyle = SystemBarStyle.auto(
-                        lightScrim,
-                        darkScrim,
-                    ) { darkTheme },
-                )
+                enableEdgeToEdge()
                 onDispose {}
             }
 
@@ -144,7 +134,3 @@ private fun shouldUseDynamicTheme(
     MainActivityUiState.Loading -> false
     is MainActivityUiState.Success -> mainActivityUiState.userData.useDynamicColor
 }
-
-private val lightScrim = android.graphics.Color.argb(0xe6, 0xFF, 0xFF, 0xFF)
-
-private val darkScrim = android.graphics.Color.argb(0x80, 0x1b, 0x1b, 0x1b)

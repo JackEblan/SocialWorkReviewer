@@ -33,7 +33,7 @@ class FakeChoiceRepository : ChoiceRepository {
 
     override val answeredQuestionsFlow get() = _answeredQuestionsFlow.asSharedFlow()
 
-    override fun multipleChoices(question: Question, choice: String) {
+    override suspend fun multipleChoices(question: Question, choice: String) {
         _answeredQuestions[question] = _answeredQuestions[question]?.let { selectedChoices ->
             if (choice in selectedChoices) {
                 selectedChoices.minus(choice)

@@ -38,7 +38,7 @@ internal class DefaultInMemoryChoiceDataSource @Inject constructor(@Dispatcher(D
 
     override val answeredQuestionsFlow get() = _answeredQuestionsFlow.asSharedFlow()
 
-    override fun multipleChoices(question: Question, choice: String) {
+    override suspend fun multipleChoices(question: Question, choice: String) {
         _answeredQuestions[question] = _answeredQuestions[question]?.let { selectedChoices ->
             if (choice in selectedChoices) {
                 selectedChoices.minus(choice)
@@ -47,7 +47,13 @@ internal class DefaultInMemoryChoiceDataSource @Inject constructor(@Dispatcher(D
             }
         } ?: listOf(choice)
 
-        _answeredQuestionsFlow.tryEmit(_answeredQuestions.toMap())
+        val filteredAnsweredQuestions = withContext(defaultDispatcher) {
+            _answeredQuestions.filter { answeredQuestion ->
+                answeredQuestion.value.isNotEmpty()
+            }.toMap()
+        }
+
+        _answeredQuestionsFlow.tryEmit(filteredAnsweredQuestions)
     }
 
     override fun singleChoice(question: Question, choice: String) {
